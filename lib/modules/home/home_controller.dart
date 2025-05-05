@@ -1,0 +1,56 @@
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+class HomeController extends GetxController {
+  final ScrollController scrollController = ScrollController();
+  final RxInt currentIndex = 0.obs;
+  final RxBool isLastAnimation = false.obs;
+  final RxDouble currentScrollPosition = 0.0.obs;
+
+  // Define section positions
+  static const double servicesPosition = 400.0; // Adjust based on your layout
+
+  @override
+  void onInit() {
+    super.onInit();
+    scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _scrollListener() {
+    currentScrollPosition.value = scrollController.position.pixels;
+  }
+
+  void updateIndex(int index) {
+    currentIndex.value = index;
+  }
+
+  void handleTap() {
+    scrollToServices();
+  }
+
+  void scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollToServices() {
+    scrollController.animateTo(
+      servicesPosition,
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  bool get isAtServices =>
+      currentScrollPosition.value >= servicesPosition - 50 &&
+      currentScrollPosition.value <= servicesPosition + 50;
+}

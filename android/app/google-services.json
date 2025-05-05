@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "755574750102",
+    "project_id": "modernisumweb",
+    "storage_bucket": "modernisumweb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755574750102:android:11082b2e63d328820efbb7",
+        "android_client_info": {
+          "package_name": "com.example.modernisum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD__KiUvQit1axSCLJPQ0TUTDfVi5G_AaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
