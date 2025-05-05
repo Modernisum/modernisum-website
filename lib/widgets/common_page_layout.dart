@@ -45,104 +45,37 @@ class CommonPageLayout extends StatelessWidget {
   }
 
   Widget _buildAppBar() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Calculate dynamic padding and font size based on width
-        double horizontalPadding = constraints.maxWidth < 800 ? 10 : 20;
-        double verticalPadding = constraints.maxWidth < 800 ? 5 : 10;
-        double logoWidth = constraints.maxWidth < 800 ? 50 : 70;
-
-        return Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: horizontalPadding, vertical: verticalPadding),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset('assets/images/logo1.png', width: logoWidth),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth < 600) {
-                    return IconButton(
-                      icon: const Icon(Icons.menu, color: Colors.white),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    );
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildResponsiveNavButtons(constraints.maxWidth),
-                    ],
-                  );
-                },
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset('assets/images/logo1.png', width: 70),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              }
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildNavButton('Home', Routes.home),
+                  _buildNavButton('Services', Routes.services),
+                  _buildNavButton('Portfolio', Routes.portfolio),
+                  _buildNavButton('Blog', Routes.blog),
+                  _buildNavButton('About', Routes.about),
+                  _buildNavButton('Contact Us', Routes.contact),
+                ],
+              );
+            },
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildResponsiveNavButtons(double width) {
-    // Calculate button properties based on available width
-    double fontSize = width < 800 ? 12 : 14;
-    double horizontalPadding = width < 800 ? 8 : 15;
-    double verticalPadding = width < 800 ? 4 : 8;
-    double buttonSpacing = width < 800 ? 2 : 5;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildNavButton(
-          'Home',
-          Routes.home,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-        _buildNavButton(
-          'Services',
-          Routes.services,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-        _buildNavButton(
-          'Portfolio',
-          Routes.portfolio,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-        _buildNavButton(
-          'Blog',
-          Routes.blog,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-        _buildNavButton(
-          'About',
-          Routes.about,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-        _buildNavButton(
-          'Contact Us',
-          Routes.contact,
-          fontSize: fontSize,
-          horizontalPadding: horizontalPadding,
-          verticalPadding: verticalPadding,
-          spacing: buttonSpacing,
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -203,21 +136,14 @@ class CommonPageLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildNavButton(
-    String text,
-    String route, {
-    double fontSize = 14,
-    double horizontalPadding = 15,
-    double verticalPadding = 8,
-    double spacing = 5,
-  }) {
+  Widget _buildNavButton(String text, String route) {
     bool isHovered = false;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: StatefulBuilder(
         builder: (context, setState) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: spacing),
+            margin: const EdgeInsets.symmetric(horizontal: 5),
             child: TextButton(
               onPressed: () => Get.toNamed(route),
               style: TextButton.styleFrom(
@@ -226,8 +152,8 @@ class CommonPageLayout extends StatelessWidget {
                 backgroundColor:
                     isHovered ? AppTheme.primaryColor : Colors.transparent,
                 side: BorderSide(color: AppTheme.primaryColor),
-                padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding, vertical: verticalPadding),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -237,10 +163,7 @@ class CommonPageLayout extends StatelessWidget {
                   isHovered = hovered;
                 });
               },
-              child: Text(
-                text,
-                style: TextStyle(fontSize: fontSize),
-              ),
+              child: Text(text),
             ),
           );
         },

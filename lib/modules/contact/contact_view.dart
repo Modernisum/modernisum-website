@@ -94,7 +94,7 @@ class ContactView extends GetView<ContactController> {
                 _buildContactInfo(
                   Icons.location_on,
                   'Address',
-                  'jawar calony ,parikshitgarh meerut Uttar Pradesh India (250406)',
+                  'near ccsu university  meerut Uttar Pradesh India (250401)',
                 ),
                 const SizedBox(height: 15),
                 _buildContactInfo(

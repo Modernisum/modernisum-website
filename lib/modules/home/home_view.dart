@@ -18,7 +18,7 @@ class HomeView extends GetView<HomeController> {
             Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
-              // padding: const EdgeInsets.symmetric(horizontal: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 50),
               alignment: Alignment.center,
               child: AnimatedTextKit(
                 animatedTexts: [
