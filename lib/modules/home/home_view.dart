@@ -6,6 +6,26 @@ import '../../widgets/common_page_layout.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
+  ShaderMask _buildGradientText(String text, double fontSize) {
+    return ShaderMask(
+      shaderCallback: (bounds) => LinearGradient(
+        colors: [
+          Color.fromRGBO(245, 179, 1, 1),
+          Colors.brown,
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(bounds),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white, // The actual color is created by the gradient
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +44,19 @@ class HomeView extends GetView<HomeController> {
                 animatedTexts: [
                   FadeAnimatedText(
                     'Welcome Modernisum',
-                    textStyle: const TextStyle(
+                    textStyle: TextStyle(
                       fontSize: 54.0,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(245, 179, 1, 1),
+                      foreground: Paint()
+                        ..shader = LinearGradient(
+                          colors: [
+                            Color.fromRGBO(245, 179, 1, 1),
+                            Colors.brown,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(
+                            const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                     ),
                     duration: const Duration(seconds: 2),
                     fadeInEnd: 0.3,
@@ -35,22 +64,38 @@ class HomeView extends GetView<HomeController> {
                   ),
                   FadeAnimatedText(
                     'Let\'s Start',
-                    textStyle: const TextStyle(
-                      fontSize: 64.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
+                    textStyle: TextStyle(
+                        fontSize: 64.0,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: [
+                              Color.fromRGBO(245, 179, 1, 1),
+                              Colors.brown,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(
+                              const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
                     duration: const Duration(seconds: 2),
                     fadeInEnd: 0.3,
                     fadeOutBegin: 0.7,
                   ),
                   FadeAnimatedText(
                     'Modernize your business',
-                    textStyle: const TextStyle(
-                      fontSize: 54.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
+                    textStyle: TextStyle(
+                        fontSize: 54.0,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: [
+                              Color.fromRGBO(245, 179, 1, 1),
+                              Colors.brown,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(
+                              const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
                     duration: const Duration(seconds: 2),
                     fadeInEnd: 0.3,
                     fadeOutBegin: 0.7,
@@ -73,14 +118,7 @@ class HomeView extends GetView<HomeController> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Our Services',
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(245, 179, 1, 1),
-                    ),
-                  ),
+                  _buildGradientText('Our Services', 42),
                   const SizedBox(height: 30),
                   Expanded(
                     child: GridView.count(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../routes/app_pages.dart';
 import '../theme/app_theme.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isTransparent;
+  final double _mobileBreakpoint = 600;
 
   const CommonAppBar({
     super.key,
@@ -15,38 +17,142 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      title: Image.asset('assets/images/logo1.png', width: 70),
+      backgroundColor: isTransparent
+          ? Colors.transparent
+          : AppTheme.primaryColor.withOpacity(0.9),
+      elevation: isTransparent ? 0 : 4,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: isTransparent
+              ? null
+              : LinearGradient(
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+        ),
+      ),
+      title: Row(
+        children: [
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => Get.toNamed(Routes.home),
+              child: Image.asset(
+                'assets/images/logo1.png',
+                width: 70.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
+      ),
       actions: [
         LayoutBuilder(
           builder: (context, constraints) {
-            if (constraints.maxWidth < 600) {
-              return IconButton(
-                icon: const Icon(Icons.menu, color: Colors.white),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => _buildMobileMenu(context),
-                  );
-                },
-              );
+            if (constraints.maxWidth < _mobileBreakpoint) {
+              return _buildMobileMenuButton(context);
             }
-            return Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildNavButton('Home', Routes.home),
-                  _buildNavButton('Services', Routes.services),
-                  _buildNavButton('Portfolio', Routes.portfolio),
-                  _buildNavButton('Blog', Routes.blog),
-                  _buildNavButton('About', Routes.about),
-                  _buildNavButton('Contact Us', Routes.contact),
-                ],
-              ),
-            );
+            return _buildDesktopMenu();
           },
         ),
+      ],
+    );
+  }
+
+  Widget _buildMobileMenuButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        Icons.menu,
+        color: Colors.white,
+        size: 24.sp,
+      ),
+      onPressed: () => _showMobileMenu(context),
+    );
+  }
+
+  void _showMobileMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10.h),
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              ..._buildMobileMenuItems(context),
+              SizedBox(height: 20.h),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildMobileMenuItems(BuildContext context) {
+    final menuItems = [
+      {'title': 'Home', 'route': Routes.home},
+      {'title': 'Services', 'route': Routes.services},
+      {'title': 'Portfolio', 'route': Routes.portfolio},
+      {'title': 'Blog', 'route': Routes.blog},
+      {'title': 'About', 'route': Routes.about},
+      {'title': 'Contact Us', 'route': Routes.contact},
+    ];
+
+    return menuItems
+        .map((item) => _buildMobileMenuItem(
+              context,
+              item['title']!,
+              item['route']!,
+            ))
+        .toList();
+  }
+
+  Widget _buildMobileMenuItem(
+      BuildContext context, String title, String route) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        Get.toNamed(route);
+      },
+    );
+  }
+
+  Widget _buildDesktopMenu() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildNavButton('Home', Routes.home),
+        _buildNavButton('Services', Routes.services),
+        _buildNavButton('Portfolio', Routes.portfolio),
+        _buildNavButton('Blog', Routes.blog),
+        _buildNavButton('About', Routes.about),
+        _buildNavButton('Contact Us', Routes.contact),
       ],
     );
   }
@@ -54,90 +160,35 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildNavButton(String text, String route) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: StatefulBuilder(
-        builder: (context, setState) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            child: TextButton(
-              onPressed: () => Get.toNamed(route),
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primaryColor,
-                backgroundColor: Colors.transparent,
-                side: BorderSide(color: AppTheme.primaryColor),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              onHover: (isHovered) {
-                setState(() {});
-              },
-              child: Text(text),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 5.w),
+        child: TextButton(
+          onPressed: () => Get.toNamed(route),
+          style: TextButton.styleFrom(
+            foregroundColor: Get.currentRoute == route
+                ? Colors.white
+                : AppTheme.primaryColor,
+            backgroundColor: Get.currentRoute == route
+                ? AppTheme.primaryColor
+                : Colors.transparent,
+            side: BorderSide(color: AppTheme.primaryColor),
+            padding: EdgeInsets.symmetric(
+              horizontal: 15.w,
+              vertical: 8.h,
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildMobileMenu(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: AppTheme.primaryColor,
-      title: const Text('Menu', style: TextStyle(color: Colors.white)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: const Text('Home', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.home);
-            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.r),
+            ),
           ),
-          ListTile(
-            title:
-                const Text('Services', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.services);
-            },
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 14.sp),
           ),
-          ListTile(
-            title:
-                const Text('Portfolio', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.portfolio);
-            },
-          ),
-          ListTile(
-            title: const Text('Blog', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.blog);
-            },
-          ),
-          ListTile(
-            title: const Text('About', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.about);
-            },
-          ),
-          ListTile(
-            title:
-                const Text('Contact Us', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed(Routes.contact);
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight.h);
 }

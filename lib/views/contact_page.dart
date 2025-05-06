@@ -1,67 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ScreenUtil with design size
+    ScreenUtil.init(
+      context,
+      designSize: const Size(375, 812), // Base design size (iPhone X)
+      minTextAdapt: true,
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: const Text('Contact Us'),
+        title: Text(
+          'Contact Us',
+          style: TextStyle(fontSize: 20.sp),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Contact Us',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 32.sp,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFf5b301),
+                  color: const Color(0xFFf5b301),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
+                      spreadRadius: 2.r,
+                      blurRadius: 5.r,
+                      offset: Offset(0, 3.h),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Get in Touch',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFf5b301),
+                        color: const Color(0xFFf5b301),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     _buildContactForm(),
-                    const SizedBox(height: 30),
-                    const Text(
+                    SizedBox(height: 30.h),
+                    Text(
                       'Our Location',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFf5b301),
+                        color: const Color(0xFFf5b301),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     _buildContactInfo(),
                   ],
                 ),
@@ -79,49 +90,58 @@ class ContactPage extends StatelessWidget {
         TextField(
           decoration: InputDecoration(
             labelText: 'Name',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            prefixIcon: const Icon(Icons.person),
+            prefixIcon: Icon(Icons.person, size: 24.w),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         TextField(
           decoration: InputDecoration(
             labelText: 'Email',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            prefixIcon: const Icon(Icons.email),
+            prefixIcon: Icon(Icons.email, size: 24.w),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         TextField(
           maxLines: 5,
           decoration: InputDecoration(
             labelText: 'Message',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            prefixIcon: const Icon(Icons.message),
+            prefixIcon: Icon(Icons.message, size: 24.w),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF3b3f43),
-              padding: const EdgeInsets.symmetric(vertical: 15),
+              padding: EdgeInsets.symmetric(vertical: 15.h),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Send Message',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 color: Colors.white,
               ),
             ),
@@ -145,27 +165,27 @@ class ContactPage extends StatelessWidget {
 
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: EdgeInsets.only(bottom: 15.h),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: const Color(0xFF3b3f43),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: Icon(
               icon,
               color: Colors.white,
-              size: 20,
+              size: 20.w,
             ),
           ),
-          const SizedBox(width: 15),
+          SizedBox(width: 15.w),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 16,
+              style: TextStyle(
+                fontSize: 16.sp,
                 color: Colors.grey,
               ),
             ),
