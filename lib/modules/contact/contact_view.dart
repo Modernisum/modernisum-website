@@ -48,6 +48,7 @@ class ContactView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return CommonPageLayout(
       child: Center(
         child: ResponsiveLayout(
@@ -186,7 +187,7 @@ class ContactView extends GetView<ContactController> {
           const Text(
             'Contact Us',
             style: TextStyle(
-              fontSize: 36,
+              fontSize: 46,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -265,7 +266,7 @@ class ContactView extends GetView<ContactController> {
               children: [
                 Icon(icon,
                     size: 30,
-                    color: isHovered ? AppTheme.primaryColor : Colors.blue),
+                    color: isHovered ? const Color(0xFFF5B301) : Colors.blue),
                 const SizedBox(width: 15),
                 Expanded(
                   child: Column(

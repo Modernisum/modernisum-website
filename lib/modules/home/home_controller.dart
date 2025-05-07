@@ -6,6 +6,7 @@ class HomeController extends GetxController {
   final RxInt currentIndex = 0.obs;
   final RxBool isLastAnimation = false.obs;
   final RxDouble currentScrollPosition = 0.0.obs;
+  final RxBool isAnimationComplete = false.obs;
 
   // Define section positions
   static const double servicesPosition = 400.0; // Adjust based on your layout
@@ -53,4 +54,8 @@ class HomeController extends GetxController {
   bool get isAtServices =>
       currentScrollPosition.value >= servicesPosition - 50 &&
       currentScrollPosition.value <= servicesPosition + 50;
+
+  void setAnimationComplete(bool value) {
+    isAnimationComplete.value = value;
+  }
 }
