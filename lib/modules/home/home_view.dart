@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home_controller.dart';
 import '../../widgets/common_page_layout.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -103,41 +104,61 @@ class HomeView extends GetView<HomeController> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 15),
-                          child: Container(
-                              height: 400,
-                              width: 600,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  gradient: LinearGradient(colors: [
-                                    Color.fromRGBO(245, 179, 1, 1),
-                                    Colors.brown,
-                                  ]),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Colors.blue,
-                                        offset: Offset(0, -1),
-                                        blurRadius: 20 / 4),
-                                    BoxShadow(
-                                        color: Colors.brown,
-                                        offset: Offset(0, 1),
-                                        blurRadius: 20 / 4),
-                                  ]),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Modernisum delivers intelligent software and robust IoT infrastructure to help businesses automate, connect, and grow—explore how we turn bold ideas into reliable, scalable digital systems.',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelSmall!
-                                        .copyWith(
-                                            color: Colors.white,
-                                            letterSpacing: 1.2,
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )),
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 40,
+                              ),
+                              Lottie.asset(
+                                '/animation/animation1.json',
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.fill,
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Container(
+                                  height: 200,
+                                  width: 800,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      gradient: const LinearGradient(colors: [
+                                        Color.fromRGBO(245, 179, 1, 1),
+                                        Colors.brown,
+                                      ]),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            color: Colors.blue,
+                                            offset: Offset(0, -1),
+                                            blurRadius: 20 / 4),
+                                        BoxShadow(
+                                            color: Colors.brown,
+                                            offset: Offset(0, 1),
+                                            blurRadius: 20 / 4),
+                                      ]),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Modernisum delivers intelligent software and robust IoT'
+                                        ' \n infrastructure to help businesses automate, connect,'
+                                        ' \nand grow—explore how we turn bold ideas into reliable, scalable digital systems.',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall!
+                                            .copyWith(
+                                                color: Colors.white,
+                                                letterSpacing: 1.2,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15),
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
                         ),
                       )),
                 ],

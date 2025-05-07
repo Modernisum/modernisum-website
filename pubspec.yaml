@@ -39,6 +39,7 @@ dependencies:
   get: ^4.6.6
   url_launcher: ^6.2.4
   flutter_screenutil: ^5.9.3
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,8 @@ flutter:
     - assets/images/
     - assets/images/logo1.png
     - assets/images/background.jpg
+    - assets/animation/
+    - assets/animation/animation1.json
    
   #   - images/a_dot_ham.jpeg
 
