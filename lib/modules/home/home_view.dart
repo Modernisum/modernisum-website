@@ -45,129 +45,125 @@ class HomeView extends GetView<HomeController> {
               alignment: Alignment.topCenter,
               child: Column(
                 children: [
-                  AnimatedTextKit(
-                    animatedTexts: [
-                      FadeAnimatedText(
-                        'Let\'s Start',
-                        textStyle: TextStyle(
-                            fontSize: 64.0,
-                            fontWeight: FontWeight.bold,
-                            foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: [
-                                  Color.fromRGBO(245, 179, 1, 1),
-                                  Colors.brown,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(
-                                  const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
-                        duration: const Duration(seconds: 2),
-                        fadeInEnd: 0.3,
-                        fadeOutBegin: 0.7,
-                      ),
-                      FadeAnimatedText(
-                        'Modernize your business',
-                        textStyle: TextStyle(
-                            fontSize: 54.0,
-                            fontWeight: FontWeight.bold,
-                            foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: [
-                                  Color.fromRGBO(245, 179, 1, 1),
-                                  Colors.brown,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(
-                                  const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
-                        duration: const Duration(seconds: 2),
-                        fadeInEnd: 0.3,
-                        fadeOutBegin: 0.7,
-                      ),
-                    ],
-                    totalRepeatCount: 1,
-                    onTap: controller.handleTap,
-                    onNextBeforePause: (index, isLast) {
-                      controller.updateIndex(index);
-                      if (isLast) {
-                        controller.setAnimationComplete(true);
-                        controller.scrollToServices();
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  Obx(() => AnimatedOpacity(
-                        opacity:
-                            controller.isAnimationComplete.value ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 800),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 40,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    child: Container(
+                      height: 200,
+                      width: 1000,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: const LinearGradient(colors: [
+                            Color.fromRGBO(245, 179, 1, 1),
+                            Colors.brown,
+                          ]),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.blue,
+                                offset: Offset(0, -1),
+                                blurRadius: 5),
+                            BoxShadow(
+                                color: Colors.brown,
+                                offset: Offset(0, 1),
+                                blurRadius: 5),
+                          ]),
+                      child: Row(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text(
+                                'Modernisum transforms traditional operations with advanced technology,offering '
+                                '\nsoftware and hardware solutions that reduce complexity, automate processes,'
+                                '\n and help you scale your organization efficiently and intelligently.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .copyWith(
+                                        color: Colors.white,
+                                        letterSpacing: 1.2,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
                               ),
-                              Lottie.asset(
-                                '/animation/animation1.json',
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.fill,
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Container(
-                                  height: 200,
-                                  width: 800,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      gradient: const LinearGradient(colors: [
-                                        Color.fromRGBO(245, 179, 1, 1),
-                                        Colors.brown,
-                                      ]),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                            color: Colors.blue,
-                                            offset: Offset(0, -1),
-                                            blurRadius: 20 / 4),
-                                        BoxShadow(
-                                            color: Colors.brown,
-                                            offset: Offset(0, 1),
-                                            blurRadius: 20 / 4),
-                                      ]),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Modernisum delivers intelligent software and robust IoT'
-                                        ' \n infrastructure to help businesses automate, connect,'
-                                        ' \nand grow—explore how we turn bold ideas into reliable, scalable digital systems.',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall!
-                                            .copyWith(
-                                                color: Colors.white,
-                                                letterSpacing: 1.2,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15),
-                                      ),
-                                    ],
-                                  )),
-                            ],
+                            ),
                           ),
-                        ),
-                      )),
+                          Expanded(
+                            child: Lottie.asset(
+                              '/animation/animation1.json',
+                              width: 800,
+                              height: 800,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 130),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    child: Container(
+                      height: 200,
+                      width: 1000,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: const LinearGradient(colors: [
+                            Color.fromRGBO(245, 179, 1, 1),
+                            Colors.brown,
+                          ]),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.blue,
+                                offset: Offset(0, -1),
+                                blurRadius: 5),
+                            BoxShadow(
+                                color: Colors.brown,
+                                offset: Offset(0, 1),
+                                blurRadius: 5),
+                          ]),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Lottie.asset(
+                              '/animation/animation10.json',
+                              width: 1000,
+                              height: 1000,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text(
+                                'Modernisum uses advanced IoT and embedded systems to automate business  '
+                                ' \noperations, reduce human errors, save valuable time,boost efficiency, increase '
+                                ' \naccuracy, and drive smarter, scalable growth solutions',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .copyWith(
+                                        color: Colors.white,
+                                        letterSpacing: 1.2,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 170, vertical: 50),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -184,6 +180,22 @@ class HomeView extends GetView<HomeController> {
                           elevation: 5,
                           child: Container(
                             padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: const LinearGradient(colors: [
+                                  Color.fromRGBO(245, 179, 1, 1),
+                                  Colors.brown,
+                                ]),
+                                boxShadow: const [
+                                  BoxShadow(
+                                      color: Colors.blue,
+                                      offset: Offset(0, -1),
+                                      blurRadius: 5),
+                                  BoxShadow(
+                                      color: Colors.brown,
+                                      offset: Offset(0, 1),
+                                      blurRadius: 5),
+                                ]),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

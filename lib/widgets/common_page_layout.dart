@@ -48,9 +48,29 @@ class CommonPageLayout extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset('assets/images/logo1.png', width: 70),
+          Image.asset('assets/images/logo1.png', width: 50),
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [
+                Color.fromRGBO(245, 179, 1, 1),
+                Colors.brown,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds),
+            child: const Text(
+              'Modernisum',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors
+                    .white, // This color will be overridden by the gradient
+              ),
+            ),
+          ),
+          const Spacer(),
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 600) {

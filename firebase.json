@@ -40,6 +40,19 @@
             "value": "max-age=31536000"
           }
         ]
+      },
+      {
+        "source": "**/*.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
       }
     ]
   }

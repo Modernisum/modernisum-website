@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
-class HomeController extends GetxController {
+class HomeController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  static bool isFirstLoad = true; // Static variable to track first load
+  final RxBool shouldAnimate = true.obs;
   final ScrollController scrollController = ScrollController();
   final RxInt currentIndex = 0.obs;
   final RxBool isLastAnimation = false.obs;
@@ -14,6 +17,10 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    shouldAnimate.value = isFirstLoad;
+    if (isFirstLoad) {
+      isFirstLoad = false; // Set to false after first load
+    }
     scrollController.addListener(_scrollListener);
   }
 

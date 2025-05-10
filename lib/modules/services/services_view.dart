@@ -13,12 +13,20 @@ class ServicesView extends GetView<ServicesController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Our Services',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                foreground: Paint()
+                  ..shader = const LinearGradient(
+                    colors: [
+                      Color.fromRGBO(245, 179, 1, 1),
+                      Colors.brown,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
               ),
             ),
             const SizedBox(height: 20),
