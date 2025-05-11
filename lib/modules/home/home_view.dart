@@ -128,8 +128,8 @@ class HomeView extends GetView<HomeController> {
                           Expanded(
                             child: Lottie.asset(
                               '/animation/animation10.json',
-                              width: 1000,
-                              height: 1000,
+                              width: 100,
+                              height: 100,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -159,65 +159,89 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 170, vertical: 50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildGradientText('Our Services', 42),
-                  const SizedBox(height: 30),
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      children: List.generate(
-                        6,
-                        (index) => Card(
-                          elevation: 5,
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: const LinearGradient(colors: [
-                                  Color.fromRGBO(245, 179, 1, 1),
-                                  Colors.brown,
-                                ]),
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Colors.blue,
-                                      offset: Offset(0, -1),
-                                      blurRadius: 5),
-                                  BoxShadow(
-                                      color: Colors.brown,
-                                      offset: Offset(0, 1),
-                                      blurRadius: 5),
-                                ]),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.business, size: 48),
-                                const SizedBox(height: 15),
-                                Text(
-                                  'Service ${index + 1}',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+            const SizedBox(
+              height: 20,
+            ),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  Color.fromRGBO(245, 179, 1, 1),
+                  Colors.brown,
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
+              child: Text(
+                "OUR SERVICES",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 50,
+                    ),
               ),
             ),
+            Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        Expanded(
+                            child:
+                                Image(image: AssetImage("/images/img6.png"))),
+                        Positioned(
+                            bottom: 11,
+                            child: Opacity(
+                                opacity: 0.3,
+                                child: Container(
+                                  height: 30,
+                                  width: 300,
+                                  decoration: const BoxDecoration(
+                                    gradient: const LinearGradient(colors: [
+                                      Color.fromRGBO(15, 15, 14, 1),
+                                      Color.fromARGB(255, 0, 0, 0),
+                                    ]),
+                                  ),
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    "Mobile Application",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          color: Colors.yellow,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                  ),
+                                )))
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
