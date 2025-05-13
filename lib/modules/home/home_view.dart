@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home_controller.dart';
@@ -7,27 +6,6 @@ import 'package:lottie/lottie.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
-
-  ShaderMask _buildGradientText(String text, double fontSize) {
-    return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        colors: [
-          Color.fromRGBO(245, 179, 1, 1),
-          Colors.brown,
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ).createShader(bounds),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          color: Colors.white, // The actual color is created by the gradient
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +158,8 @@ class HomeView extends GetView<HomeController> {
                     ),
               ),
             ),
-            Column(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   margin: const EdgeInsets.only(top: 130),
@@ -207,40 +186,438 @@ class HomeView extends GetView<HomeController> {
                         ]),
                     child: Stack(
                       children: [
-                        Expanded(
-                            child:
-                                Image(image: AssetImage("/images/img6.png"))),
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img6.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                         Positioned(
-                            bottom: 11,
-                            child: Opacity(
-                                opacity: 0.3,
-                                child: Container(
-                                  height: 30,
-                                  width: 300,
-                                  decoration: const BoxDecoration(
-                                    gradient: const LinearGradient(colors: [
-                                      Color.fromRGBO(15, 15, 14, 1),
-                                      Color.fromARGB(255, 0, 0, 0),
-                                    ]),
-                                  ),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "Mobile Application",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .copyWith(
-                                          color: Colors.yellow,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                  ),
-                                )))
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Mobile Application",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img7.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Web Application",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img8.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Automation",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  Color.fromRGBO(245, 179, 1, 1),
+                  Colors.brown,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
+              child: Text(
+                "PORTFOLIO",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 50,
+                    ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img6.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Modern School",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img7.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Modern CV",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 130),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromRGBO(251, 252, 204, 1),
+                          Color(0xFFF0F8CB),
+                        ]),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.blue,
+                              offset: Offset(0, -1),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: Colors.brown,
+                              offset: Offset(0, 1),
+                              blurRadius: 5),
+                        ]),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: const Image(
+                            image: AssetImage("/images/img8.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 11,
+                          left: 0,
+                          right: 0,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              height: 30,
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromRGBO(15, 15, 14, 1),
+                                    Color.fromARGB(255, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "Modern Page",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: 200,
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("COPYRIGHT © 2025 MODERNISUM",
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                          color: Color.fromRGBO(245, 179, 1, 1),
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15)),
+                ],
+              ),
             )
           ],
         ),
