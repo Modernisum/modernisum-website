@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'routes/app_pages.dart';
 import 'theme/app_theme.dart';
 import 'modules/home/home_controller.dart';
@@ -27,28 +28,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Modernisum',
-      theme: AppTheme.lightTheme,
-      initialRoute: Routes.home,
-      getPages: AppPages.routes,
-      locale: const Locale('en', 'IN'),
-      fallbackLocale: const Locale('en', 'IN'),
-      debugShowCheckedModeBanner: false,
-      enableLog: false,
-      defaultTransition: Transition.fadeIn,
-      opaqueRoute: true,
-      popGesture: true,
+    return ScreenUtilInit(
+      designSize: const Size(1920, 1080), // Design size for desktop
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: (context, child) {
-        return ScrollConfiguration(
-          behavior: ScrollBehavior().copyWith(
-            physics: const BouncingScrollPhysics(),
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            },
-          ),
-          child: child!,
+        return GetMaterialApp(
+          title: 'Modernisum',
+          theme: AppTheme.lightTheme,
+          initialRoute: Routes.home,
+          getPages: AppPages.routes,
+          locale: const Locale('en', 'IN'),
+          fallbackLocale: const Locale('en', 'IN'),
+          debugShowCheckedModeBanner: false,
+          enableLog: false,
+          defaultTransition: Transition.fadeIn,
+          opaqueRoute: true,
+          popGesture: true,
+          builder: (context, child) {
+            return ScrollConfiguration(
+              behavior: ScrollBehavior().copyWith(
+                physics: const BouncingScrollPhysics(),
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                },
+              ),
+              child: child!,
+            );
+          },
         );
       },
     );

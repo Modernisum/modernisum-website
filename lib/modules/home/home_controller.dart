@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'models/home_model.dart';
 
 class HomeController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -10,6 +11,7 @@ class HomeController extends GetxController
   final RxBool isLastAnimation = false.obs;
   final RxDouble currentScrollPosition = 0.0.obs;
   final RxBool isAnimationComplete = false.obs;
+  final HomeModel model = HomeModel();
 
   // Define section positions
   static const double servicesPosition = 400.0; // Adjust based on your layout
@@ -65,4 +67,9 @@ class HomeController extends GetxController
   void setAnimationComplete(bool value) {
     isAnimationComplete.value = value;
   }
+
+  List<ServiceItem> get services => model.services;
+  List<PortfolioItem> get portfolioItems => model.portfolioItems;
+  String get companyDescription => model.companyDescription;
+  String get iotDescription => model.iotDescription;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'contact_controller.dart';
 import '../../widgets/common_page_layout.dart';
 import '../../widgets/responsive_layout.dart';
@@ -48,7 +49,6 @@ class ContactView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return CommonPageLayout(
       child: Center(
         child: ResponsiveLayout(
@@ -62,31 +62,31 @@ class ContactView extends GetView<ContactController> {
 
   Widget _buildMobileLayout() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Contact Us',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 28.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  spreadRadius: 2.r,
+                  blurRadius: 5.r,
+                  offset: Offset(0, 3.h),
                 ),
               ],
             ),
@@ -97,19 +97,19 @@ class ContactView extends GetView<ContactController> {
                   'Address',
                   'near ccsu university  meerut Uttar Pradesh India (250401)',
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 _buildContactInfo(
                   Icons.phone,
                   'Phone',
                   '+91 9368671007',
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 _buildContactInfo(
                   Icons.email,
                   'Email',
                   's.b.dayalpur@gmail.com',
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _buildContactForm(),
               ],
             ),
@@ -121,31 +121,31 @@ class ContactView extends GetView<ContactController> {
 
   Widget _buildTabletLayout() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(30),
+      padding: EdgeInsets.all(30.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Contact Us',
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 32.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: 30.h),
           Container(
-            width: 600,
-            padding: const EdgeInsets.all(25),
+            width: 600.w,
+            padding: EdgeInsets.all(25.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  spreadRadius: 2.r,
+                  blurRadius: 5.r,
+                  offset: Offset(0, 3.h),
                 ),
               ],
             ),
@@ -156,19 +156,19 @@ class ContactView extends GetView<ContactController> {
                   'Address',
                   'jawar calony ,parikshitgarh meerut Uttar Pradesh India (250406)',
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _buildContactInfo(
                   Icons.phone,
                   'Phone',
                   '+91 9368671007',
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _buildContactInfo(
                   Icons.email,
                   'Email',
                   's.b.dayalpur@gmail.com',
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30.h),
                 _buildContactForm(),
               ],
             ),
@@ -180,31 +180,31 @@ class ContactView extends GetView<ContactController> {
 
   Widget _buildDesktopLayout() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(40),
+      padding: EdgeInsets.all(40.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Contact Us',
             style: TextStyle(
-              fontSize: 46,
+              fontSize: 46.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
           Container(
-            width: 800,
-            padding: const EdgeInsets.all(30),
+            width: 800.w,
+            padding: EdgeInsets.all(30.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  spreadRadius: 2.r,
+                  blurRadius: 5.r,
+                  offset: Offset(0, 3.h),
                 ),
               ],
             ),
@@ -220,13 +220,13 @@ class ContactView extends GetView<ContactController> {
                         'Address',
                         'jawar calony ,parikshitgarh meerut Uttar Pradesh India (250406)',
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       _buildContactInfo(
                         Icons.phone,
                         'Phone',
                         '+91 9368671007',
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       _buildContactInfo(
                         Icons.email,
                         'Email',
@@ -235,7 +235,7 @@ class ContactView extends GetView<ContactController> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 40),
+                SizedBox(width: 40.w),
                 Expanded(
                   flex: 2,
                   child: _buildContactForm(),
@@ -255,19 +255,19 @@ class ContactView extends GetView<ContactController> {
         builder: (context, setState) {
           bool isHovered = false;
           return Container(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15.w),
             decoration: BoxDecoration(
               color: isHovered
                   ? AppTheme.primaryColor.withOpacity(0.1)
                   : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: Row(
               children: [
                 Icon(icon,
-                    size: 30,
+                    size: 30.w,
                     color: isHovered ? const Color(0xFFF5B301) : Colors.blue),
-                const SizedBox(width: 15),
+                SizedBox(width: 15.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,17 +275,17 @@ class ContactView extends GetView<ContactController> {
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color:
                               isHovered ? AppTheme.primaryColor : Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      SizedBox(height: 5.h),
                       Text(
                         content,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color:
                               isHovered ? AppTheme.primaryColor : Colors.grey,
                         ),
@@ -315,57 +315,63 @@ class ContactView extends GetView<ContactController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           'Send us a message',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         TextField(
           controller: nameController,
           decoration: InputDecoration(
             labelText: 'Name',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         TextField(
           controller: emailController,
           decoration: InputDecoration(
             labelText: 'Email',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         TextField(
           controller: messageController,
           maxLines: 5,
           decoration: InputDecoration(
             labelText: 'Message',
+            labelStyle: TextStyle(fontSize: 16.sp),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         MouseRegion(
           cursor: SystemMouseCursors.click,
           child: StatefulBuilder(
@@ -418,12 +424,12 @@ ${messageController.text}
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 15.h),
                   backgroundColor:
                       isHovered ? AppTheme.primaryColor : Colors.blue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
                 onHover: (hovered) {
@@ -431,7 +437,10 @@ ${messageController.text}
                     isHovered = hovered;
                   });
                 },
-                child: const Text('Send Message'),
+                child: Text(
+                  'Send Message',
+                  style: TextStyle(fontSize: 16.sp),
+                ),
               );
             },
           ),
