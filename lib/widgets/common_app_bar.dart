@@ -6,7 +6,7 @@ import '../theme/app_theme.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isTransparent;
-  final double _mobileBreakpoint = 600;
+  final double _mobileBreakpoint = 600.w;
 
   const CommonAppBar({
     super.key,

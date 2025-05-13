@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../routes/app_pages.dart';
 import '../theme/app_theme.dart';
 import 'common_background.dart';
@@ -22,7 +23,7 @@ class CommonPageLayout extends StatelessWidget {
       backgroundColor: Colors.transparent,
       drawer: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
+          if (constraints.maxWidth < 600.w) {
             return _buildDrawer(context);
           }
           return const SizedBox.shrink();
@@ -46,11 +47,12 @@ class CommonPageLayout extends StatelessWidget {
 
   Widget _buildAppBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset('assets/images/logo1.png', width: 50),
+          Image.asset('assets/images/logo1.png', width: 50.w),
+          SizedBox(width: 10.w),
           ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
               colors: [
@@ -60,22 +62,21 @@ class CommonPageLayout extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ).createShader(bounds),
-            child: const Text(
+            child: Text(
               'Modernisum',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors
-                    .white, // This color will be overridden by the gradient
+                color: Colors.white, // This color will be overridden by the gradient
               ),
             ),
           ),
           const Spacer(),
           LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth < 600) {
+              if (constraints.maxWidth < 600.w) {
                 return IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white),
+                  icon: Icon(Icons.menu, color: Colors.white, size: 24.sp),
                   onPressed: () {
                     Scaffold.of(context).openDrawer();
                   },
@@ -112,13 +113,13 @@ class CommonPageLayout extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/images/logo1.png', width: 100),
-                const SizedBox(height: 10),
-                const Text(
+                Image.asset('assets/images/logo1.png', width: 100.w),
+                SizedBox(height: 10.h),
+                Text(
                   'Modernisum',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -126,13 +127,11 @@ class CommonPageLayout extends StatelessWidget {
             ),
           ),
           _buildDrawerItem(Icons.home, 'Home', Routes.home, context),
-          _buildDrawerItem(
-              Icons.business, 'Services', Routes.services, context),
+          _buildDrawerItem(Icons.business, 'Services', Routes.services, context),
           _buildDrawerItem(Icons.work, 'Portfolio', Routes.portfolio, context),
           _buildDrawerItem(Icons.article, 'Blog', Routes.blog, context),
           _buildDrawerItem(Icons.info, 'About', Routes.about, context),
-          _buildDrawerItem(
-              Icons.contact_mail, 'Contact Us', Routes.contact, context),
+          _buildDrawerItem(Icons.contact_mail, 'Contact Us', Routes.contact, context),
         ],
       ),
     );
@@ -141,12 +140,12 @@ class CommonPageLayout extends StatelessWidget {
   Widget _buildDrawerItem(
       IconData icon, String title, String route, BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: Colors.white),
+      leading: Icon(icon, color: Colors.white, size: 24.sp),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.white,
-          fontSize: 16,
+          fontSize: 16.sp,
         ),
       ),
       onTap: () {
@@ -163,7 +162,7 @@ class CommonPageLayout extends StatelessWidget {
       child: StatefulBuilder(
         builder: (context, setState) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
+            margin: EdgeInsets.symmetric(horizontal: 5.w),
             child: TextButton(
               onPressed: () => Get.toNamed(route),
               style: TextButton.styleFrom(
@@ -173,9 +172,9 @@ class CommonPageLayout extends StatelessWidget {
                     isHovered ? AppTheme.primaryColor : Colors.transparent,
                 side: BorderSide(color: AppTheme.primaryColor),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
               ),
               onHover: (hovered) {
@@ -183,7 +182,7 @@ class CommonPageLayout extends StatelessWidget {
                   isHovered = hovered;
                 });
               },
-              child: Text(text),
+              child: Text(text, style: TextStyle(fontSize: 14.sp)),
             ),
           );
         },
