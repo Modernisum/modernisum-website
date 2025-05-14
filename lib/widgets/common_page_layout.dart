@@ -21,19 +21,14 @@ class CommonPageLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      drawer: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 600.w) {
-            return _buildDrawer(context);
-          }
-          return const SizedBox.shrink();
-        },
-      ),
+      drawer: _buildDrawer(context),
       body: CommonBackground(
         isTransparent: isTransparent,
         child: Column(
           children: [
-            _buildAppBar(),
+            Builder(
+              builder: (context) => _buildAppBar(context),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: child,
@@ -45,56 +40,60 @@ class CommonPageLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 1100.w;
+    
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: isTransparent ? Colors.transparent : AppTheme.primaryColor.withOpacity(0.9),
+        boxShadow: isTransparent ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5.r,
+            offset: Offset(0, 2.h),
+          ),
+        ],
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset('assets/images/logo1.png', width: 50.w),
-          SizedBox(width: 10.w),
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [
-                Color.fromRGBO(245, 179, 1, 1),
-                Colors.brown,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds),
-            child: Text(
-              'Modernisum',
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // This color will be overridden by the gradient
+          Row(
+            children: [
+              if (isMobile)
+                Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: IconButton(
+                    icon: Icon(Icons.menu, color: Colors.white, size: 24.sp),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
+                ),
+              Image.asset('assets/images/logo1.png', width: 50.w),
+              SizedBox(width: 10.w),
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [
+                    Color.fromRGBO(245, 179, 1, 1),
+                    Colors.brown,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Text(
+                  'Modernisum',
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          const Spacer(),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 600.w) {
-                return IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white, size: 24.sp),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              }
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildNavButton('Home', Routes.home),
-                  _buildNavButton('Services', Routes.services),
-                  _buildNavButton('Portfolio', Routes.portfolio),
-                  _buildNavButton('Blog', Routes.blog),
-                  _buildNavButton('About', Routes.about),
-                  _buildNavButton('Contact Us', Routes.contact),
-                ],
-              );
-            },
-          ),
+          if (!isMobile)
+            _buildDesktopMenu(),
         ],
       ),
     );
@@ -137,8 +136,7 @@ class CommonPageLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawerItem(
-      IconData icon, String title, String route, BuildContext context) {
+  Widget _buildDrawerItem(IconData icon, String title, String route, BuildContext context) {
     return ListTile(
       leading: Icon(icon, color: Colors.white, size: 24.sp),
       title: Text(
@@ -155,6 +153,20 @@ class CommonPageLayout extends StatelessWidget {
     );
   }
 
+  Widget _buildDesktopMenu() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildNavButton('Home', Routes.home),
+        _buildNavButton('Services', Routes.services),
+        _buildNavButton('Portfolio', Routes.portfolio),
+        _buildNavButton('Blog', Routes.blog),
+        _buildNavButton('About', Routes.about),
+        _buildNavButton('Contact Us', Routes.contact),
+      ],
+    );
+  }
+
   Widget _buildNavButton(String text, String route) {
     bool isHovered = false;
     return MouseRegion(
@@ -162,17 +174,14 @@ class CommonPageLayout extends StatelessWidget {
       child: StatefulBuilder(
         builder: (context, setState) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 5.w),
+            margin: EdgeInsets.symmetric(horizontal: 2.w),
             child: TextButton(
               onPressed: () => Get.toNamed(route),
               style: TextButton.styleFrom(
-                foregroundColor:
-                    isHovered ? Colors.white : AppTheme.primaryColor,
-                backgroundColor:
-                    isHovered ? AppTheme.primaryColor : Colors.transparent,
+                foregroundColor: isHovered ? Colors.white : AppTheme.primaryColor,
+                backgroundColor: isHovered ? AppTheme.primaryColor : Colors.transparent,
                 side: BorderSide(color: AppTheme.primaryColor),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.r),
                 ),
@@ -182,7 +191,10 @@ class CommonPageLayout extends StatelessWidget {
                   isHovered = hovered;
                 });
               },
-              child: Text(text, style: TextStyle(fontSize: 14.sp)),
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 14.sp),
+              ),
             ),
           );
         },

@@ -68,9 +68,10 @@ flutter:
     - assets/images/
     - assets/images/logo1.png
     - assets/images/background.jpg
+    - assets/images/img6.png
     - assets/animation/
     - assets/animation/animation1.json
-    - assets/images/img6.png
+    - assets/animation/animation10.json
    
   #   - images/a_dot_ham.jpeg
 

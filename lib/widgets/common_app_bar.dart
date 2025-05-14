@@ -6,7 +6,7 @@ import '../theme/app_theme.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isTransparent;
-  final double _mobileBreakpoint = 600.w;
+  double get _mobileBreakpoint => 600.w;
 
   const CommonAppBar({
     super.key,
@@ -45,6 +45,13 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 'assets/images/logo1.png',
                 width: 70.w,
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.business,
+                    size: 70.w,
+                    color: Colors.white,
+                  );
+                },
               ),
             ),
           ),
@@ -70,76 +77,131 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: Colors.white,
         size: 24.sp,
       ),
-      onPressed: () => _showMobileMenu(context),
+      onPressed: () {
+        Scaffold.of(context).openDrawer();
+      },
     );
   }
 
-  void _showMobileMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: AppTheme.primaryColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 10.h),
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2.r),
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      backgroundColor: AppTheme.primaryColor,
+      child: Column(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo1.png',
+                  width: 100.w,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      Icons.business,
+                      size: 100.w,
+                      color: Colors.white,
+                    );
+                  },
                 ),
-              ),
-              SizedBox(height: 20.h),
-              ..._buildMobileMenuItems(context),
-              SizedBox(height: 20.h),
-            ],
+                SizedBox(height: 10.h),
+                Text(
+                  'Modernisum',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              children: [
+                _buildDrawerItem(
+                  context,
+                  Icons.home,
+                  'Home',
+                  Routes.home,
+                ),
+                _buildDrawerItem(
+                  context,
+                  Icons.business,
+                  'Services',
+                  Routes.services,
+                ),
+                _buildDrawerItem(
+                  context,
+                  Icons.work,
+                  'Portfolio',
+                  Routes.portfolio,
+                ),
+                _buildDrawerItem(
+                  context,
+                  Icons.article,
+                  'Blog',
+                  Routes.blog,
+                ),
+                _buildDrawerItem(
+                  context,
+                  Icons.info,
+                  'About',
+                  Routes.about,
+                ),
+                _buildDrawerItem(
+                  context,
+                  Icons.contact_mail,
+                  'Contact Us',
+                  Routes.contact,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String route,
+  ) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: Colors.white,
+          size: 24.sp,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
-      ),
-    );
-  }
-
-  List<Widget> _buildMobileMenuItems(BuildContext context) {
-    final menuItems = [
-      {'title': 'Home', 'route': Routes.home},
-      {'title': 'Services', 'route': Routes.services},
-      {'title': 'Portfolio', 'route': Routes.portfolio},
-      {'title': 'Blog', 'route': Routes.blog},
-      {'title': 'About', 'route': Routes.about},
-      {'title': 'Contact Us', 'route': Routes.contact},
-    ];
-
-    return menuItems
-        .map((item) => _buildMobileMenuItem(
-              context,
-              item['title']!,
-              item['route']!,
-            ))
-        .toList();
-  }
-
-  Widget _buildMobileMenuItem(
-      BuildContext context, String title, String route) {
-    return ListTile(
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white.withOpacity(0.5),
+          size: 16.sp,
         ),
+        onTap: () {
+          Navigator.pop(context);
+          Get.toNamed(route);
+        },
       ),
-      onTap: () {
-        Navigator.pop(context);
-        Get.toNamed(route);
-      },
     );
   }
 
@@ -158,33 +220,36 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildNavButton(String text, String route) {
+    bool isHovered = false;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5.w),
-        child: TextButton(
-          onPressed: () => Get.toNamed(route),
-          style: TextButton.styleFrom(
-            foregroundColor: Get.currentRoute == route
-                ? Colors.white
-                : AppTheme.primaryColor,
-            backgroundColor: Get.currentRoute == route
-                ? AppTheme.primaryColor
-                : Colors.transparent,
-            side: BorderSide(color: AppTheme.primaryColor),
-            padding: EdgeInsets.symmetric(
-              horizontal: 15.w,
-              vertical: 8.h,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 2.w),
+            child: TextButton(
+              onPressed: () => Get.toNamed(route),
+              style: TextButton.styleFrom(
+                foregroundColor: isHovered ? Colors.white : AppTheme.primaryColor,
+                backgroundColor: isHovered ? AppTheme.primaryColor : Colors.transparent,
+                side: BorderSide(color: AppTheme.primaryColor),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+              ),
+              onHover: (hovered) {
+                setState(() {
+                  isHovered = hovered;
+                });
+              },
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 14.sp),
+              ),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.r),
-            ),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 14.sp),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

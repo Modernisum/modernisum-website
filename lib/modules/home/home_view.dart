@@ -112,7 +112,7 @@ class HomeView extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
                     child: Container(
                       height: 200.h,
-                      width: double.infinity,
+                      width: 1200.w,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.r),
                         gradient: const LinearGradient(colors: [
@@ -160,7 +160,7 @@ class HomeView extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
                     child: Container(
                       height: 200.h,
-                      width: double.infinity,
+                      width: 1200.w,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.r),
                         gradient: const LinearGradient(colors: [
@@ -207,7 +207,7 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             SizedBox(height: 20.h),
-            _buildGradientText("OUR SERVICES", 50),
+            _buildGradientText("OUR SERVICES", 50.h),
             Wrap(
               spacing: 20.w,
               runSpacing: 20.h,
@@ -217,7 +217,7 @@ class HomeView extends GetView<HomeController> {
                   .toList(),
             ),
             SizedBox(height: 20.h),
-            _buildGradientText("PORTFOLIO", 50),
+            _buildGradientText("PORTFOLIO", 50.h),
             Wrap(
               spacing: 20.w,
               runSpacing: 20.h,
