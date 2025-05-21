@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class CommonBackground extends StatelessWidget {
   final Widget child;
   final bool isTransparent;
-
   const CommonBackground({
     super.key,
     required this.child,
@@ -13,9 +12,9 @@ class CommonBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
-          image: const AssetImage('assets/images/Margo.jpg'),
+          image: AssetImage('assets/images/Margo.jpg'),
           fit: BoxFit.cover,
         ),
       ),

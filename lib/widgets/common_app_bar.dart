@@ -83,89 +83,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
-      backgroundColor: AppTheme.primaryColor,
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.8),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/logo1.png',
-                  width: 100.w,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      Icons.business,
-                      size: 100.w,
-                      color: Colors.white,
-                    );
-                  },
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  'Modernisum',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              children: [
-                _buildDrawerItem(
-                  context,
-                  Icons.home,
-                  'Home',
-                  Routes.home,
-                ),
-                _buildDrawerItem(
-                  context,
-                  Icons.business,
-                  'Services',
-                  Routes.services,
-                ),
-                _buildDrawerItem(
-                  context,
-                  Icons.work,
-                  'Portfolio',
-                  Routes.portfolio,
-                ),
-                _buildDrawerItem(
-                  context,
-                  Icons.article,
-                  'Blog',
-                  Routes.blog,
-                ),
-                _buildDrawerItem(
-                  context,
-                  Icons.info,
-                  'About',
-                  Routes.about,
-                ),
-                _buildDrawerItem(
-                  context,
-                  Icons.contact_mail,
-                  'Contact Us',
-                  Routes.contact,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDrawerItem(
     BuildContext context,
     IconData icon,
@@ -230,8 +147,10 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: TextButton(
               onPressed: () => Get.toNamed(route),
               style: TextButton.styleFrom(
-                foregroundColor: isHovered ? Colors.white : AppTheme.primaryColor,
-                backgroundColor: isHovered ? AppTheme.primaryColor : Colors.transparent,
+                foregroundColor:
+                    isHovered ? Colors.white : AppTheme.primaryColor,
+                backgroundColor:
+                    isHovered ? AppTheme.primaryColor : Colors.transparent,
                 side: BorderSide(color: AppTheme.primaryColor),
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
