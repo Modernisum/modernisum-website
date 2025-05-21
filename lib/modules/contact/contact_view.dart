@@ -335,7 +335,8 @@ class ContactView extends GetView<ContactController> {
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
         SizedBox(height: 15.h),
@@ -351,7 +352,8 @@ class ContactView extends GetView<ContactController> {
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
         SizedBox(height: 15.h),
@@ -368,16 +370,19 @@ class ContactView extends GetView<ContactController> {
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           ),
         ),
         SizedBox(height: 20.h),
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              bool isHovered = false;
-              return ElevatedButton(
+        StatefulBuilder(
+          builder: (context, setState) {
+            bool isHovered = false;
+            return MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (_) => setState(() => isHovered = true),
+              onExit: (_) => setState(() => isHovered = false),
+              child: ElevatedButton(
                 onPressed: () async {
                   if (nameController.text.isEmpty ||
                       emailController.text.isEmpty ||
@@ -432,18 +437,13 @@ ${messageController.text}
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
-                onHover: (hovered) {
-                  setState(() {
-                    isHovered = hovered;
-                  });
-                },
                 child: Text(
                   'Send Message',
                   style: TextStyle(fontSize: 16.sp),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );

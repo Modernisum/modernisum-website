@@ -83,45 +83,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildDrawerItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String route,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: Colors.white,
-          size: 24.sp,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.white.withOpacity(0.5),
-          size: 16.sp,
-        ),
-        onTap: () {
-          Navigator.pop(context);
-          Get.toNamed(route);
-        },
-      ),
-    );
-  }
-
   Widget _buildDesktopMenu() {
     return Row(
       mainAxisSize: MainAxisSize.min,

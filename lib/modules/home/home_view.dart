@@ -400,7 +400,19 @@ class HomeView extends GetView<HomeController> {
                           children: [
                             TextFormField(
                               controller: _nameController,
-                              decoration: InputDecoration(labelText: 'Name'),
+                              decoration: InputDecoration(
+                                labelText: 'Name',
+                                labelStyle: TextStyle(fontSize: 16.sp),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  borderSide: BorderSide(color: Colors.brown),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15.w, vertical: 15.h),
+                              ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your name';
@@ -411,12 +423,25 @@ class HomeView extends GetView<HomeController> {
                             SizedBox(height: 10.h),
                             TextFormField(
                               controller: _emailController,
-                              decoration: InputDecoration(labelText: 'Email'),
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle: TextStyle(fontSize: 16.sp),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  borderSide: BorderSide(color: Colors.brown),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15.w, vertical: 15.h),
+                              ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your email';
                                 }
-                                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                                if (!RegExp(
+                                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
                                     .hasMatch(value)) {
                                   return 'Please enter a valid email';
                                 }
@@ -426,14 +451,24 @@ class HomeView extends GetView<HomeController> {
                             SizedBox(height: 10.h),
                             TextFormField(
                               controller: _messageController,
-                              decoration: InputDecoration(labelText: 'Message'),
                               maxLines: 5,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your message';
-                                }
-                                return null;
-                              },
+                              decoration: InputDecoration(
+                                labelText: 'Message',
+                                labelStyle: TextStyle(fontSize: 16.sp),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  borderSide: BorderSide(color: Colors.brown),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15.w, vertical: 15.h),
+                              ),
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Please enter your message'
+                                      : null,
                             ),
                             SizedBox(height: 20.h),
                             ElevatedButton(
