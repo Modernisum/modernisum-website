@@ -4,32 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'home_controller.dart';
 import '../../widgets/common_page_layout.dart';
 import 'package:lottie/lottie.dart';
-import 'dart:async';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:modernisum/assets.dart';
+import 'package:modernisum/theme/gradient.dart';
+import 'package:modernisum/widgets/text_box.dart';
+import 'package:modernisum/widgets/common/TextField.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
-  Widget _buildGradientText(String text, double fontSize) {
-    return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        colors: [
-          Color.fromRGBO(245, 179, 1, 1),
-          Colors.brown,
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ).createShader(bounds),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: fontSize.sp,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
+  get name => HomeController().name;
+  get email => HomeController().email;
+  get massage => HomeController().massage;
 
   Widget _buildServiceCard(
       BuildContext context, String title, String imagePath) {
@@ -83,7 +69,7 @@ class HomeView extends GetView<HomeController> {
                     textAlign: TextAlign.center,
                     title,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Colors.yellow,
+                          // color: Colors.yellow,
                           fontWeight: FontWeight.bold,
                           fontSize: 20.sp,
                         ),
@@ -103,61 +89,10 @@ class HomeView extends GetView<HomeController> {
     final PageController _pageController =
         PageController(viewportFraction: 0.33); // Show three items at a time
 
-    Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (_pageController.hasClients) {
-        int nextPage = _pageController.page!.toInt() + 1;
-        if (nextPage >= controller.services.length) {
-          nextPage = 0;
-        }
-        _pageController.animateToPage(
-          nextPage,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-
     final PageController portfolioPageController = PageController(
         viewportFraction: 0.33); // Show three items at a time for Portfolio
 
-    Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (portfolioPageController.hasClients) {
-        int nextPage = portfolioPageController.page!.toInt() + 1;
-        if (nextPage >= controller.portfolioItems.length) {
-          nextPage = 0;
-        }
-        portfolioPageController.animateToPage(
-          nextPage,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-
     final _formKey = GlobalKey<FormState>();
-    final TextEditingController _nameController = TextEditingController();
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _messageController = TextEditingController();
-
-    Future<void> _sendEmail() async {
-      if (_formKey.currentState!.validate()) {
-        final Email email = Email(
-          body: _messageController.text,
-          subject: 'Contact Form Message from ${_nameController.text}',
-          recipients: ['modernisum@gmail.com'],
-          isHTML: false,
-        );
-
-        try {
-          await FlutterEmailSender.send(email);
-          Get.snackbar('Success', 'Message sent successfully!',
-              snackPosition: SnackPosition.BOTTOM);
-        } catch (error) {
-          Get.snackbar('Error', 'Failed to send message.',
-              snackPosition: SnackPosition.BOTTOM);
-        }
-      }
-    }
 
     return CommonPageLayout(
       isTransparent: true,
@@ -183,53 +118,10 @@ class HomeView extends GetView<HomeController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 15.h),
-                          child: Container(
-                            height: context.height * 0.3,
-                            width: context.width * 0.6,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  context.width > 600.w ? 60.r : 120.r),
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color.fromRGBO(245, 179, 1, 1),
-                                  Colors.brown,
-                                ],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.blue,
-                                    offset: Offset(0, -1.h),
-                                    blurRadius: 5.r),
-                                BoxShadow(
-                                    color: Colors.brown,
-                                    offset: Offset(0, 1.h),
-                                    blurRadius: 5.r),
-                              ],
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(20.w),
-                                child: Text(
-                                  controller.companyDescription,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        letterSpacing: 1.2,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: context.width > 600.w
-                                            ? 25.sp
-                                            : 20.sp,
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        TextBox1(
+                          text: "$controller.companyDescription",
+                          fontSize: Responsive.isDesktop(context) ? 50.h : 30.h,
+                          //context: context,
                         ),
                         // Space between text and animation
                         Container(
@@ -238,7 +130,7 @@ class HomeView extends GetView<HomeController> {
                           child: Expanded(
                             flex: 2,
                             child: Lottie.asset(
-                              '/animation/animation1.json',
+                              '$AnimationPaths.tedianim',
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -260,56 +152,10 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20.h),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 15.h),
-                          child: Container(
-                            height: context.height * 0.3,
-                            width: context.width * 0.6,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                context.width > 600.w ? 60.r : 120.r,
-                              ),
-                              gradient: const LinearGradient(colors: [
-                                Color.fromRGBO(245, 179, 1, 1),
-                                Colors.brown,
-                              ]),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.blue,
-                                    offset: Offset(0, -1.h),
-                                    blurRadius: 5.r),
-                                BoxShadow(
-                                    color: Colors.brown,
-                                    offset: Offset(0, 1.h),
-                                    blurRadius: 5.r),
-                              ],
-                            ),
-                            child: Expanded(
-                              flex: 1,
-                              child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20.w),
-                                  child: Text(
-                                    controller.iotDescription,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelSmall!
-                                        .copyWith(
-                                          color: Colors.white,
-                                          letterSpacing: 1.2,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: context.width > 600.w
-                                              ? 25.sp
-                                              : 20.sp,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        TextBox1(
+                          text: "We are a team of professions",
+                          fontSize: 50.h,
+                          // context: context,
                         ),
                       ],
                     ),
@@ -322,7 +168,7 @@ class HomeView extends GetView<HomeController> {
                 margin: EdgeInsets.only(left: 150.w, right: 150.w),
                 child: Column(
                   children: [
-                    _buildGradientText("OUR SERVICES", 50.h),
+                    ShaderMaskText1(text: "Our service", fontSize: 50.h),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -341,7 +187,7 @@ class HomeView extends GetView<HomeController> {
 
                     // space between services and portfolio
                     SizedBox(height: 20.h),
-                    _buildGradientText("PORTFOLIO", 50.h),
+                    ShaderMaskText1(text: "Portfolio", fontSize: 50.h),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -358,7 +204,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    _buildGradientText("BLOG", 50.h),
+                    ShaderMaskText1(text: "BLOG", fontSize: 50.h),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -374,7 +220,7 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                     ),
-                    _buildGradientText("Contact Us", 50.h),
+                    ShaderMaskText1(text: "ContactUs", fontSize: 50.h),
                     Container(
                       width: context.width * 0.6,
                       padding: EdgeInsets.all(150.w),
@@ -398,81 +244,27 @@ class HomeView extends GetView<HomeController> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            TextFormField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                labelText: 'Name',
-                                labelStyle: TextStyle(fontSize: 16.sp),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  borderSide: BorderSide(color: Colors.brown),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 15.w, vertical: 15.h),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your name';
-                                }
-                                return null;
-                              },
+                            TextFieldHelper1.buildTextField(
+                              controller: name,
+                              label: 'Name',
+                              //context: context,
                             ),
                             SizedBox(height: 10.h),
-                            TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: TextStyle(fontSize: 16.sp),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  borderSide: BorderSide(color: Colors.brown),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 15.w, vertical: 15.h),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!RegExp(
-                                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-                                    .hasMatch(value)) {
-                                  return 'Please enter a valid email';
-                                }
-                                return null;
-                              },
+                            TextFieldHelper1.buildTextField(
+                              controller: email,
+                              label: 'Email',
+                              //context: context,
                             ),
                             SizedBox(height: 10.h),
-                            TextFormField(
-                              controller: _messageController,
+                            TextFieldHelper1.buildTextField(
+                              controller: massage,
+                              label: 'Message',
                               maxLines: 5,
-                              decoration: InputDecoration(
-                                labelText: 'Message',
-                                labelStyle: TextStyle(fontSize: 16.sp),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  borderSide: BorderSide(color: Colors.brown),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 15.w, vertical: 15.h),
-                              ),
-                              validator: (value) =>
-                                  value == null || value.isEmpty
-                                      ? 'Please enter your message'
-                                      : null,
+                              //context: context,
                             ),
                             SizedBox(height: 20.h),
                             ElevatedButton(
-                              onPressed: _sendEmail,
+                              onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 20.w, vertical: 10.h),

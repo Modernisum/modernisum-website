@@ -112,7 +112,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                     isHovered ? Colors.white : AppTheme.primaryColor,
                 backgroundColor:
                     isHovered ? AppTheme.primaryColor : Colors.transparent,
-                side: BorderSide(color: AppTheme.primaryColor),
+                side:  const BorderSide(color: AppTheme.primaryColor),
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.r),

@@ -1,3 +1,4 @@
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'models/home_model.dart';
@@ -12,6 +13,9 @@ class HomeController extends GetxController
   final RxDouble currentScrollPosition = 0.0.obs;
   final RxBool isAnimationComplete = false.obs;
   final HomeModel model = HomeModel();
+  TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController massage = TextEditingController();
 
   // Define section positions
   static const double servicesPosition = 400.0; // Adjust based on your layout
@@ -72,4 +76,21 @@ class HomeController extends GetxController
   List<PortfolioItem> get portfolioItems => model.portfolioItems;
   String get companyDescription => model.companyDescription;
   String get iotDescription => model.iotDescription;
+
+  Future<void> sendEmail(String name, String email, String message) async {
+    final Email emailData = Email(
+      body: message,
+      subject: 'Contact Form Message from $name',
+      recipients: ['modernisum@gmail.com'],
+      isHTML: false,
+    );
+    try {
+      await FlutterEmailSender.send(emailData);
+      Get.snackbar('Success', 'Message sent successfully!',
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (error) {
+      Get.snackbar('Error', 'Failed to send message.',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
 }

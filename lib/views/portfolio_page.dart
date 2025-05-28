@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/common_page_layout.dart';
-import '../widgets/responsive_layout.dart';
 
 class PortfolioPage extends StatelessWidget {
   const PortfolioPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CommonPageLayout(
-      child: Center(
-        child: ResponsiveLayout(
-          mobile: _buildMobileLayout(),
-          tablet: _buildTabletLayout(),
-          desktop: _buildDesktopLayout(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -59,132 +45,44 @@ class PortfolioPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTabletLayout() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Our Portfolio',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 30),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            children: [
-              _buildPortfolioCard(
-                'Project 1',
-                'Web Application',
-                'assets/project1.jpg',
-              ),
-              _buildPortfolioCard(
-                'Project 2',
-                'Mobile App',
-                'assets/project2.jpg',
-              ),
-              _buildPortfolioCard(
-                'Project 3',
-                'UI Design',
-                'assets/project3.jpg',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Our Portfolio',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 40),
-          Wrap(
-            spacing: 30,
-            runSpacing: 30,
-            children: [
-              _buildPortfolioCard(
-                'Project 1',
-                'Web Application',
-                'assets/project1.jpg',
-              ),
-              _buildPortfolioCard(
-                'Project 2',
-                'Mobile App',
-                'assets/project2.jpg',
-              ),
-              _buildPortfolioCard(
-                'Project 3',
-                'UI Design',
-                'assets/project3.jpg',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPortfolioCard(String title, String category, String imagePath) {
-    return Container(
-      width: 300,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+  Widget _buildPortfolioCard(String title, String subtitle, String imagePath) {
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: SizedBox(
+        width: 250,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              height: 200,
-              width: double.infinity,
-              imagePath,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.asset(
+                imagePath,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFf5b301),
+                      color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   Text(
-                    category,
+                    subtitle,
                     style: const TextStyle(
-                      color: Colors.grey,
+                      fontSize: 14,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
