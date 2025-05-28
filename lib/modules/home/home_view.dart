@@ -9,6 +9,7 @@ import 'package:modernisum/theme/gradient.dart';
 import 'package:modernisum/widgets/text_box.dart';
 import 'package:modernisum/widgets/common/TextField.dart';
 import 'package:modernisum/widgets/constants/responsive.dart';
+import 'package:modernisum/widgets/common/button_text.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -168,7 +169,9 @@ class HomeView extends GetView<HomeController> {
                 margin: EdgeInsets.only(left: 150.w, right: 150.w),
                 child: Column(
                   children: [
-                    ShaderMaskText1(text: "Our service", fontSize: 50.h),
+                    ShaderMaskText1(
+                        text: "Our service",
+                        fontSize: ResponsiveConstant().r10(context) * 5),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -186,8 +189,10 @@ class HomeView extends GetView<HomeController> {
                     ),
 
                     // space between services and portfolio
-                    SizedBox(height: 20.h),
-                    ShaderMaskText1(text: "Portfolio", fontSize: 50.h),
+                    SizedBox(height: ResponsiveConstant().r10(context) * 5),
+                    ShaderMaskText1(
+                        text: "Portfolio",
+                        fontSize: ResponsiveConstant().r10(context) * 5),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -203,10 +208,12 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                     ),
-                    SizedBox(height: 20.h),
-                    ShaderMaskText1(text: "BLOG", fontSize: 50.h),
+                    SizedBox(height: ResponsiveConstant().r10(context) * 5),
+                    ShaderMaskText1(
+                        text: "BLOG",
+                        fontSize: ResponsiveConstant().r10(context) * 5),
                     SizedBox(
-                      height: 600.h,
+                      height: ResponsiveConstant().r10(context) * 30,
                       child: PageView.builder(
                         controller: portfolioPageController,
                         itemCount: controller.portfolioItems.length,
@@ -220,9 +227,11 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                     ),
-                    ShaderMaskText1(text: "ContactUs", fontSize: 50.h),
+                    ShaderMaskText1(
+                        text: "ContactUs",
+                        fontSize: ResponsiveConstant().r10(context) * 5),
                     Container(
-                      width: context.width * 0.6,
+                      width: ResponsiveConstant().r10(context) * 80,
                       padding: EdgeInsets.all(150.w),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(colors: [
@@ -262,44 +271,10 @@ class HomeView extends GetView<HomeController> {
                               maxLines: 5,
                               //context: context,
                             ),
-                            SizedBox(height: 20.h),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 10.h),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                elevation: 10,
-                              ),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color.fromRGBO(245, 179, 1, 1),
-                                      Colors.brown,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                child: Container(
-                                  height: 50.h,
-                                  width: 300.w,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Send Message',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.sp,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            SizedBox(
+                                height: ResponsiveConstant().r10(context) * 5),
+                            const TextButton1(
+                                width: 100, height: 30, text: "Send Message"),
                           ],
                         ),
                       ),

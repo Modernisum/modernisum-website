@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 
-class TextFieldHelper1 {
+class TextFieldHelper1 extends ResponsiveConstant {
   static Widget buildTextField({
     required String label,
     required TextEditingController controller,

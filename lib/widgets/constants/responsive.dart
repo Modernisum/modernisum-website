@@ -4,6 +4,7 @@ class Responsive extends StatelessWidget {
   final Widget mobile;
   final Widget? tablet;
   final Widget desktop;
+  //final int  value = 0;
 
   const Responsive({
     super.key,
@@ -41,4 +42,28 @@ class Responsive extends StatelessWidget {
       return mobile;
     }
   }
+}
+
+// that will be executed decrease redence
+class Responsive1 {
+  const Responsive1();
+
+  int res(BuildContext context, int num) {
+    int tab = (num * 3 ~/ 4);
+    int mobile = (num * 2 ~/ 3);
+    return Responsive.isDesktop(context)
+        ? num
+        : Responsive.isTablet(context)
+            ? tab
+            : mobile;
+  }
+}
+
+class ResponsiveConstant extends Responsive1 {
+  int r10(BuildContext context) => Responsive1().res(context, 10);
+  int r20(BuildContext context) => Responsive1().res(context, 20);
+  int r30(BuildContext context) => Responsive1().res(context, 30);
+  int r40(BuildContext context) => Responsive1().res(context, 40);
+  int r50(BuildContext context) => Responsive1().res(context, 50);
+  int r60(BuildContext context) => Responsive1().res(context, 60);
 }
