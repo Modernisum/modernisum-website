@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'contact_controller.dart';
+
+import '../modules/contact/contact_controller.dart';
 
 class ContactBinding extends Bindings {
   @override

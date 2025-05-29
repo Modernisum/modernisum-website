@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'services_controller.dart';
+
+import '../modules/services/services_controller.dart';
 
 class ServicesBinding extends Bindings {
   @override

@@ -1,16 +1,21 @@
 import 'package:get/get.dart';
-import 'package:modernisum/modules/home/home_binding.dart';
 import 'package:modernisum/modules/home/home_view.dart';
-import 'package:modernisum/modules/services/services_binding.dart';
 import 'package:modernisum/modules/services/services_view.dart';
-import 'package:modernisum/modules/portfolio/portfolio_binding.dart';
+
 import 'package:modernisum/modules/portfolio/portfolio_view.dart';
-import 'package:modernisum/modules/blog/blog_binding.dart';
+
 import 'package:modernisum/modules/blog/blog_view.dart';
-import 'package:modernisum/modules/about/about_binding.dart';
+
 import 'package:modernisum/modules/about/about_view.dart';
-import 'package:modernisum/modules/contact/contact_binding.dart';
+
 import 'package:modernisum/modules/contact/contact_view.dart';
+
+import '../Binding/about_binding.dart';
+import '../Binding/blog_binding.dart';
+import '../Binding/contact_binding.dart';
+import '../Binding/home_binding.dart';
+import '../Binding/services_binding.dart';
+import '../Binding/portfolio_binding.dart';
 
 part 'app_routes.dart';
 
@@ -49,4 +54,13 @@ class AppPages {
       binding: ContactBinding(),
     ),
   ];
+}
+
+abstract class Routes {
+  static const home = '/home';
+  static const services = '/services';
+  static const portfolio = '/portfolio';
+  static const blog = '/blog';
+  static const about = '/about';
+  static const contact = '/contact';
 }

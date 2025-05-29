@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'about_controller.dart';
+
+import '../modules/about/about_controller.dart';
 
 class AboutBinding extends Bindings {
   @override

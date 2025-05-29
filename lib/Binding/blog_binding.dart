@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'blog_controller.dart';
+
+import '../modules/blog/blog_controller.dart';
 
 class BlogBinding extends Bindings {
   @override
