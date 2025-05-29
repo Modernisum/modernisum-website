@@ -1,7 +1,10 @@
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'models/home_model.dart';
+//import 'models/home_model.dart';
+import 'package:modernisum/models/home_model.dart';
+import 'package:modernisum/models/portfolio_model.dart';
+import 'package:modernisum/models/service_model.dart';
 
 class HomeController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -12,7 +15,7 @@ class HomeController extends GetxController
   final RxBool isLastAnimation = false.obs;
   final RxDouble currentScrollPosition = 0.0.obs;
   final RxBool isAnimationComplete = false.obs;
-  final HomeModel model = HomeModel();
+  //final HomeModel model = HomeModel();
   TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController massage = TextEditingController();
@@ -72,10 +75,10 @@ class HomeController extends GetxController
     isAnimationComplete.value = value;
   }
 
-  List<ServiceItem> get services => model.services;
-  List<PortfolioItem> get portfolioItems => model.portfolioItems;
-  String get companyDescription => model.companyDescription;
-  String get iotDescription => model.iotDescription;
+  List<ServiceItem> get services => ServiceModel.services1;
+  List<PortfolioItem> get portfolioItems => PortfolioModel.portfolioItems1;
+  String get companyDescription => HomeModel1.companyDescription;
+  String get iotDescription => HomeModel1.iotDescription;
 
   Future<void> sendEmail(String name, String email, String message) async {
     final Email emailData = Email(

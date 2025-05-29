@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 
 class TextBox1 extends StatelessWidget {
   final String text;
@@ -14,13 +15,13 @@ class TextBox1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
+    //final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       child: Container(
-        height: screenHeight * 0.3,
-        width: screenWidth * 0.6,
+        height: 300.h,
+        width: 1200.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
             screenWidth > 600.w ? 60.r : 120.r,

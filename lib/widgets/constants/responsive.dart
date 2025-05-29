@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Responsive extends StatelessWidget {
   final Widget mobile;
@@ -60,10 +61,5 @@ class Responsive1 {
 }
 
 class ResponsiveConstant extends Responsive1 {
-  int r10(BuildContext context) => Responsive1().res(context, 10);
-  int r20(BuildContext context) => Responsive1().res(context, 20);
-  int r30(BuildContext context) => Responsive1().res(context, 30);
-  int r40(BuildContext context) => Responsive1().res(context, 40);
-  int r50(BuildContext context) => Responsive1().res(context, 50);
-  int r60(BuildContext context) => Responsive1().res(context, 60);
+  int r10(BuildContext context) => Responsive1().res(context, 10.h.toInt());
 }

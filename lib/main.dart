@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import 'modules/home/home_controller.dart';
 import 'routes/app_pages.dart';
 import 'theme/app_theme.dart';
-import 'modules/home/home_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
           popGesture: true,
           builder: (context, child) {
             return ScrollConfiguration(
-              behavior: ScrollBehavior().copyWith(
+              behavior: const ScrollBehavior().copyWith(
                 physics: const BouncingScrollPhysics(),
                 dragDevices: {
                   PointerDeviceKind.touch,

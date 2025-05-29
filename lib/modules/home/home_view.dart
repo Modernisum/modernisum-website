@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/common/build_card.dart';
+
 import 'home_controller.dart';
 import '../../widgets/common_page_layout.dart';
 import 'package:lottie/lottie.dart';
-import 'package:modernisum/assets.dart';
+//import 'package:modernisum/assets.dart';
 import 'package:modernisum/theme/gradient.dart';
 import 'package:modernisum/widgets/text_box.dart';
 import 'package:modernisum/widgets/common/TextField.dart';
@@ -17,72 +19,8 @@ class HomeView extends GetView<HomeController> {
   get name => HomeController().name;
   get email => HomeController().email;
   get massage => HomeController().massage;
-
-  Widget _buildServiceCard(
-      BuildContext context, String title, String imagePath) {
-    return Container(
-      margin: EdgeInsets.only(top: 20.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-      child: Container(
-        height: context.height * 0.3,
-        width: context.width * 0.3,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.r),
-          gradient: const LinearGradient(colors: [
-            Color.fromRGBO(251, 252, 204, 1),
-            Color(0xFFF0F8CB),
-          ]),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.blue, offset: Offset(0, -1.h), blurRadius: 5.r),
-            BoxShadow(
-                color: Colors.brown, offset: Offset(0, 1.h), blurRadius: 5.r),
-          ],
-        ),
-        child: Stack(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Image(
-                image: AssetImage(imagePath),
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned(
-              bottom: 11.h,
-              left: 0,
-              right: 0,
-              child: Opacity(
-                opacity: 0.3,
-                child: Container(
-                  height: 30.h,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromRGBO(15, 15, 14, 1),
-                        Color.fromARGB(255, 0, 0, 0),
-                      ],
-                    ),
-                  ),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          // color: Colors.yellow,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                        ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  get companyDescription => HomeController().companyDescription;
+  get iotDescription => HomeController().iotDescription;
 
 //Above is the code for the manu bar weget
   @override
@@ -120,8 +58,8 @@ class HomeView extends GetView<HomeController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextBox1(
-                          text: "$controller.companyDescription",
-                          fontSize: Responsive.isDesktop(context) ? 50.h : 30.h,
+                          text: "$companyDescription",
+                          fontSize: Responsive.isDesktop(context) ? 35.h : 20.h,
                           //context: context,
                         ),
                         // Space between text and animation
@@ -131,7 +69,7 @@ class HomeView extends GetView<HomeController> {
                           child: Expanded(
                             flex: 2,
                             child: Lottie.asset(
-                              '$AnimationPaths.tedianim',
+                              '/animation/animation1.json',
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -154,8 +92,8 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         TextBox1(
-                          text: "We are a team of professions",
-                          fontSize: 50.h,
+                          text: "$iotDescription.",
+                          fontSize: 35.h,
                           // context: context,
                         ),
                       ],
@@ -169,9 +107,7 @@ class HomeView extends GetView<HomeController> {
                 margin: EdgeInsets.only(left: 150.w, right: 150.w),
                 child: Column(
                   children: [
-                    ShaderMaskText1(
-                        text: "Our service",
-                        fontSize: ResponsiveConstant().r10(context) * 5),
+                    ShaderMaskText1(text: "Our service", fontSize: 50.h),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -179,20 +115,17 @@ class HomeView extends GetView<HomeController> {
                         itemCount: controller.services.length,
                         itemBuilder: (context, index) {
                           final service = controller.services[index];
-                          return _buildServiceCard(
-                            context,
-                            service.title,
-                            service.imagePath,
+                          return BuildCard(
+                            title: service.title,
+                            imagePath: service.imagePath,
                           );
                         },
                       ),
                     ),
 
                     // space between services and portfolio
-                    SizedBox(height: ResponsiveConstant().r10(context) * 5),
-                    ShaderMaskText1(
-                        text: "Portfolio",
-                        fontSize: ResponsiveConstant().r10(context) * 5),
+                    SizedBox(height: 50.h),
+                    ShaderMaskText1(text: "Portfolio", fontSize: 50.h),
                     SizedBox(
                       height: 600.h,
                       child: PageView.builder(
@@ -200,38 +133,32 @@ class HomeView extends GetView<HomeController> {
                         itemCount: controller.portfolioItems.length,
                         itemBuilder: (context, index) {
                           final item = controller.portfolioItems[index];
-                          return _buildServiceCard(
-                            context,
-                            item.title,
-                            item.imagePath,
+                          return BuildCard(
+                            title: item.title,
+                            imagePath: item.imagePath,
                           );
                         },
                       ),
                     ),
-                    SizedBox(height: ResponsiveConstant().r10(context) * 5),
-                    ShaderMaskText1(
-                        text: "BLOG",
-                        fontSize: ResponsiveConstant().r10(context) * 5),
+                    SizedBox(height: 50.h),
+                    ShaderMaskText1(text: "BLOG", fontSize: 50.h),
                     SizedBox(
-                      height: ResponsiveConstant().r10(context) * 30,
+                      height: 300.h,
                       child: PageView.builder(
                         controller: portfolioPageController,
                         itemCount: controller.portfolioItems.length,
                         itemBuilder: (context, index) {
                           final item = controller.portfolioItems[index];
-                          return _buildServiceCard(
-                            context,
-                            item.title,
-                            item.imagePath,
+                          return BuildCard(
+                            title: item.title,
+                            imagePath: item.imagePath,
                           );
                         },
                       ),
                     ),
-                    ShaderMaskText1(
-                        text: "ContactUs",
-                        fontSize: ResponsiveConstant().r10(context) * 5),
+                    ShaderMaskText1(text: "ContactUs", fontSize: 50.h),
                     Container(
-                      width: ResponsiveConstant().r10(context) * 80,
+                      width: 800.w,
                       padding: EdgeInsets.all(150.w),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(colors: [
@@ -282,7 +209,11 @@ class HomeView extends GetView<HomeController> {
 
                     // space between portfolio and footer
                     Container(
-                      height: 200.h,
+                      height: Responsive.isDesktop(context)
+                          ? 200.h
+                          : Responsive.isMobile(context)
+                              ? 150.h
+                              : 100.h,
                       width: double.infinity,
                       margin: EdgeInsets.only(bottom: 30.h),
                       child: Row(
@@ -297,7 +228,7 @@ class HomeView extends GetView<HomeController> {
                                   color: const Color.fromRGBO(245, 179, 1, 1),
                                   letterSpacing: 1.2,
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 15.sp,
+                                  fontSize: 30.h,
                                 ),
                           ),
                         ],
