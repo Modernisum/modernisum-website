@@ -1,15 +1,10 @@
 import 'package:get/get.dart';
 import 'package:modernisum/modules/home/home_view.dart';
 import 'package:modernisum/modules/services/services_view.dart';
-
 import 'package:modernisum/modules/portfolio/portfolio_view.dart';
-
 import 'package:modernisum/modules/blog/blog_view.dart';
-
 import 'package:modernisum/modules/about/about_view.dart';
-
 import 'package:modernisum/modules/contact/contact_view.dart';
-
 import '../Binding/about_binding.dart';
 import '../Binding/blog_binding.dart';
 import '../Binding/contact_binding.dart';
