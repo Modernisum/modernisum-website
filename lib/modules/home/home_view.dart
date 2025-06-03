@@ -4,21 +4,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modernisum/widgets/common/Footer.dart';
 import 'package:modernisum/widgets/common/build_card.dart';
 import 'package:modernisum/widgets/common/contact_form.dart';
-
+import 'package:modernisum/widgets/common/manu_bar.dart';
+import 'package:modernisum/widgets/constants/assets.dart';
+import 'package:modernisum/widgets/constants/color.dart';
 import 'home_controller.dart';
-import '../../widgets/common_page_layout.dart';
 import 'package:lottie/lottie.dart';
-//import 'package:modernisum/assets.dart';
 import 'package:modernisum/theme/gradient.dart';
 import 'package:modernisum/widgets/text_box.dart';
-
 import 'package:modernisum/widgets/constants/responsive.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({super.key});
+  HomeView({super.key});
 
   get companyDescription => HomeController().companyDescription;
   get iotDescription => HomeController().iotDescription;
+  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
 
 //Above is the code for the manu bar weget
   @override
@@ -29,9 +29,20 @@ class HomeView extends GetView<HomeController> {
     final PageController portfolioPageController = PageController(
         viewportFraction: 0.33); // Show three items at a time for Portfolio
 
-    return CommonPageLayout(
-      isTransparent: true,
-      child: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white70,
+      appBar: Responsive.isDesktop(context)
+          ? AppBar(
+              backgroundColor: WidgetStateColor.transparent,
+              scrolledUnderElevation: 60,
+              toolbarHeight: 20,
+              bottom: const PreferredSize(
+                preferredSize: Size.fromHeight(20),
+                child: ManuBar(),
+              ),
+            )
+          : null,
+      body: SingleChildScrollView(
         controller: controller.scrollController,
         child: Padding(
           padding: EdgeInsets.only(
@@ -139,7 +150,7 @@ class HomeView extends GetView<HomeController> {
                     SizedBox(height: 50.h),
                     ShaderMaskText1(text: "BLOG", fontSize: 50.h),
                     SizedBox(
-                      height: 300.h,
+                      height: 800.h,
                       child: PageView.builder(
                         controller: portfolioPageController,
                         itemCount: controller.portfolioItems.length,

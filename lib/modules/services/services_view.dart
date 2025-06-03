@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services_controller.dart';
-import '../../widgets/common_page_layout.dart';
+//import '../../widgets/common/common_page_layout.dart';
 
 class ServicesView extends GetView<ServicesController> {
   const ServicesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CommonPageLayout(
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(20.w),
           child: Column(

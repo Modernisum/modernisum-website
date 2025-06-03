@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'contact_controller.dart';
-import '../../widgets/common_page_layout.dart';
+
 //import '../../widgets/responsive_layout.dart';
 import '../../theme/app_theme.dart';
 
@@ -49,8 +49,8 @@ class ContactView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonPageLayout(
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: _buildMobileLayout(),
       ),
     );

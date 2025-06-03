@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:modernisum/widgets/constants/responsive.dart';
+import 'package:modernisum/widgets/constants/color.dart';
+//import 'package:modernisum/widgets/constants/responsive.dart';
 
 class TextBox1 extends StatelessWidget {
   final String text;
@@ -26,12 +27,7 @@ class TextBox1 extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             screenWidth > 600.w ? 60.r : 120.r,
           ),
-          gradient: const LinearGradient(
-            colors: [
-              Color.fromRGBO(245, 179, 1, 1),
-              Colors.brown,
-            ],
-          ),
+          gradient: AppGradients.primary,
         ),
         child: Center(
           child: Padding(

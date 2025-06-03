@@ -17,8 +17,8 @@ class BuildCard extends StatelessWidget {
       margin: EdgeInsets.only(top: 20.h),
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.3,
-        width: MediaQuery.of(context).size.width * 0.3,
+        height: MediaQuery.of(context).size.height * 0.4,
+        width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
           gradient: const LinearGradient(colors: [
@@ -54,8 +54,8 @@ class BuildCard extends StatelessWidget {
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Color.fromRGBO(15, 15, 14, 1),
-                        Color.fromARGB(255, 0, 0, 0),
+                        Colors.blue,
+                        Colors.brown,
                       ],
                     ),
                   ),
