@@ -51,7 +51,7 @@ class AppPages {
   ];
 }
 
-abstract class Routes {
+class Routes {
   static const home = '/home';
   static const services = '/services';
   static const portfolio = '/portfolio';

@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modernisum/widgets/common/Footer.dart';
 import 'package:modernisum/widgets/common/build_card.dart';
+import 'package:modernisum/widgets/common/button_text.dart';
 import 'package:modernisum/widgets/common/contact_form.dart';
 import 'package:modernisum/widgets/common/manu_bar.dart';
+import 'package:modernisum/widgets/common/top_logo.dart';
 import 'package:modernisum/widgets/constants/assets.dart';
-import 'package:modernisum/widgets/constants/color.dart';
 import 'home_controller.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modernisum/theme/gradient.dart';
@@ -23,19 +24,34 @@ class HomeView extends GetView<HomeController> {
 //Above is the code for the manu bar weget
   @override
   Widget build(BuildContext context) {
-    final PageController pageController =
-        PageController(viewportFraction: 0.33); // Show three items at a time
-
-    final PageController portfolioPageController = PageController(
-        viewportFraction: 0.33); // Show three items at a time for Portfolio
-
     return Scaffold(
+      drawer: Responsive.isDesktop(context)
+          ? null
+          : Drawer(
+              backgroundColor: Colors.white70,
+              child: ListView(
+                children: const [
+                  DrawerHeader(
+                    decoration: BoxDecoration(color: Colors.blue),
+                    child: Text('Drawer Header',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  ListTile(title: Text('Item 1')),
+                  ListTile(title: Text('Item 2')),
+                ],
+              ),
+            ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       backgroundColor: Colors.white70,
+      floatingActionButton: Responsive.isDesktop(context)
+          ? null
+          : const TopLogo(text: 'Modernisum'),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
       appBar: Responsive.isDesktop(context)
           ? AppBar(
               backgroundColor: WidgetStateColor.transparent,
               scrolledUnderElevation: 60,
-              toolbarHeight: 20,
+              toolbarHeight: 30,
               bottom: const PreferredSize(
                 preferredSize: Size.fromHeight(20),
                 child: ManuBar(),
@@ -51,6 +67,7 @@ class HomeView extends GetView<HomeController> {
             right: 30.w,
           ),
           child: Column(
+            spacing: 50.h,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -60,47 +77,54 @@ class HomeView extends GetView<HomeController> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 alignment: Alignment.topCenter,
                 child: Column(
+                  spacing: 60.h,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextBox1(
-                          text: "$companyDescription",
-                          fontSize: Responsive.isDesktop(context) ? 35.h : 20.h,
-                          //context: context,
-                        ),
-                        // Space between text and animation
-                        SizedBox(
-                          height: context.height * 0.3,
-                          width: context.width * 0.2,
-                          child: Expanded(
-                            flex: 2,
-                            child: Lottie.asset(
-                              '/animation/animation1.json',
-                              fit: BoxFit.contain,
-                            ),
+                        if (Responsive.isDesktop(context))
+                          TextBox1(
+                            text: "$companyDescription",
+                            fontSize:
+                                Responsive.isDesktop(context) ? 35.h : 30.h,
+                            //context: context,
                           ),
-                        ),
+                        // Space between text and animation
+                        Responsive.isDesktop(context)
+                            ? SizedBox(
+                                height: context.height * 0.3,
+                                width: context.width * 0.2,
+                                child: Expanded(
+                                  flex: 1,
+                                  child: Lottie.asset(
+                                    AnimationPaths.tedianim,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                     // Space between animation and description
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: context.height * 0.3,
-                          width: context.width * 0.2,
-                          child: Expanded(
-                            flex: 2,
-                            child: Lottie.asset(
-                              '/animation/animation10.json',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
+                        Responsive.isDesktop(context)
+                            ? SizedBox(
+                                height: context.height * 0.3,
+                                width: context.width * 0.2,
+                                child: Expanded(
+                                  flex: 1,
+                                  child: Lottie.asset(
+                                    AnimationPaths.roboanim,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                         TextBox1(
                           text: "$iotDescription.",
-                          fontSize: 35.h,
+                          fontSize: Responsive.isDesktop(context) ? 35.h : 20.h,
                           // context: context,
                         ),
                       ],
@@ -111,58 +135,32 @@ class HomeView extends GetView<HomeController> {
               // space between description and services
               // SizedBox(height: 5.h),
               Container(
-                margin: EdgeInsets.only(left: 150.w, right: 150.w),
+                margin: EdgeInsets.only(left: 100.w, right: 100.w),
                 child: Column(
+                  spacing: 50.h,
                   children: [
                     ShaderMaskText1(text: "Our service", fontSize: 50.h),
-                    SizedBox(
-                      height: 600.h,
-                      child: PageView.builder(
-                        controller: pageController,
-                        itemCount: controller.services.length,
-                        itemBuilder: (context, index) {
-                          final service = controller.services[index];
-                          return BuildCard(
-                            title: service.title,
-                            imagePath: service.imagePath,
-                          );
-                        },
+                    const BuildServices(),
+                    if (!Responsive.isDesktop(context))
+                      ExploreButton(
+                        text: "Explore Service",
+                        onPressed: () => Get.toNamed('/services'),
                       ),
-                    ),
 
-                    // space between services and portfolio
-                    SizedBox(height: 50.h),
                     ShaderMaskText1(text: "Portfolio", fontSize: 50.h),
-                    SizedBox(
-                      height: 600.h,
-                      child: PageView.builder(
-                        controller: portfolioPageController,
-                        itemCount: controller.portfolioItems.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.portfolioItems[index];
-                          return BuildCard(
-                            title: item.title,
-                            imagePath: item.imagePath,
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 50.h),
-                    ShaderMaskText1(text: "BLOG", fontSize: 50.h),
-                    SizedBox(
-                      height: 800.h,
-                      child: PageView.builder(
-                        controller: portfolioPageController,
-                        itemCount: controller.portfolioItems.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.portfolioItems[index];
-                          return BuildCard(
-                            title: item.title,
-                            imagePath: item.imagePath,
-                          );
-                        },
-                      ),
-                    ),
+                    // BuildCard(title: item.title, imagePath: imagePath, routeName: routeName, itemCount: itemCount, item: item)
+                    const BuildPortfolio(),
+                    if (!Responsive.isDesktop(context))
+                      ExploreButton(
+                          text: "Explore Portfolio",
+                          onPressed: () => Get.toNamed('/portfolio')),
+                    ShaderMaskText1(text: "Blog", fontSize: 50.h),
+                    // BuildCard(title: item.title, imagePath: imagePath, routeName: routeName, itemCount: itemCount, item: item)
+                    const BuildBlog(),
+                    if (!Responsive.isDesktop(context))
+                      ExploreButton(
+                          text: "More Blog",
+                          onPressed: () => Get.toNamed('/blog')),
                     ShaderMaskText1(
                         text: "ContactUs", fontSize: 50.h), // contact headline
 

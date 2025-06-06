@@ -16,4 +16,9 @@ class AppGradients {
   static const LinearGradient primary = LinearGradient(
     colors: [AppColors.accent, Colors.brown],
   );
+  static const LinearGradient secondary = LinearGradient(colors: [
+    Color(0xFFF2F9CB),
+    Color.fromARGB(255, 236, 241, 209),
+    Color.fromARGB(255, 243, 249, 209),
+  ]);
 }

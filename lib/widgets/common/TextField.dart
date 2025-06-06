@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_email_sender/flutter_email_sender.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/constants/color.dart';
 import 'package:modernisum/widgets/constants/responsive.dart';
 
 class TextFieldHelper1 extends ResponsiveConstant {
@@ -15,14 +15,21 @@ class TextFieldHelper1 extends ResponsiveConstant {
         controller: controller,
         maxLines: maxLines ?? 1,
         decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
-            borderSide: const BorderSide(color: Colors.brown),
-          ),
+          hintText: 'Enter your name',
+          labelText: 'Name',
+          prefixIcon: const Icon(Icons.person_outlined),
+          filled: true,
+          fillColor: AppGradients.primary.colors.first.withOpacity(0.8),
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey, width: 2),
+          ),
         ),
         validator: validator ??
             (value) {
@@ -37,14 +44,21 @@ class TextFieldHelper1 extends ResponsiveConstant {
         controller: controller,
         maxLines: maxLines ?? 5,
         decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
-            borderSide: const BorderSide(color: Colors.brown),
-          ),
+          hintText: 'Enter your message',
+          labelText: 'Message',
+          prefixIcon: const Icon(Icons.message_outlined),
+          filled: true,
+          fillColor: Colors.grey.shade100,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey, width: 2),
+          ),
         ),
         validator: validator ??
             (value) {
@@ -58,17 +72,21 @@ class TextFieldHelper1 extends ResponsiveConstant {
       return TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          labelText: 'Email',
-          labelStyle: TextStyle(fontSize: 16.sp),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
+          hintText: 'Email',
+          labelText: 'Enter your email',
+          prefixIcon: const Icon(Icons.email_outlined),
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade400),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
-            borderSide: const BorderSide(color: Colors.brown),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey, width: 2),
           ),
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {

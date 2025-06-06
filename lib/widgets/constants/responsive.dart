@@ -61,5 +61,6 @@ class Responsive1 {
 }
 
 class ResponsiveConstant extends Responsive1 {
-  int r10(BuildContext context) => Responsive1().res(context, 10.h.toInt());
+  int r10(BuildContext context) =>
+      const Responsive1().res(context, 10.h.toInt());
 }

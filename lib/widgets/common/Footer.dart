@@ -27,7 +27,7 @@ class Footer extends StatelessWidget {
                   color: const Color.fromRGBO(245, 179, 1, 1),
                   letterSpacing: 1.2,
                   fontWeight: FontWeight.w500,
-                  fontSize: 30.h,
+                  fontSize: Responsive.isDesktop(context) ? 25.sp : 50.sp,
                 ),
           ),
         ],

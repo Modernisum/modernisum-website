@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/constants/color.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 import '../constants/assets.dart';
 
 class TopLogo extends StatelessWidget {
@@ -12,32 +14,29 @@ class TopLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(
-          ImagePaths.logo,
-          height: 50.h,
-          width: 50.w,
-        ),
-        ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [
-              Color.fromRGBO(245, 179, 1, 1),
-              Colors.brown,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(bounds),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return SizedBox(
+        height: Responsive.isDesktop(context) ? 70.h : 100.h,
+        width: Responsive.isDesktop(context) ? 500.w : 700.w,
+        child: Row(
+          children: [
+            Image.asset(
+              ImagePaths.logo,
+              height: Responsive.isDesktop(context) ? 50.h : 200.h,
+              width: Responsive.isDesktop(context) ? 50.w : 200.w,
             ),
-          ),
-        )
-      ],
-    );
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppGradients.primary.createShader(bounds),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: Responsive.isDesktop(context) ? 30.sp : 70.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

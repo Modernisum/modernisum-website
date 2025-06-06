@@ -1,3 +1,5 @@
+import 'package:modernisum/widgets/constants/assets.dart';
+
 class PortfolioItem {
   final String title;
   final String imagePath;
@@ -14,7 +16,7 @@ class PortfolioModel {
   static List<PortfolioItem> portfolioItems1 = [
     PortfolioItem(
       title: 'Modern School',
-      imagePath: '/images/img6.png',
+      imagePath: ImagePaths.modernSchool,
       description: 'School management system',
     ),
     PortfolioItem(

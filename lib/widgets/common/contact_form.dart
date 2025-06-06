@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/widgets/constants/color.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 
 import '../../modules/home/home_controller.dart';
 import 'TextField.dart';
@@ -18,15 +20,11 @@ class ContactForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     return Container(
-      width: 800.w,
-      padding: EdgeInsets.all(150.w),
+      width: Responsive.isDesktop(context) ? 800.w : 1650.w,
+      padding: EdgeInsets.all(Responsive.isDesktop(context) ? 100.w : 100.w),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [
-          Color(0xFFF2F9CB),
-          Color.fromARGB(255, 236, 241, 209),
-          Color.fromARGB(255, 243, 249, 209),
-        ]),
-        borderRadius: BorderRadius.circular(10.r),
+        gradient: AppGradients.secondary,
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: const [
           BoxShadow(
             color: Color(0xFF9E9E9E),
@@ -59,7 +57,7 @@ class ContactForm extends StatelessWidget {
               //context: context,
             ),
             SizedBox(height: 50.h),
-            const TextButton1(width: 100, height: 30, text: "Send Message"),
+            TextButton1(text: "Send Message"),
           ],
         ),
       ),

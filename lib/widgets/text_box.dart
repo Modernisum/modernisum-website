@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:modernisum/widgets/constants/color.dart';
+
+import 'package:modernisum/widgets/constants/responsive.dart';
+import 'package:modernisum/widgets/constants/assets.dart';
 //import 'package:modernisum/widgets/constants/responsive.dart';
 
 class TextBox1 extends StatelessWidget {
@@ -15,35 +17,45 @@ class TextBox1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     //final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       child: Container(
-        height: 300.h,
-        width: 1200.w,
+        height: Responsive.isDesktop(context) ? 300.h : 760.h,
+        width: Responsive.isDesktop(context) ? 1100.w : 1500.w,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            screenWidth > 600.w ? 60.r : 120.r,
-          ),
-          gradient: AppGradients.primary,
+          borderRadius: BorderRadius.circular(20.r),
+          gradient: const LinearGradient(colors: [
+            Color.fromRGBO(251, 252, 204, 1),
+            Color(0xFFF0F8CB),
+          ]),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.blue, offset: Offset(0, -1.h), blurRadius: 5.r),
+            BoxShadow(
+                color: Colors.brown, offset: Offset(0, 1.h), blurRadius: 5.r),
+          ],
         ),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(20.w),
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                    fontWeight: FontWeight.w500,
-                    fontSize: fontSize,
-                  ),
-            ),
-          ),
-        ),
+        child: Responsive.isDesktop(context)
+            ? Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: const Color.fromRGBO(245, 179, 1, 1),
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.h,
+                ),
+              )
+            : Positioned(
+                bottom: 90.h,
+                child: Image.asset(
+                  ImagePaths.baner,
+                  fit: BoxFit.fill,
+                ),
+              ),
       ),
     );
   }
