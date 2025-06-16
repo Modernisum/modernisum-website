@@ -1,42 +1,61 @@
 import 'package:flutter/material.dart';
 
-class AnimationText extends StatelessWidget {
+class AnimationText extends StatefulWidget {
   final Widget child;
-  final bool isTransparent;
   final String buttonName;
   final List<String> option;
+
   const AnimationText({
     super.key,
     required this.child,
     required this.buttonName,
     required this.option,
-    this.isTransparent = false,
   });
+
+  @override
+  State<AnimationText> createState() => _AnimationTextState();
+}
+
+class _AnimationTextState extends State<AnimationText> {
+  bool _isDialogVisible = false;
+
   void _showDropdownDialog(BuildContext context) {
+    if (_isDialogVisible) return;
+
+    _isDialogVisible = true;
+
     showDialog(
       context: context,
-      builder: (_) => const DropdownDialog(),
+      builder: (_) => DropdownDialog(
+        options: widget.option,
+        onDismissed: () {
+          _isDialogVisible = false;
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: MouseRegion(
-          onEnter: (_) => _showDropdownDialog(context),
-          child: TextButton(
-            onPressed: () => _showDropdownDialog(context),
-            child: const Text('hover'),
-          ),
-        ),
+    return MouseRegion(
+      onEnter: (_) => _showDropdownDialog(context),
+      child: TextButton(
+        onPressed: () => _showDropdownDialog(context),
+        child: Text(widget.buttonName),
       ),
     );
   }
 }
 
 class DropdownDialog extends StatefulWidget {
-  const DropdownDialog({super.key});
+  final List<String> options;
+  final VoidCallback onDismissed;
+
+  const DropdownDialog({
+    super.key,
+    required this.options,
+    required this.onDismissed,
+  });
 
   @override
   State<DropdownDialog> createState() => _DropdownDialogState();
@@ -46,8 +65,6 @@ class _DropdownDialogState extends State<DropdownDialog>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
-
-  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
 
   @override
   void initState() {
@@ -61,7 +78,9 @@ class _DropdownDialogState extends State<DropdownDialog>
     _animation = Tween<Offset>(
       begin: const Offset(0, -0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
 
     _controller.forward();
   }
@@ -69,6 +88,7 @@ class _DropdownDialogState extends State<DropdownDialog>
   @override
   void dispose() {
     _controller.dispose();
+    widget.onDismissed(); // Notify parent
     super.dispose();
   }
 
@@ -82,16 +102,22 @@ class _DropdownDialogState extends State<DropdownDialog>
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: const EdgeInsets.all(20),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: SlideTransition(
         position: _animation,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: options
-              .map((option) => ListTile(
-                    title: Text(option),
-                    onTap: () => _onOptionSelected(option),
-                  ))
-              .toList(),
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          itemCount: widget.options.length,
+          itemBuilder: (context, index) {
+            final option = widget.options[index];
+            return ListTile(
+              title: Text(option),
+              onTap: () => _onOptionSelected(option),
+            );
+          },
         ),
       ),
     );

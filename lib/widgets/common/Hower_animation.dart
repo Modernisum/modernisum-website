@@ -38,6 +38,7 @@ class _HoverAnimationState extends State<HoverAnimation> {
         child: MouseRegion(
           onExit: (event) {
             Timer(const Duration(microseconds: 600), () => _removeOverlay());
+            _removeOverlay();
           },
           child: Material(
             elevation: 4,
@@ -63,12 +64,14 @@ class _HoverAnimationState extends State<HoverAnimation> {
                           onTap: () {
                             _removeOverlay();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('You selected: $option')),
+                              SnackBar(
+                                  content:
+                                      SelectableText('You selected: $option')),
                             );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(option),
+                            child: SelectableText(option),
                           ),
                         ))
                     .toList(),
@@ -117,7 +120,7 @@ class _HoverAnimationState extends State<HoverAnimation> {
                 // ... rest of the style
               ),
               onPressed: widget.onPresess,
-              child: Text(widget.text),
+              child: SelectableText(widget.text),
             ),
           ],
         ));

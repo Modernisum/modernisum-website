@@ -16,7 +16,7 @@ class AboutView extends GetView<AboutController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              SelectableText(
                 'About Us',
                 style: TextStyle(
                   fontSize: 32.sp,
@@ -41,7 +41,7 @@ class AboutView extends GetView<AboutController> {
                 ),
                 child: Column(
                   children: [
-                    Text(
+                    SelectableText(
                       'Welcome to Modernisum',
                       style: TextStyle(
                         fontSize: 24.sp,
@@ -49,7 +49,7 @@ class AboutView extends GetView<AboutController> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    Text(
+                    SelectableText(
                       'We are a team of passionate developers and designers dedicated to creating beautiful and functional digital experiences. Our mission is to help businesses thrive in the digital world by providing innovative solutions that make a difference.',
                       style: TextStyle(
                         fontSize: 16.sp,
@@ -58,7 +58,7 @@ class AboutView extends GetView<AboutController> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20.h),
-                    Text(
+                    SelectableText(
                       'Our Values',
                       style: TextStyle(
                         fontSize: 20.sp,
@@ -107,7 +107,7 @@ class AboutView extends GetView<AboutController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          SelectableText(
             title,
             style: TextStyle(
               fontSize: 18.sp,
@@ -115,7 +115,7 @@ class AboutView extends GetView<AboutController> {
             ),
           ),
           SizedBox(height: 5.h),
-          Text(
+          SelectableText(
             description,
             style: TextStyle(
               fontSize: 14.sp,

@@ -16,7 +16,7 @@ class ServicesView extends GetView<ServicesController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              SelectableText(
                 'Our Services',
                 style: TextStyle(
                   fontSize: 32.sp,
@@ -76,7 +76,7 @@ class ServicesView extends GetView<ServicesController> {
             color: Colors.blue,
           ),
           SizedBox(height: 20.h),
-          Text(
+          SelectableText(
             service.title,
             style: TextStyle(
               fontSize: 24.sp,
@@ -85,7 +85,7 @@ class ServicesView extends GetView<ServicesController> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10.h),
-          Text(
+          SelectableText(
             service.description,
             style: TextStyle(
               fontSize: 16.sp,

@@ -6,14 +6,10 @@ import 'package:modernisum/widgets/constants/responsive.dart';
 import 'package:modernisum/modules/home/home_controller.dart';
 
 class BuildServices extends GetView<HomeController> {
-  const BuildServices({
-    Key? key,
-  }) : super(key: key);
+  const BuildServices({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Show three items at a time
-
     final PageController pageController =
         PageController(viewportFraction: 0.33);
 
@@ -78,7 +74,6 @@ class BuildServices extends GetView<HomeController> {
                           opacity: 0.6,
                           child: Container(
                             height: 300.h,
-                            width: double.infinity,
                             decoration: BoxDecoration(
                               boxShadow: const [
                                 BoxShadow(color: Colors.blueAccent)
@@ -91,15 +86,16 @@ class BuildServices extends GetView<HomeController> {
                             ),
                           ),
                         ),
-                        Positioned(
-                            right: 100.h,
-                            left: 100.h,
-                            bottom: 200.h,
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 50.h),
                             child: ElevatedButton(
-                                onPressed: () => Get.toNamed('/services'),
-                                child: Text(service.title
-                                    //style: Colors.orange,
-                                    ))),
+                              onPressed: () => Get.toNamed('/services'),
+                              child: SelectableText(service.title),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -114,16 +110,13 @@ class BuildServices extends GetView<HomeController> {
 }
 
 class BuildPortfolio extends GetView<HomeController> {
-  const BuildPortfolio({
-    Key? key,
-  }) : super(key: key);
+  const BuildPortfolio({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Show three items at a time
-
     final PageController portfolioPageController =
         PageController(viewportFraction: 0.33);
+
     return SizedBox(
       height: Responsive.isDesktop(context) ? 800.h : 2300.h,
       child: ListView.builder(
@@ -132,7 +125,7 @@ class BuildPortfolio extends GetView<HomeController> {
         controller: portfolioPageController,
         itemCount: controller.portfolioItems.length,
         itemBuilder: (context, index) {
-          final Portfolio = controller.portfolioItems[index];
+          final portfolio = controller.portfolioItems[index];
           return Container(
             margin: EdgeInsets.only(top: 20.h),
             padding:
@@ -171,7 +164,7 @@ class BuildPortfolio extends GetView<HomeController> {
                     width: double.infinity,
                     height: double.infinity,
                     child: Image(
-                      image: AssetImage(Portfolio.imagePath),
+                      image: AssetImage(portfolio.imagePath),
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -185,7 +178,6 @@ class BuildPortfolio extends GetView<HomeController> {
                           opacity: 0.6,
                           child: Container(
                             height: 300.h,
-                            width: double.infinity,
                             decoration: BoxDecoration(
                               boxShadow: const [
                                 BoxShadow(color: Colors.blueAccent)
@@ -198,15 +190,16 @@ class BuildPortfolio extends GetView<HomeController> {
                             ),
                           ),
                         ),
-                        Positioned(
-                            right: 100.h,
-                            left: 100.h,
-                            bottom: 200.h,
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 50.h),
                             child: ElevatedButton(
-                                onPressed: () => Get.toNamed('/portfolio'),
-                                child: Text(Portfolio.title
-                                    //style: Colors.orange,
-                                    ))),
+                              onPressed: () => Get.toNamed('/portfolio'),
+                              child: SelectableText(portfolio.title),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -221,22 +214,19 @@ class BuildPortfolio extends GetView<HomeController> {
 }
 
 class BuildBlog extends GetView<HomeController> {
-  const BuildBlog({
-    Key? key,
-  }) : super(key: key);
+  const BuildBlog({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Show three items at a time
-
-    final PageController portfolioPageController =
+    final PageController blogPageController =
         PageController(viewportFraction: 0.33);
+
     return SizedBox(
       height: Responsive.isDesktop(context) ? 800.h : 2300.h,
       child: ListView.builder(
         scrollDirection:
             Responsive.isDesktop(context) ? Axis.horizontal : Axis.vertical,
-        controller: portfolioPageController,
+        controller: blogPageController,
         itemCount: controller.portfolioItems.length,
         itemBuilder: (context, index) {
           final blog = controller.portfolioItems[index];
@@ -292,7 +282,6 @@ class BuildBlog extends GetView<HomeController> {
                           opacity: 0.6,
                           child: Container(
                             height: 300.h,
-                            width: double.infinity,
                             decoration: BoxDecoration(
                               boxShadow: const [
                                 BoxShadow(color: Colors.blueAccent)
@@ -300,22 +289,23 @@ class BuildBlog extends GetView<HomeController> {
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(150.r),
                                 topRight: Radius.circular(150.r),
+                                bottomLeft: Radius.circular(20.r),
+                                bottomRight: Radius.circular(20.r),
                               ),
                               gradient: AppGradients.primary,
                             ),
                           ),
                         ),
-                        Positioned(
-                          right: 100.h,
-                          left: 100.h,
-                          bottom: 200.h,
-                          child: ElevatedButton(
-                            onPressed: () => Get.toNamed('/blog'),
-                            child: Text(blog.title
-                                //style: Colors.orange,
-                                ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 50.h),
+                            child: ElevatedButton(
+                              onPressed: () => Get.toNamed('/blog'),
+                              child: SelectableText(blog.title),
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

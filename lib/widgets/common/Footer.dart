@@ -21,7 +21,7 @@ class Footer extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          SelectableText(
             "COPYRIGHT © 2025 MODERNISUM",
             style: Theme.of(context).textTheme.labelSmall!.copyWith(
                   color: const Color.fromRGBO(245, 179, 1, 1),

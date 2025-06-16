@@ -23,7 +23,7 @@ class _ShaderMaskTextState extends State<ShaderMaskText1> {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(bounds),
-      child: Text(
+      child: SelectableText(
         widget.text,
         style: TextStyle(
           fontSize: widget.fontSize,
@@ -59,6 +59,72 @@ class GradientLinear1 {
           blurRadius: 5,
         ),
       ],
+    );
+  }
+}
+
+class ShaderMaskText2 extends StatefulWidget {
+  final String text;
+
+  final TextStyle? textStyle; // ✅ fixed type
+
+  const ShaderMaskText2({
+    Key? key,
+    required this.text,
+    required this.textStyle,
+  }) : super(key: key);
+
+  @override
+  _ShaderMaskText2State createState() => _ShaderMaskText2State();
+}
+
+class _ShaderMaskText2State extends State<ShaderMaskText2> {
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [
+          Color.fromRGBO(245, 179, 1, 1),
+          Colors.brown,
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(bounds),
+      blendMode: BlendMode.srcIn, // ✅ required for text masking
+      child: SelectableText(widget.text, style: widget.textStyle),
+    );
+  }
+}
+
+class ShaderMaskText3 extends StatefulWidget {
+  final String text;
+
+  final TextStyle? textStyle; // ✅ fixed type
+
+  const ShaderMaskText3({
+    Key? key,
+    required this.text,
+    required this.textStyle,
+  }) : super(key: key);
+
+  @override
+  _ShaderMaskText3State createState() => _ShaderMaskText3State();
+}
+
+class _ShaderMaskText3State extends State<ShaderMaskText2> {
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [
+          Color.fromRGBO(35, 134, 204, 1),
+          Color.fromARGB(255, 208, 242, 248),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(bounds),
+      blendMode: BlendMode.srcIn, // ✅ required for text masking
+      child: SelectableText(widget.text, style: widget.textStyle),
     );
   }
 }

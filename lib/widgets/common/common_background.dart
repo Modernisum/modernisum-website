@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modernisum/widgets/constants/assets.dart';
 
 class CommonBackground extends StatelessWidget {
   final Widget child;
@@ -12,9 +13,9 @@ class CommonBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/bg1.jpg'),
+          image: AssetImage(ImagePaths.bg1img),
           fit: BoxFit.cover,
         ),
       ),

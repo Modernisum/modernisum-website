@@ -15,7 +15,7 @@ class BlogView extends GetView<BlogController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              SelectableText(
                 'Our Blog',
                 style: TextStyle(
                   fontSize: 32.sp,
@@ -67,7 +67,7 @@ class BlogView extends GetView<BlogController> {
             color: Colors.blue,
           ),
           SizedBox(height: 20.h),
-          Text(
+          SelectableText(
             blog.title,
             style: TextStyle(
               fontSize: 24.sp,
@@ -76,7 +76,7 @@ class BlogView extends GetView<BlogController> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10.h),
-          Text(
+          SelectableText(
             blog.description,
             style: TextStyle(
               fontSize: 16.sp,

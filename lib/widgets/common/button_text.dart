@@ -48,7 +48,7 @@ class TextButton1 extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: Text(
+        child: SelectableText(
           text,
           style: TextStyle(
             color: Colors.white,
@@ -103,7 +103,7 @@ class ExploreButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 5.sp,
           children: [
-            Text(
+            SelectableText(
               text,
               style: TextStyle(
                 color: Colors.white,

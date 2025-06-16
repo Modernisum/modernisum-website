@@ -27,7 +27,7 @@ class TopLogo extends StatelessWidget {
             ShaderMask(
               shaderCallback: (bounds) =>
                   AppGradients.primary.createShader(bounds),
-              child: Text(
+              child: SelectableText(
                 text,
                 style: TextStyle(
                   fontSize: Responsive.isDesktop(context) ? 30.sp : 70.sp,

@@ -1,3 +1,5 @@
+import 'package:modernisum/widgets/constants/assets.dart';
+
 class ServiceItem {
   String title;
   final String imagePath;
@@ -14,17 +16,17 @@ class ServiceModel {
   static List<ServiceItem> services1 = [
     ServiceItem(
       title: 'Mobile Application',
-      imagePath: '/images/img6.png',
+      imagePath: ImagePaths.appimg,
       description: 'Modern mobile applications for iOS and Android',
     ),
     ServiceItem(
       title: 'Web Application',
-      imagePath: '/images/img7.png',
+      imagePath: ImagePaths.webimg,
       description: 'Responsive web applications and websites',
     ),
     ServiceItem(
       title: 'Automation',
-      imagePath: '/images/img8.png',
+      imagePath: ImagePaths.autoimg,
       description: 'Business process automation solutions',
     ),
   ];

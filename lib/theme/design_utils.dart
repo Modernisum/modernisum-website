@@ -43,7 +43,7 @@ class DesignUtils {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(bounds),
-      child: Text(
+      child: SelectableText(
         text,
         style: TextStyle(
           fontSize: fontSize.sp,

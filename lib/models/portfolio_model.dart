@@ -21,12 +21,12 @@ class PortfolioModel {
     ),
     PortfolioItem(
       title: 'Modern CV',
-      imagePath: '/images/img7.png',
+      imagePath: ImagePaths.webimg,
       description: 'CV builder application',
     ),
     PortfolioItem(
       title: 'Modern Page',
-      imagePath: '/images/img8.png',
+      imagePath: ImagePaths.autoimg,
       description: 'Portfolio website',
     ),
   ];

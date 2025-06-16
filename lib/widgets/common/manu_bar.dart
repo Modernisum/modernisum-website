@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/route_manager.dart';
 import 'package:modernisum/widgets/common/Hower_animation.dart';
 import 'package:modernisum/widgets/common/top_logo.dart';
@@ -14,6 +15,9 @@ class ManuBar extends StatelessWidget {
     return Row(
       spacing: 50,
       children: [
+        SizedBox(
+          width: 50.h,
+        ),
         const TopLogo(text: 'Modernisum'),
         const SizedBox(
           width: 200,

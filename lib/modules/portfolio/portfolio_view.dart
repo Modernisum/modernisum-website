@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modernisum/theme/gradient.dart';
+import 'package:modernisum/widgets/constants/responsive.dart';
 import 'portfolio_controller.dart';
 //import '../../widgets/common/common_page_layout.dart';
 
@@ -14,16 +16,11 @@ class PortfolioView extends GetView<PortfolioController> {
         child: SingleChildScrollView(
           padding: EdgeInsets.all(20.w),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                'Our Portfolio',
-                style: TextStyle(
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              ShaderMaskText1(
+                  text: "Portfolio",
+                  fontSize: Responsive.isDesktop(context) ? 100.h : 50.h),
               SizedBox(height: 20.h),
               Obx(
                 () => Wrap(
@@ -84,7 +81,7 @@ class PortfolioView extends GetView<PortfolioController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                SelectableText(
                   title,
                   style: TextStyle(
                     fontSize: 20.sp,

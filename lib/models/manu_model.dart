@@ -1,12 +1,3 @@
-class ManuOption {
-  final String text;
-  final List<String> options;
-  ManuOption({
-    required this.text,
-    required this.options,
-  });
-}
-
 class ManuModel {
   static List<String> serviceModel = [
     'Android Aplication ',
