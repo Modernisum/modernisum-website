@@ -13,9 +13,11 @@ class ImagePaths {
 }
 
 class AnimationPaths {
-  static String animation = 'assets/animation';
+  static String animation = '/animation';
   static String tedianim = '$animation/animation1.json';
   static String roboanim = '$animation/animation10.json';
   static String navigationRight = '$animation/navigation_right.json';
   static String circular = '$animation/circuler_animation.json';
+  static String lineAnimation = '$animation/line_animation.json';
+  static String intronimation = '$animation/intro.json';
 }

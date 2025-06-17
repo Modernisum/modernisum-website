@@ -20,8 +20,6 @@ class _ShaderMaskTextState extends State<ShaderMaskText1> {
           Color.fromRGBO(245, 179, 1, 1),
           Colors.brown,
         ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
       ).createShader(bounds),
       child: SelectableText(
         widget.text,
