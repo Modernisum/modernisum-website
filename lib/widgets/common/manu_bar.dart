@@ -12,27 +12,38 @@ class ManuBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 50,
-      children: [
-        SizedBox(
-          width: 50.h,
+    return Container(
+        margin: EdgeInsets.only(top: 60.h),
+        height: 100.h,
+        width: 600.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
+          gradient: const LinearGradient(colors: [
+            Color.fromRGBO(251, 252, 204, 0.8),
+            Color.fromRGBO(240, 248, 203, 0.8),
+          ]),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.blue, offset: Offset(0, -1.h), blurRadius: 5.r),
+            BoxShadow(
+                color: Colors.brown, offset: Offset(0, 1.h), blurRadius: 5.r),
+          ],
         ),
-        const TopLogo(text: 'Modernisum'),
-        const SizedBox(
-          width: 200,
-        ),
-        HoverAnimation(
-          text: 'Services',
-          options: ManuModel.serviceModel,
-          onPresess: () => navigator,
-        ),
-        HoverAnimation(
-          text: 'PortFolio',
-          options: ManuModel.portfolioModel,
-          onPresess: () => navigator,
-        ),
-      ],
-    );
+        child: Row(
+          spacing: 50.h,
+          children: [
+            const TopLogo(),
+            HoverAnimation(
+              text: 'Services',
+              options: ManuModel.serviceModel,
+              onPress: () => navigator,
+            ),
+            HoverAnimation(
+              text: 'PortFolio',
+              options: ManuModel.portfolioModel,
+              onPress: () => navigator,
+            ),
+          ],
+        ));
   }
 }

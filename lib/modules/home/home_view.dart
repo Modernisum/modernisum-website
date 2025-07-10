@@ -30,19 +30,9 @@ class HomeView extends GetView<HomeController> {
       backgroundColor: Colors.white70,
       floatingActionButton: Responsive.isDesktop(context)
           ? const ManuBar()
-          : const TopLogo(text: 'Modernisum'),
+          : const TopLogo(),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
-      // appBar: Responsive.isDesktop(context)
-      //     ? AppBar(
-      //         backgroundColor: WidgetStateColor.transparent,
-      //         scrolledUnderElevation: 60,
-      //         toolbarHeight: 30,
-      //         bottom: const PreferredSize(
-      //           preferredSize: Size.fromHeight(20),
-      //           child: ManuBar(),
-      //         ),
-      //       )
-      //     : null,
+ 
       body: SingleChildScrollView(
         controller: controller.scrollController,
         padding: EdgeInsets.all(40.h),
@@ -63,10 +53,7 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   Lottie.asset(AnimationPaths.circular,
                       height: context.height * 0.5, width: context.width * 0.5),
-                  // ShaderMaskText3(
-                  //     text: "your Business",
-                  //     textStyle:
-                  //         TextStyle(letterSpacing: 10.sp, fontSize: 50.sp)),
+               
                   Positioned(
                     top: Responsive.isDesktop(context) ? 120.h : 200.h,
                     child: ShaderMaskText2(
@@ -80,6 +67,9 @@ class HomeView extends GetView<HomeController> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 400.h,
             ),
 
             CommonContainer2(
@@ -110,7 +100,7 @@ class HomeView extends GetView<HomeController> {
                     if (!Responsive.isDesktop(context))
                       ExploreButton(
                           text: "Explore Portfolio",
-                          onPressed: () => Get.toNamed('/portfolio')),
+                          onPressed: () => Get.toNamed('/Portfolio')),
                   ],
                 )),
 

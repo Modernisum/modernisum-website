@@ -48,8 +48,8 @@ class TextButton1 extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: SelectableText(
-          text,
+        child: Text(
+          "SEND",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class ExploreButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 5.sp,
           children: [
-            SelectableText(
+            Text(
               text,
               style: TextStyle(
                 color: Colors.white,

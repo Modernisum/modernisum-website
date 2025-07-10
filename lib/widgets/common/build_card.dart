@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:modernisum/models/service_model.dart';
 import 'package:modernisum/widgets/constants/color.dart';
 import 'package:modernisum/widgets/constants/responsive.dart';
 import 'package:modernisum/modules/home/home_controller.dart';
@@ -80,34 +81,7 @@ class BuildServices extends GetView<HomeController> {
                           left: 0,
                           right: 0,
                           child: Stack(
-                            children: [
-                              Opacity(
-                                opacity: 0.6,
-                                child: Container(
-                                  height: 300.h,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    boxShadow: const [
-                                      BoxShadow(color: Colors.blueAccent)
-                                    ],
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(150.r),
-                                      topRight: Radius.circular(150.r),
-                                    ),
-                                    gradient: AppGradients.primary,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                  right: 100.h,
-                                  left: 100.h,
-                                  bottom: 200.h,
-                                  child: ElevatedButton(
-                                      onPressed: () => Get.toNamed('/services'),
-                                      child: SelectableText(service.title
-                                          //style: Colors.orange,
-                                          ))),
-                            ],
+                            children: Selected(service),
                           ),
                         ),
                       ],
@@ -195,7 +169,7 @@ class BuildServices extends GetView<HomeController> {
                                   bottom: 200.h,
                                   child: ElevatedButton(
                                       onPressed: () => Get.toNamed('/services'),
-                                      child: SelectableText(service.title
+                                      child: Text(service.title
                                           //style: Colors.orange,
                                           ))),
                             ],
@@ -208,6 +182,35 @@ class BuildServices extends GetView<HomeController> {
               },
             ),
     );
+  }
+
+  List<Widget> Selected(ServiceItem service) {
+    return [
+      Opacity(
+        opacity: 0.6,
+        child: Container(
+          height: 300.h,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: const [BoxShadow(color: Colors.blueAccent)],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(150.r),
+              topRight: Radius.circular(150.r),
+            ),
+            gradient: AppGradients.primary,
+          ),
+        ),
+      ),
+      Positioned(
+          right: 100.h,
+          left: 100.h,
+          bottom: 200.h,
+          child: ElevatedButton(
+              onPressed: () => Get.toNamed('/services'),
+              child: Text(service.title
+                  //style: Colors.orange,
+                  ))),
+    ];
   }
 }
 
@@ -310,7 +313,7 @@ class BuildPortfolio extends GetView<HomeController> {
                                   child: ElevatedButton(
                                       onPressed: () =>
                                           Get.toNamed('/portfolio'),
-                                      child: SelectableText(Portfolio.title
+                                      child: Text(Portfolio.title
                                           //style: Colors.orange,
                                           ))),
                             ],
@@ -402,7 +405,7 @@ class BuildPortfolio extends GetView<HomeController> {
                                   child: ElevatedButton(
                                       onPressed: () =>
                                           Get.toNamed('/portfolio'),
-                                      child: SelectableText(Portfolio.title
+                                      child: Text(Portfolio.title
                                           //style: Colors.orange,
                                           ))),
                             ],
@@ -517,7 +520,7 @@ class BuildBlog extends GetView<HomeController> {
                                 bottom: 200.h,
                                 child: ElevatedButton(
                                   onPressed: () => Get.toNamed('/blog'),
-                                  child: SelectableText(blog.title
+                                  child: Text(blog.title
                                       //style: Colors.orange,
                                       ),
                                 ),
@@ -611,7 +614,7 @@ class BuildBlog extends GetView<HomeController> {
                                 bottom: 200.h,
                                 child: ElevatedButton(
                                   onPressed: () => Get.toNamed('/blog'),
-                                  child: SelectableText(blog.title
+                                  child: Text(blog.title
                                       //style: Colors.orange,
                                       ),
                                 ),

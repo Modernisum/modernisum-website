@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modernisum/widgets/constants/responsive.dart';
-import 'package:modernisum/widgets/constants/assets.dart';
 
 class TextBox1 extends StatelessWidget {
   final String text;
@@ -36,15 +35,6 @@ class TextBox1 extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            if (!Responsive.isDesktop(context))
-              Positioned(
-                bottom: 90.h,
-                child: Image.asset(
-                  ImagePaths.baner,
-                  fit: BoxFit.fill,
-                  height: 200.h,
-                ),
-              ),
             if (Responsive.isDesktop(context))
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
