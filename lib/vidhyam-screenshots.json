@@ -1,0 +1,72 @@
+[
+  {
+    "id": "dashboard",
+    "title": "Executive Cockpit & School Dashboard",
+    "category": "Executive Overview",
+    "caption": "Real-time administrative telemetry: daily attendance metrics, fee collection summaries, active bus tracking alerts, and quick actions.",
+    "url": "https://lh3.googleusercontent.com/d/1yhZbZalbypbFJ8WCqyaLNi3wX4g0VMMl",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1yhZbZalbypbFJ8WCqyaLNi3wX4g0VMMl&sz=w1200",
+    "fileId": "1yhZbZalbypbFJ8WCqyaLNi3wX4g0VMMl",
+    "isMain": true
+  },
+  {
+    "id": "attendance",
+    "title": "Automated RFID & Face AI Attendance Console",
+    "category": "Attendance & Security",
+    "caption": "Sub-second contactless campus entry logging with instant parent WhatsApp notifications and leave quota tracking.",
+    "url": "https://lh3.googleusercontent.com/d/1Mq_K-wM8ecoGYfOXAn2U34LlW2DCSlXf",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1Mq_K-wM8ecoGYfOXAn2U34LlW2DCSlXf&sz=w1200",
+    "fileId": "1Mq_K-wM8ecoGYfOXAn2U34LlW2DCSlXf",
+    "isMain": false
+  },
+  {
+    "id": "timetable",
+    "title": "Conflict-Free Timetable & Teacher Substitution Engine",
+    "category": "Academic Scheduling",
+    "caption": "Intelligent timetable matrix with drag-and-drop slot reordering and automated teacher substitution resolving.",
+    "url": "https://lh3.googleusercontent.com/d/1klhVZQF3Sl0OI7eE5fHK8-ytjiK5XeM2",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1klhVZQF3Sl0OI7eE5fHK8-ytjiK5XeM2&sz=w1200",
+    "fileId": "1klhVZQF3Sl0OI7eE5fHK8-ytjiK5XeM2",
+    "isMain": false
+  },
+  {
+    "id": "call_center",
+    "title": "Autonomous Voice Campaign & Parent Call Center",
+    "category": "Communication & CRM",
+    "caption": "Integrated outbound calling engine for batch attendance alerts, fee recovery reminders, and automated DTMF feedback collection.",
+    "url": "https://lh3.googleusercontent.com/d/1zolpd19pwgMUkrbOyqvxRCRkO8NVkaGA",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1zolpd19pwgMUkrbOyqvxRCRkO8NVkaGA&sz=w1200",
+    "fileId": "1zolpd19pwgMUkrbOyqvxRCRkO8NVkaGA",
+    "isMain": false
+  },
+  {
+    "id": "assistant",
+    "title": "Integrated AI Administrative Copilot",
+    "category": "Cognitive AI",
+    "caption": "Context-aware conversational assistant delivering instant student dossiers, marksheet analytics, and board policy answers.",
+    "url": "https://lh3.googleusercontent.com/d/11-stkPD2IHBY5rQwCQW9Z7wbLXhXRnLC",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=11-stkPD2IHBY5rQwCQW9Z7wbLXhXRnLC&sz=w1200",
+    "fileId": "11-stkPD2IHBY5rQwCQW9Z7wbLXhXRnLC",
+    "isMain": false
+  },
+  {
+    "id": "admissions",
+    "title": "In-Place Multi-Step Student Admission Suite",
+    "category": "Student Onboarding",
+    "caption": "Paperless admission workflow with instant certificate OCR, fee schedule assignment, and bus route mapping.",
+    "url": "https://lh3.googleusercontent.com/d/1zHW-V9GfAuSltlqUSVJvs696Y1-QGR4K",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1zHW-V9GfAuSltlqUSVJvs696Y1-QGR4K&sz=w1200",
+    "fileId": "1zHW-V9GfAuSltlqUSVJvs696Y1-QGR4K",
+    "isMain": false
+  },
+  {
+    "id": "roster",
+    "title": "Centralized Student Information & Dossier Directory",
+    "category": "Records & Dossiers",
+    "caption": "Comprehensive student records with multi-attribute filtering, emergency contact cards, and complete academic audit trails.",
+    "url": "https://lh3.googleusercontent.com/d/1UiW8Ecr9IKOUwaOeJQJU58iFqD0v1-W6",
+    "thumbnailUrl": "https://drive.google.com/thumbnail?id=1UiW8Ecr9IKOUwaOeJQJU58iFqD0v1-W6&sz=w1200",
+    "fileId": "1UiW8Ecr9IKOUwaOeJQJU58iFqD0v1-W6",
+    "isMain": false
+  }
+]
