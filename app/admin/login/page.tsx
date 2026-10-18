@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ModernisumLogo } from "@/components/ui/BrandLogos";
 import { useRouter } from "next/navigation";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { LiquidGlassCard } from "@/components/ui/LiquidGlassCard";
@@ -135,14 +136,15 @@ export default function AdminLoginPage() {
         >
           {/* Header */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-purple-600/20 border border-cyan-400/40 flex items-center justify-center p-2.5 shadow-[0_0_30px_rgba(0,242,254,0.35)]">
-              <Image
-                src="/logo.png"
-                alt="Modernisum"
-                width={40}
-                height={40}
-                className="object-contain"
-              />
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-12 h-12 flex items-center justify-center shrink-0">
+                <ModernisumLogo className="w-full h-full drop-shadow-[0_0_16px_rgba(241,176,27,0.55)]" />
+              </div>
+              <div>
+                <span className="text-2xl sm:text-3xl font-bold font-tech tracking-wider text-white block leading-tight">
+                  MODERNISUM
+                </span>
+              </div>
             </div>
 
             <div>

@@ -1,8 +1,3 @@
-import { connectToDatabase } from "@/lib/db";
-import { Service, IService } from "@/lib/models/Service";
-import { Project, IProject } from "@/lib/models/Project";
-import { BlogPost, IBlogPost } from "@/lib/models/BlogPost";
-import { SiteSettings } from "@/lib/models/SiteSettings";
 import {
   SEED_SERVICES,
   SEED_PROJECTS,
@@ -12,40 +7,12 @@ import {
   SeedProject,
   SeedBlogPost,
 } from "@/lib/seed-data";
+import { fetchPublishedBlogs, fetchBlogBySlug as fetchFirestoreBlogBySlug } from "@/lib/firestore/blogs";
 
 /**
- * Resilient Services Loader with Zero-Downtime Fallback
+ * Resilient Services Loader
  */
 export async function getServices(): Promise<SeedService[]> {
-  try {
-    const conn = await connectToDatabase();
-    if (conn) {
-      const raw = await Service.find({}).sort({ order: 1 }).lean();
-      if (raw && raw.length > 0) {
-        const dbServices = JSON.parse(JSON.stringify(raw));
-        return dbServices.map((s: any) => ({
-          title: String(s.title || ""),
-          slug: String(s.slug || ""),
-          category: s.category as SeedService["category"],
-          shortDescription: String(s.shortDescription || ""),
-          description: String(s.description || ""),
-          iconName: String(s.iconName || "Sparkles"),
-          features: Array.isArray(s.features) ? s.features.map(String) : [],
-          faqs: Array.isArray(s.faqs)
-            ? s.faqs.map((f: any) => ({
-                question: String(f.question || ""),
-                answer: String(f.answer || ""),
-              }))
-            : [],
-          highlightBadge: s.highlightBadge ? String(s.highlightBadge) : undefined,
-          isPopular: Boolean(s.isPopular),
-          order: Number(s.order || 0),
-        }));
-      }
-    }
-  } catch (err) {
-    console.warn("⚠️ Error querying MongoDB services, falling back to seed data:", err);
-  }
   return SEED_SERVICES;
 }
 
@@ -55,48 +22,9 @@ export async function getServiceBySlug(slug: string): Promise<SeedService | null
 }
 
 /**
- * Resilient Projects Loader with Zero-Downtime Fallback
+ * Resilient Projects Loader
  */
 export async function getProjects(): Promise<SeedProject[]> {
-  try {
-    const conn = await connectToDatabase();
-    if (conn) {
-      const raw = await Project.find({}).sort({ order: 1 }).lean();
-      if (raw && raw.length > 0) {
-        const dbProjects = JSON.parse(JSON.stringify(raw));
-        return dbProjects.map((p: any) => ({
-          id: String(p._id || ""),
-          title: String(p.title || ""),
-          slug: String(p.slug || ""),
-          client: String(p.client || "Enterprise Client"),
-          category: String(p.category || ""),
-          description: String(p.description || ""),
-          imageUrl: String(p.imageUrl || "/logo.png"),
-          screenshots: Array.isArray(p.screenshots)
-            ? p.screenshots.map((s: any) => ({
-                title: String(s.title || ""),
-                category: s.category ? String(s.category) : undefined,
-                caption: s.caption ? String(s.caption) : undefined,
-                url: String(s.url || ""),
-                thumbnailUrl: s.thumbnailUrl ? String(s.thumbnailUrl) : undefined,
-              }))
-            : [],
-          tags: Array.isArray(p.tags) ? p.tags.map(String) : [],
-          metrics: Array.isArray(p.metrics)
-            ? p.metrics.map((m: any) => ({
-                label: String(m.label || ""),
-                value: String(m.value || ""),
-              }))
-            : [],
-          websiteUrl: p.websiteUrl ? String(p.websiteUrl) : undefined,
-          isFeatured: Boolean(p.isFeatured),
-          order: Number(p.order || 0),
-        }));
-      }
-    }
-  } catch (err) {
-    console.warn("⚠️ Error querying MongoDB projects, falling back to seed data:", err);
-  }
   return SEED_PROJECTS;
 }
 
@@ -106,96 +34,125 @@ export async function getProjectBySlug(slug: string): Promise<SeedProject | null
 }
 
 /**
- * Resilient Blog Posts Loader with Zero-Downtime Fallback
+ * Resilient Blog Posts Loader with Firestore & Seed Data Fallback
  */
 export async function getBlogPosts(): Promise<SeedBlogPost[]> {
   try {
-    const conn = await connectToDatabase();
-    if (conn) {
-      const raw = await BlogPost.find({ published: true }).sort({ publishedAt: -1 }).lean();
-      if (raw && raw.length > 0) {
-        const dbPosts = JSON.parse(JSON.stringify(raw));
-        return dbPosts.map((b: any) => ({
-          id: String(b._id || ""),
-          title: String(b.title || ""),
-          slug: String(b.slug || ""),
-          excerpt: String(b.excerpt || ""),
-          content: String(b.content || ""),
-          category: String(b.category || "AI & Tech"),
-          author: {
-            name: String(b.author?.name || "Modernisum Team"),
-            role: String(b.author?.role || "Software Architect"),
-            avatar: String(b.author?.avatar || "/logo.png"),
-          },
-          tags: Array.isArray(b.tags) ? b.tags.map(String) : [],
-          coverImage:
-            String(b.coverImage || "").includes("firebasestorage.googleapis.com") || !b.coverImage || b.coverImage === "/logo.png"
-              ? b.slug === "ai-saas-school-erp-transformation"
-                ? "/images/blog/ai-saas-school-erp.jpg"
-                : b.slug === "liquid-glass-design-enterprise-software"
-                ? "/images/blog/liquid-glass-ui.jpg"
-                : "/logo.png"
-              : String(b.coverImage),
-          readTime: String(b.readTime || "5 min read"),
-          publishedAt: b.publishedAt ? new Date(b.publishedAt).toISOString().split("T")[0] : "2026-03-01",
-          seo: {
-            metaTitle: String(b.seo?.metaTitle || b.title || ""),
-            metaDescription: String(b.seo?.metaDescription || b.excerpt || ""),
-            keywords: Array.isArray(b.seo?.keywords)
-              ? b.seo.keywords.map(String)
-              : Array.isArray(b.tags)
-              ? b.tags.map(String)
-              : [],
-          },
-        }));
-      }
+    // 1. Direct Firebase Firestore Query (Free Spark Tier, Zero Server)
+    const firestoreBlogs = await fetchPublishedBlogs();
+    if (firestoreBlogs && firestoreBlogs.length > 0) {
+      const mapped = firestoreBlogs.map((b) => ({
+        id: b.id || b.slug,
+        title: b.title,
+        slug: b.slug,
+        excerpt: b.excerpt,
+        content: b.content,
+        category: b.category as any,
+        author: {
+          name: b.author?.name || "Modernisum Team",
+          role: b.author?.role || "Software Architect",
+          avatar: b.author?.avatar || "/logo.png",
+        },
+        tags: b.tags || [],
+        coverImage: b.coverImage || "/images/blog/ai-saas-school-erp.jpg",
+        readTime: b.readTime || "5 min read",
+        publishedAt: b.publishedAt
+          ? typeof b.publishedAt === "string"
+            ? b.publishedAt
+            : b.publishedAt?.toDate
+            ? b.publishedAt.toDate().toISOString()
+            : new Date().toISOString()
+          : "2026-03-01T10:00:00",
+        seo: {
+          metaTitle: b.seo?.metaTitle || b.title,
+          metaDescription: b.seo?.metaDescription || b.excerpt,
+          keywords: b.seo?.keywords || b.tags || [],
+        },
+      }));
+
+      const firestoreSlugs = new Set(mapped.map((b) => b.slug.toLowerCase()));
+      const missingFromFirestore = SEED_BLOG_POSTS.filter(
+        (s) => !firestoreSlugs.has(s.slug.toLowerCase())
+      );
+      return [...missingFromFirestore, ...mapped];
     }
-  } catch (err) {
-    console.warn("⚠️ Error querying MongoDB blog posts, falling back to seed data:", err);
+  } catch (firestoreErr) {
+    console.warn("⚠️ Firestore blogs query fallback to seed data:", firestoreErr);
   }
+
   return SEED_BLOG_POSTS;
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<SeedBlogPost | null> {
+  try {
+    const firestoreBlog = await fetchFirestoreBlogBySlug(slug);
+    if (firestoreBlog) {
+      return {
+        id: firestoreBlog.id || firestoreBlog.slug,
+        title: firestoreBlog.title,
+        slug: firestoreBlog.slug,
+        excerpt: firestoreBlog.excerpt,
+        content: firestoreBlog.content,
+        category: firestoreBlog.category as any,
+        author: {
+          name: firestoreBlog.author?.name || "Modernisum Team",
+          role: firestoreBlog.author?.role || "Software Architect",
+          avatar: firestoreBlog.author?.avatar || "/logo.png",
+        },
+        tags: firestoreBlog.tags || [],
+        coverImage: firestoreBlog.coverImage || "/images/blog/ai-saas-school-erp.jpg",
+        readTime: firestoreBlog.readTime || "5 min read",
+        publishedAt: firestoreBlog.publishedAt
+          ? typeof firestoreBlog.publishedAt === "string"
+            ? firestoreBlog.publishedAt
+            : firestoreBlog.publishedAt?.toDate
+            ? firestoreBlog.publishedAt.toDate().toISOString()
+            : new Date().toISOString()
+          : "2026-03-01T10:00:00",
+        seo: {
+          metaTitle: firestoreBlog.seo?.metaTitle || firestoreBlog.title,
+          metaDescription: firestoreBlog.seo?.metaDescription || firestoreBlog.excerpt,
+          keywords: firestoreBlog.seo?.keywords || firestoreBlog.tags || [],
+        },
+      };
+    }
+  } catch (err) {
+    console.warn("⚠️ Firestore single blog query fallback:", err);
+  }
+
   const posts = await getBlogPosts();
   return posts.find((p) => p.slug.toLowerCase() === slug.toLowerCase()) || null;
 }
 
 /**
- * Resilient Site Settings Loader
+ * Resilient Site Settings Loader (Fetched from Firebase Firestore with Seed Fallback)
  */
 export async function getSiteSettings() {
   try {
-    const conn = await connectToDatabase();
-    if (conn) {
-      const raw = await SiteSettings.findOne({}).lean();
-      if (raw) {
-        const dbSettings = JSON.parse(JSON.stringify(raw));
-        return {
-          companyName: String(dbSettings.companyName || "Modernisum"),
-          tagline: String(dbSettings.tagline || ""),
-          phone: String(dbSettings.phone || "+91 9368671007"),
-          email: String(dbSettings.email || "contact@modernisum.com"),
-          address: String(dbSettings.address || ""),
-          workingHours: String(dbSettings.workingHours || ""),
-          funFacts: {
-            projectsCompleted: Number(dbSettings.funFacts?.projectsCompleted || 128),
-            satisfiedClients: Number(dbSettings.funFacts?.satisfiedClients || 85),
-            itSpecialists: Number(dbSettings.funFacts?.itSpecialists || 24),
-            smartSolutions: Number(dbSettings.funFacts?.smartSolutions || 42),
-            systemUptime: String(dbSettings.funFacts?.systemUptime || "99.98%"),
-          },
-          socialLinks: {
-            facebook: String(dbSettings.socialLinks?.facebook || ""),
-            twitter: String(dbSettings.socialLinks?.twitter || ""),
-            linkedin: String(dbSettings.socialLinks?.linkedin || ""),
-            github: String(dbSettings.socialLinks?.github || ""),
-          },
-        };
-      }
-    }
+    const { fetchTelemetryStats } = await import("@/lib/firestore/telemetry");
+    const funFacts = await fetchTelemetryStats();
+    return {
+      ...SEED_SITE_SETTINGS,
+      funFacts,
+    };
   } catch (err) {
-    console.warn("⚠️ Error querying MongoDB site settings, falling back to seed data:", err);
+    console.warn("Could not fetch telemetry stats from Firestore:", err);
   }
   return SEED_SITE_SETTINGS;
 }
+
+/**
+ * Resilient Featured Community Reviews Loader for Home Page
+ */
+export async function getFeaturedCommunityReviews() {
+  try {
+    const { fetchFeaturedCommunityEntries } = await import("@/lib/firestore/community");
+    const reviews = await fetchFeaturedCommunityEntries();
+    if (reviews && reviews.length > 0) return reviews;
+  } catch (err) {
+    console.warn("Could not fetch featured community reviews from Firestore:", err);
+  }
+  const { SEED_COMMUNITY_ENTRIES } = await import("@/lib/firestore/community");
+  return SEED_COMMUNITY_ENTRIES.filter((e) => e.featuredOnHome);
+}
+

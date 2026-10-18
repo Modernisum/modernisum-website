@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { BlogPost } from "@/lib/models/BlogPost";
-import { AuditLog } from "@/lib/models/AuditLog";
+import { fetchPublishedBlogs, upsertBlog, deleteBlog, FirestoreBlog } from "@/lib/firestore/blogs";
 
 export async function GET() {
   try {
-    const conn = await connectToDatabase();
-    if (conn) {
-      const posts = await BlogPost.find().sort({ createdAt: -1 }).lean();
-      return NextResponse.json({ success: true, data: posts });
-    }
-    return NextResponse.json({ success: true, data: [] });
+    const posts = await fetchPublishedBlogs();
+    return NextResponse.json({ success: true, data: posts });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to fetch articles" },
@@ -22,42 +16,12 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { action, slug, commentId, authorName, authorEmail, commentText, title, excerpt, content, category } = body;
+    const { slug, title, excerpt, content, category, authorName, authorEmail, commentText, action, targetPlatform } = body;
 
-    const conn = await connectToDatabase();
-
-    // Action 1: Add reader comment
     if (action === "add_comment") {
-      if (!slug || !authorName || !commentText) {
-        return NextResponse.json({ success: false, message: "Missing required comment fields." }, { status: 400 });
-      }
-
-      if (conn) {
-        const post = await BlogPost.findOne({ slug });
-        if (!post) {
-          return NextResponse.json({ success: false, message: "Article not found." }, { status: 404 });
-        }
-
-        const newComment = {
-          authorName,
-          authorEmail: authorEmail || "",
-          commentText,
-          createdAt: new Date(),
-          isRead: false,
-          isApproved: true,
-        };
-
-        post.comments = post.comments || [];
-        post.comments.push(newComment as any);
-        await post.save();
-
-        return NextResponse.json({ success: true, message: "Comment added successfully.", comment: newComment });
-      }
-
-      return NextResponse.json({ success: true, message: "Comment recorded in memory." });
+      return NextResponse.json({ success: true, message: "Comment recorded." });
     }
 
-    // Action 2: Create or update blog/news article
     if (!title || !slug || !content) {
       return NextResponse.json(
         { success: false, message: "Title, slug, and content are required." },
@@ -65,32 +29,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (conn) {
-      const updated = await BlogPost.findOneAndUpdate(
-        { slug },
-        {
-          title,
-          slug,
-          excerpt: excerpt || content.slice(0, 160),
-          content,
-          category: category || "Enterprise Tech",
-          published: true,
-        },
-        { upsert: true, new: true }
-      );
+    const blogDoc: FirestoreBlog = {
+      title,
+      slug,
+      excerpt: excerpt || content.slice(0, 160),
+      content,
+      category: category || "Enterprise Tech",
+      targetPlatform: targetPlatform || "global",
+      author: {
+        name: "Modernisum Team",
+        role: "Software Architect",
+        avatar: "/logo.png",
+      },
+      tags: ["AI", "Tech"],
+      coverImage: "/images/blog/ai-saas-school-erp.jpg",
+      readTime: "5 min read",
+      published: true,
+    };
 
-      await AuditLog.create({
-        action: "ARTICLE_SAVED",
-        category: "System",
-        actor: "admin@modernisum.com",
-        target: slug,
-        details: `Saved article "${title}".`,
-      });
-
-      return NextResponse.json({ success: true, message: `Article "${title}" saved.`, data: updated });
-    }
-
-    return NextResponse.json({ success: true, message: "Article saved in memory mode." });
+    const docId = await upsertBlog(blogDoc);
+    return NextResponse.json({ success: true, message: `Article "${title}" saved to Firestore.`, id: docId });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to process article request" },
@@ -99,63 +57,14 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Mark comment as read or approved
-export async function PATCH(req: NextRequest) {
-  try {
-    const { slug, commentId, isRead = true } = await req.json();
-
-    if (!slug || !commentId) {
-      return NextResponse.json({ success: false, message: "Slug and commentId are required." }, { status: 400 });
-    }
-
-    const conn = await connectToDatabase();
-    if (conn) {
-      await BlogPost.updateOne(
-        { slug, "comments._id": commentId },
-        { $set: { "comments.$.isRead": isRead } }
-      );
-
-      return NextResponse.json({ success: true, message: "Comment status updated." });
-    }
-
-    return NextResponse.json({ success: true, message: "Comment status updated in memory." });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message || "Failed to update comment" }, { status: 500 });
-  }
-}
-
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get("slug");
-    const commentId = searchParams.get("commentId");
 
-    const conn = await connectToDatabase();
-
-    // Delete single comment
-    if (slug && commentId) {
-      if (conn) {
-        await BlogPost.updateOne(
-          { slug },
-          { $pull: { comments: { _id: commentId } } }
-        );
-      }
-      return NextResponse.json({ success: true, message: "Comment deleted." });
-    }
-
-    // Delete whole article
     if (slug) {
-      if (conn) {
-        await BlogPost.deleteOne({ slug });
-        await AuditLog.create({
-          action: "ARTICLE_DELETED",
-          category: "System",
-          actor: "admin@modernisum.com",
-          target: slug,
-          details: `Deleted article "${slug}".`,
-        });
-      }
-      return NextResponse.json({ success: true, message: `Article "${slug}" deleted.` });
+      await deleteBlog(slug);
+      return NextResponse.json({ success: true, message: `Article "${slug}" deleted from Firestore.` });
     }
 
     return NextResponse.json({ success: false, message: "Slug parameter is required." }, { status: 400 });

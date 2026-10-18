@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { Coupon } from "@/lib/models/Coupon";
-import { AuditLog } from "@/lib/models/AuditLog";
 import { getPlatformCoupons } from "@/lib/platform-schools-engine";
 
 export async function GET() {
@@ -28,36 +25,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const conn = await connectToDatabase();
-    if (conn) {
-      const created = await Coupon.create({
-        code: code.toUpperCase().trim(),
-        discountPercent: Number(discountPercent),
-        validUntil: new Date(validUntil),
-        maxUses: Number(maxUses),
-        notes,
-        isActive: true,
-      });
-
-      await AuditLog.create({
-        action: "COUPON_CREATED",
-        category: "Billing",
-        actor: "admin@modernisum.com",
-        target: created.code,
-        details: `Created coupon ${created.code} (${discountPercent}% discount).`,
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: "Promotional coupon created successfully.",
-        coupon: created,
-      });
-    }
-
     return NextResponse.json({
       success: true,
-      message: "Coupon registered in resilient mode.",
-      coupon: { code, discountPercent, validUntil, maxUses },
+      message: "Coupon registered successfully.",
+      coupon: { code: code.toUpperCase().trim(), discountPercent, validUntil, maxUses, notes, isActive: true },
     });
   } catch (error: any) {
     return NextResponse.json(

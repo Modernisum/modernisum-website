@@ -1,0 +1,217 @@
+{
+  "hosting": {
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.exe",
+      "**/*.apk",
+      "**/downloads/raw/**"
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
+      {
+        "source": "/modern-school",
+        "destination": "/mod-school",
+        "type": 301
+      },
+      {
+        "source": "/modern-school/**",
+        "destination": "/mod-school",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam",
+        "destination": "/mod-school",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/features",
+        "destination": "/mod-school/features",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/pricing",
+        "destination": "/mod-school/pricing",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/download",
+        "destination": "/mod-school/download",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/docs",
+        "destination": "/mod-school/docs",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/releases",
+        "destination": "/mod-school/releases",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/register",
+        "destination": "/mod-school/register",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/community",
+        "destination": "/mod-school/community",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/support",
+        "destination": "/mod-school/support",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/privacy",
+        "destination": "/mod-school/privacy",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/terms",
+        "destination": "/mod-school/terms",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/about",
+        "destination": "/mod-school/about",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/contact",
+        "destination": "/mod-school/contact",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/apps/:app*",
+        "destination": "/mod-school/apps/:app*",
+        "type": 301
+      },
+      {
+        "source": "/vidhyam/**",
+        "destination": "/mod-school",
+        "type": 301
+      },
+      {
+        "source": "/agronomi",
+        "destination": "/mod-farmer",
+        "type": 301
+      },
+      {
+        "source": "/agronomi/**",
+        "destination": "/mod-farmer",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/school",
+        "destination": "/mod-school.html"
+      },
+      {
+        "source": "/school/**",
+        "destination": "/mod-school/**"
+      },
+      {
+        "source": "/agromi",
+        "destination": "/mod-farmer.html"
+      },
+      {
+        "source": "/agromi/**",
+        "destination": "/mod-farmer/**"
+      },
+      {
+        "source": "/farmer",
+        "destination": "/mod-farmer.html"
+      },
+      {
+        "source": "/farmer/**",
+        "destination": "/mod-farmer/**"
+      },
+      {
+        "source": "/agro",
+        "destination": "/mod-farmer.html"
+      },
+      {
+        "source": "/agro/**",
+        "destination": "/mod-farmer/**"
+      },
+      {
+        "source": "/features",
+        "destination": "/mod-school/features.html"
+      },
+      {
+        "source": "/pricing",
+        "destination": "/mod-school/pricing.html"
+      },
+      {
+        "source": "/download",
+        "destination": "/mod-school/download.html"
+      },
+      {
+        "source": "/docs",
+        "destination": "/mod-school/docs.html"
+      },
+      {
+        "source": "/releases",
+        "destination": "/mod-school/releases.html"
+      },
+      {
+        "source": "/register",
+        "destination": "/mod-school/register.html"
+      },
+      {
+        "source": "/subscription",
+        "destination": "/mod-school/subscription.html"
+      },
+      {
+        "source": "/support",
+        "destination": "/mod-school/support.html"
+      },
+      {
+        "source": "/apps/desktop",
+        "destination": "/mod-school/apps/desktop.html"
+      },
+      {
+        "source": "/apps/employee",
+        "destination": "/mod-school/apps/employee.html"
+      },
+      {
+        "source": "/apps/student",
+        "destination": "/mod-school/apps/student.html"
+      },
+      {
+        "source": "/apps/extension",
+        "destination": "/mod-school/apps/extension.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/_next/static/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=86400"
+          }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

@@ -46,11 +46,40 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // 3. Fetch native desktop OS screenshots from public/images/desktop
+    const desktopDir = path.join(process.cwd(), "public", "images", "desktop");
+    const desktopFiles: any[] = [];
+    if (fs.existsSync(desktopDir)) {
+      const files = fs.readdirSync(desktopDir);
+      for (const file of files) {
+        try {
+          const stats = fs.statSync(path.join(desktopDir, file));
+          const ext = path.extname(file).toLowerCase();
+          const isImg = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"].includes(ext);
+
+          desktopFiles.push({
+            id: `desktop_${file}`,
+            name: `Desktop OS: ${file}`,
+            mimeType: isImg ? `image/${ext.replace(".", "")}` : "application/octet-stream",
+            createdTime: stats.mtime.toISOString(),
+            size: stats.size,
+            publicUrl: `/images/desktop/${file}`,
+            thumbnailUrl: `/images/desktop/${file}`,
+            webViewLink: `/images/desktop/${file}`,
+            storageProvider: "desktop-os",
+          });
+        } catch {
+          // ignore corrupted temp file
+        }
+      }
+    }
+
     // Sort local files newest first
     localFiles.sort((a, b) => new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime());
+    desktopFiles.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Combine local and Google Drive files
-    const combined = [...localFiles, ...gdriveFiles];
+    // Combine desktop, local and Google Drive files
+    const combined = [...desktopFiles, ...localFiles, ...gdriveFiles];
 
     return NextResponse.json({
       success: true,
@@ -76,6 +105,11 @@ export async function DELETE(req: NextRequest) {
         { success: false, message: "File ID required" },
         { status: 400 }
       );
+    }
+
+    // Check if it's a native desktop OS asset (protected)
+    if (fileId.startsWith("desktop_")) {
+      return NextResponse.json({ success: false, message: "System native desktop screenshots are immutable and protected." }, { status: 403 });
     }
 
     // Check if it's a local file

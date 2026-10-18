@@ -34,8 +34,8 @@ export function getGoogleDriveClient() {
   try {
     let credentials: any;
 
-    if (fs.existsSync(SERVICE_ACCOUNT_PATH)) {
-      const fileContent = fs.readFileSync(SERVICE_ACCOUNT_PATH, "utf-8");
+    if (fs.existsSync(/*turbopackIgnore: true*/ SERVICE_ACCOUNT_PATH)) {
+      const fileContent = fs.readFileSync(/*turbopackIgnore: true*/ SERVICE_ACCOUNT_PATH, "utf-8");
       credentials = JSON.parse(fileContent);
     } else {
       console.warn(

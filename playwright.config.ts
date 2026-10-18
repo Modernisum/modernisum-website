@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
@@ -13,7 +13,7 @@ export default defineConfig({
     headless: true,
   },
   webServer: {
-    command: "npx.cmd next dev -p 3005",
+    command: "npm.cmd run dev",
     url: "http://localhost:3005",
     reuseExistingServer: true,
     timeout: 120 * 1000,

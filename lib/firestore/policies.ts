@@ -1,0 +1,1238 @@
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  serverTimestamp,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+export interface PolicyHighlight {
+  iconName?: string;
+  title: string;
+  description: string;
+  badge?: string;
+}
+
+export interface PolicyAlert {
+  type: "info" | "warning" | "success" | "critical";
+  title: string;
+  items: string[];
+}
+
+export interface PolicyTable {
+  headers: string[];
+  rows: string[][];
+}
+
+export interface PolicySignoffBlock {
+  licensor: {
+    entity: string;
+    msme: string;
+    authorizedBy: string;
+    address: string;
+    webMail: string;
+  };
+  licensee: {
+    institutionPrompt: string;
+    signatoryPrompt: string;
+    schoolIdPrompt: string;
+    acceptanceMode: string;
+  };
+}
+
+export interface PolicyPdfAttachment {
+  url: string;
+  fileName: string;
+  fileSize: string;
+  sealText: string;
+  description: string;
+  gdriveUrl?: string; // High-speed Google Drive direct view/download link
+}
+
+export interface PolicySectionItem {
+  id: string; // anchor slug e.g. "legal-entity", "license-grant", "zero-storage"
+  number?: string | number;
+  title: string;
+  tag?: string; // e.g. "Core Invariant", "DPDP Act 2023", "Recently Added"
+  isRecentlyAdded?: boolean;
+  lastAddedOrUpdated?: string; // e.g. "Added in Q1 2026", "Updated 17 Oct 2026"
+  description?: string;
+  content: string[];
+  highlights?: PolicyHighlight[];
+  bullets?: string[];
+  alert?: PolicyAlert;
+  table?: PolicyTable;
+  codeSnippet?: string;
+  signoffBlock?: PolicySignoffBlock;
+}
+
+export interface FirestorePolicyDoc {
+  id: string; // e.g. "terms", "subscription", "privacy", "dpdp", "licensing"
+  slug: string;
+  title: string;
+  shortTitle: string;
+  category: "Master Agreements" | "Privacy & Sovereignty" | "Compliance & Standards" | "Operations & Billing";
+  variant?: "all" | "modernisum" | "vidhyam";
+  order: number;
+  badge?: string;
+  effectiveDate: string;
+  lastUpdated: string;
+  summaryTitle: string;
+  summarySubtitle: string;
+  summaryDescription: string;
+  changelogNotice?: string; // Shows what was added/updated
+  pdfAttachment?: PolicyPdfAttachment;
+  pdfAttachments?: PolicyPdfAttachment[];
+  preamble?: {
+    title: string;
+    text: string;
+  };
+  sections: PolicySectionItem[];
+  createdAt?: any;
+  updatedAt?: any;
+}
+
+export const POLICY_CATEGORIES = [
+  "Master Agreements",
+  "Privacy & Sovereignty",
+  "Compliance & Standards",
+  "Operations & Billing",
+] as const;
+
+export type PolicyCategoryType = (typeof POLICY_CATEGORIES)[number];
+
+const COLLECTION_NAME = "policies";
+const AUDIT_COLLECTION = "policy_audit_logs";
+
+/**
+ * Master Seed Data:
+ * Structured categorized policies, headlines, and sections representing Modernisum's
+ * complete legal framework, DPDP Act 2023, local-first zero-central-storage invariant,
+ * Google API Limited Use, SLA, and software licensing.
+ */
+export const DEFAULT_POLICIES_SEED: FirestorePolicyDoc[] = [
+  // 1. MASTER SOFTWARE LICENSE, DATA PRIVACY & BILLING POLICY (OFFICIAL EXECUTED AGREEMENT)
+  {
+    id: "terms",
+    slug: "terms",
+    title: "Master Software License, Data Privacy & Billing Policy",
+    shortTitle: "Terms of Service",
+    category: "Master Agreements",
+    variant: "all",
+    order: 1,
+    badge: "UDYAM-UP-56-0049848",
+    effectiveDate: "Academic & Fiscal Year 2026–2027",
+    lastUpdated: "17 October 2026",
+    summaryTitle: "Official Master Software License & Data Sovereignty Agreement",
+    summarySubtitle: "Zero Cloud Hoarding • Zero-Knowledge Rust/Cloudflare Tunnel • Pure Pay-as-a-Service",
+    summaryDescription:
+      "Modernisum Technologies (derived from 'Modern' [Adhunik] + 'Isum' [Unique]) builds friction-eliminating enterprise software. 'MOD' is the official registered short form / abbreviation of Modernisum. The flagship School ERP suite is officially titled and registered under the proper noun 'MOD School' (school.modernisum.com), and precision agriculture software under 'MOD Farmer'. Unlike centralized cloud ERPs that hoard sensitive student records on vendor servers, MOD School operates on a strict Local-First, Zero-Knowledge, Zero-Ad Architecture under Section 10A of the IT Act, 2000 and DPDP Act, 2023.",
+    pdfAttachment: {
+      url: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+      fileName: "MOD-School-Master-Software-License-Agreement.pdf",
+      fileSize: "1.05 MB",
+      sealText: "Govt. of India MSME: UDYAM-UP-56-0049848 • Official Executed Document",
+      description:
+        "Official executed Master Software License, Data Privacy, and Subscription Policy for MOD School under Section 10A of the IT Act, 2000, DPDP Act 2023, and Indian Contract Act 1872.",
+      gdriveUrl: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+    },
+    pdfAttachments: [
+      {
+        url: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+        fileName: "MOD-School-Master-Software-License-Agreement.pdf",
+        fileSize: "1.05 MB",
+        sealText: "Master Software License, Data Privacy & Billing Agreement (4 Pages)",
+        description: "Official statutory executed contract covering zero-knowledge architecture, local storage, DPDP 2023, and Meerut jurisdiction.",
+        gdriveUrl: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+      },
+      {
+        url: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+        fileName: "MOD-School-Official-Subscription-Pricing-Policy.pdf",
+        fileSize: "980 KB",
+        sealText: "Official Subscription, Transparent Pricing & Refund Policy (2 Pages)",
+        description: "Official commercial policy: flat ₹20/student/mo, 25% annual discount, UPI AutoPay, 0% GST, and non-blocking grace period.",
+        gdriveUrl: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+      },
+    ],
+    preamble: {
+      title: "Statutory Preamble & Electronic Binding Notice",
+      text: "This Master Software License, Data Privacy, and Subscription Policy (\"Agreement\") is a legally binding electronic contract under Section 10A of the Information Technology Act, 2000, the Digital Personal Data Protection (DPDP) Act, 2023, and the Indian Contract Act, 1872, executed between Modernisum Technologies (MSME: UDYAM-UP-56-0049848), represented by its Founder & Lead Architect Mr. Shivank Kumar, having its registered office at Near Water Tank, Village Dayalpur, Parikshitgarh, Meerut, Uttar Pradesh – 250406 (\"Licensor\"), and the onboarding educational institution (\"School\" or \"Data Fiduciary\") licensing the proprietary software proper noun 'MOD School' (school.modernisum.com).",
+    },
+    sections: [
+      {
+        id: "brand-philosophy",
+        number: "1",
+        title: "Brand Philosophy & Zero-Knowledge Architectural Model",
+        tag: "Zero-Knowledge Flow",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Modernisum Technologies (derived from \"Modern\" [Adhunik] + \"Isum\" [Unique]) builds friction-eliminating enterprise software. \"MOD\" is the official registered short form and abbreviation of Modernisum. The flagship School ERP suite is officially titled and registered under the proper noun \"MOD School\" (school.modernisum.com), and the flagship precision agriculture suite is registered under the proper noun \"MOD Farmer\".",
+          "Unlike centralized cloud ERPs that hoard sensitive student records on vendor servers, MOD School (school.modernisum.com) operates on a strict Local-First, Zero-Knowledge, Zero-Ad Architecture. Modernisum acts solely as a software tool creator and encrypted transit facilitator, holding 0% possession of or visibility into the School's student or staff database.",
+        ],
+        highlights: [
+          {
+            iconName: "HardDrive",
+            title: "1. School Local PC",
+            description: "100% Core Database Storage • Local Auth & ZIP Decryption [School = Sole Data Fiduciary]",
+            badge: "Sole Data Fiduciary",
+          },
+          {
+            iconName: "Server",
+            title: "2. Modernisum Tunnel",
+            description: "Rust / Cloudflare Transit Pipe • Lookup: School ID -> Tunnel URL [Zero-Log / RAM Transit Only] (TLS 1.3 + AES)",
+            badge: "RAM Transit Only",
+          },
+          {
+            iconName: "CheckCircle2",
+            title: "3. Apps & Drive Backup",
+            description: "Student & Staff Android Apps • School's Own Google Drive [Full Local ZIP Export Anytime]",
+            badge: "Local ZIP Export",
+          },
+        ],
+      },
+      {
+        id: "proper-nouns-trademarks",
+        number: "2",
+        title: "Registered Proper Nouns, Search Attribution & Proprietary Marks ('MOD School' & 'MOD Farmer')",
+        tag: "Brand Protection",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "1. Statutory Proper Noun Identity: 'MOD School' and 'MOD Farmer' are the official proper nouns, registered marks, and exclusive software products of Modernisum Technologies (UDYAM-UP-56-0049848), wherein 'MOD' is the designated short form and abbreviation of Modernisum.",
+          "2. Exclusive Search & Traffic Attribution Invariant: By electronic covenant and digital intellectual property law, any search, user query, directory listing, or organic traffic originating from Google Search, Bing, DuckDuckGo, AI search assistants, or digital portals for 'MOD School', 'MOD School OS', 'MOD School ERP', 'MOD Farmer', 'MOD Farmer OS', or 'MOD Agro' legally, commercially, and technically resolves directly and exclusively to Modernisum Technologies and its sovereign software suite (school.modernisum.com / modernisum.com).",
+          "3. Complete Traffic Ownership: All search equity, digital impressions, domain routing, and reputation generated from the proper nouns 'MOD School' and 'MOD Farmer' belong strictly and perpetually to Modernisum Technologies. No third party is permitted to appropriate or redirect these proper nouns.",
+        ],
+        highlights: [
+          {
+            iconName: "ShieldCheck",
+            title: "MOD School",
+            description: "Registered Proper Noun & Software Trademark • Resolves to school.modernisum.com",
+            badge: "Official Software Mark",
+          },
+          {
+            iconName: "Globe",
+            title: "MOD Farmer",
+            description: "Registered Proper Noun & Agro OS • Resolves to modernisum.com/agromi",
+            badge: "Official Agro Mark",
+          },
+          {
+            iconName: "CheckCircle2",
+            title: "100% Traffic Attribution",
+            description: "All Google & digital search traffic for 'MOD School' / 'MOD Farmer' belongs to Modernisum",
+            badge: "Sovereign Traffic",
+          },
+        ],
+      },
+      {
+        id: "technical-data-handling",
+        number: "3",
+        title: "Technical Data Handling & Zero-Third-Party Commitment",
+        tag: "On-Premise Core",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "100% On-Premise Core Database: All student, academic, attendance, HR, and fee records reside exclusively on the Principal's/Administrator's local desktop computer within the School premises. Modernisum is legally and technically bound never to store student PII on its servers.",
+          "Public Directory Metadata Only (Firebase): Modernisum's central Firebase directory stores only public marketing banner details that the School voluntarily makes public (School Public Name, Banner, School ID Code, and active Tunnel Endpoint URL).",
+          "End-to-End Encrypted (E2EE) Tunnel Pipe: Android apps (Student & Employee) connect to the School's desktop via a custom Rust / Cloudflare E2EE tunnel. After the user inputs the permanent School ID, authentication and API responses occur directly between the School's desktop and the mobile app. The tunnel remains strictly encrypted unless a high-level statutory government/court interception warrant is served upon the School.",
+          "Zero Ads & Zero Third-Party Data Monetization: Modernisum's business model is 100% software subscription-based. We never display advertisements, embed third-party ad trackers, or sell/transfer any institutional or student data to third parties.",
+        ],
+      },
+      {
+        id: "data-allocation-matrix",
+        number: "4",
+        title: "Data Allocation, Roles & Statutory Compliance Matrix",
+        tag: "DPDP & IT Act Matrix",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "In full compliance with the Digital Personal Data Protection Act, 2023 (DPDP Act) and IT Act, 2000, the matrix below establishes the exact boundary of control between the Onboarding School and Modernisum Technologies:",
+        ],
+        table: {
+          headers: ["Data Category", "Physical Storage Location", "Encryption & Access Control", "Legal Role & Liability"],
+          rows: [
+            [
+              "Student & Minor PII\n(Names, DOB, Under-13 Data, Marks, Attendance, Fees)",
+              "100% on School's Local Desktop Computer\n(SQLite/PostgreSQL)",
+              "Local OS Access + E2EE during Mobile App Transit",
+              "School = Sole Data Fiduciary\n(Modernisum has 0% access/liability)",
+            ],
+            [
+              "Employee & Staff Data\n(Payroll, Attendance, Profiles, Login Credentials)",
+              "100% on School's Local Desktop Computer",
+              "Salted Password Hashes + Local Admin Control",
+              "School = Sole Data Fiduciary\n(Managed solely by School Principal)",
+            ],
+            [
+              "Disaster Recovery Backups\n(Hourly Snapshots & Cloud Sync)",
+              "Local PC Partition + School's Own Google Drive\n(Decrypted ZIP Exportable)",
+              "Client-Side AES-256 Encryption + School Master Key",
+              "School = Sole Custodian\n(Modernisum never holds Master Key)",
+            ],
+            [
+              "Public School Metadata\n(School ID, Public Banner, Tunnel URL, Active Count)",
+              "Modernisum Lookup Directory\n(Firebase Cloud)",
+              "TLS 1.3 Secured Public Directory & Billing Counter",
+              "Modernisum = Routing Provider\n(Contains zero personal student data)",
+            ],
+          ],
+        },
+      },
+      {
+        id: "protection-of-minors",
+        number: "5",
+        title: "Protection of Minors' Data (<13 / <18 Yrs) & Parental Consent Mandate",
+        tag: "DPDP Section 9",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Exclusive Responsibility of School for Parental Permission: Under Section 9 of the DPDP Act, 2023, the School is the sole \"Data Fiduciary\". Because the School collects student details at admission and stores them on its own local desktop computer, obtaining verifiable written or digital permission/consent from the parents or lawful guardians of all students (especially children below 13 and 18 years of age) is 100% the mandatory legal responsibility of the School.",
+          "Developer Indemnification on Consent: Modernisum Technologies is strictly bound not to store any student data and relies entirely on the School's affirmative warranty that parental permission has been lawfully recorded prior to adding any child into the desktop software or issuing mobile login credentials.",
+          "High-Level Government Lawful Interception: Modernisum maintains strict End-to-End Encryption across its tunnel at all times. Modernisum cannot decrypt transit payloads. Only upon presentation of a valid, high-level statutory order from a competent Government Authority or Court of Law under Section 69 of the IT Act, 2000 shall routing metadata be shared, while decrypted database inspection must be fulfilled directly by the School Principal from their local desktop.",
+        ],
+      },
+      {
+        id: "disaster-recovery",
+        number: "6",
+        title: "Disaster Recovery, Hourly Backups & Full Local ZIP Portability",
+        tag: "Zero Vendor Lock-In",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "CLIENT-SIDE BACKUP, MASTER KEY CUSTODY & ZERO DATA LOCK-IN GUARANTEE:",
+          "1. Hourly Automated Snapshots & Google Drive Sync: To protect against accidental deletion, OS reset, or hardware failure, the software creates hourly local snapshots and syncs an AES-256 encrypted backup directly to the School's own Google Drive account via OAuth Refresh Tokens.",
+          "2. Master Recovery Key Custody: A unique 16-digit cryptographic Master Recovery Key is generated locally on the School's computer during setup. Modernisum DOES NOT store this key on its servers. The School Principal must safeguard a printed copy of this key.",
+          "3. Unconditional Local ZIP Export (Zero Vendor Lock-In): The School is never forcibly bound to Modernisum's services. At any time—even if subscription billing expires—the School Admin can decrypt its local database and backup resources on its local PC and download/export them inside a standard decrypted ZIP file.",
+        ],
+      },
+      {
+        id: "financial-policy",
+        number: "7",
+        title: "Transparent Flat-Rate Subscription, 25% Annual Discount & Razorpay Billing",
+        tag: "Official Commercial Policy",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Modernisum Technologies operates a 100% transparent, equal-access B2B pricing model in Indian Rupees (INR), where every School receives identical features and continuous updates without hidden tiers or ad monetization:",
+        ],
+        table: {
+          headers: ["Billing Parameter", "Official Commercial Policy", "Operational Rule & Legal Treatment"],
+          rows: [
+            [
+              "Flat Per-Student Rate",
+              "₹20 / Active Regular Student / Month\n(100 Students = ₹2,000/mo; 200 = ₹4,000/mo)",
+              "Billed strictly on currently enrolled ACTIVE REGULAR students. Transferred (TC), dropped, or Alumni students incur ₹0 charge.",
+            ],
+            [
+              "Prepaid Cycles & 25% Annual Discount",
+              "Quarterly Advance (0% Discount)\nAnnual Upfront (Flat 25% OFF)",
+              "Strictly prepaid (no postpaid). Billing date starts on actual Payment Success Date after the 7-to-30 day free evaluation trial.",
+            ],
+            [
+              "Razorpay & UPI AutoPay Mandate",
+              "Razorpay Gateway + OTP/UPI AutoPay\n(0% GST — MSME Threshold Exempt)",
+              "Next quarter renews automatically via RBI-compliant UPI AutoPay mandate. Once Payment Success Token is issued, Modernisum guarantees credit.",
+            ],
+            [
+              "Google Gemini AI (BYOK) & Hardware",
+              "₹0 Platform Markup on AI / Cloud\n(Optional Hardware Billed at Unit Cost)",
+              "Schools integrate their own Google Gemini API key (utilizing Google's 15 RPM free tier via low-token logic) and Google Cloud backup directly.",
+            ],
+          ],
+        },
+      },
+      {
+        id: "billing-grace-period",
+        number: "8",
+        title: "7–15 Day Grace Period, Non-Disruptive Read Pause & Strict No-Refund Rule",
+        tag: "Non-Coercive Guarantee",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "7-to-15 Day Payment Window & Non-Blocking Local Write Access: Following trial expiry or cycle completion, the School receives a 7-to-15 calendar day payment window with advance alerts. If unpaid past 15 days, Modernisum never blocks local academic work or local database write operations. Only external/read modules—specifically Student/Employee Mobile App tunnel visibility, Employee App sync, and Advanced Read Analytics—are paused until renewal.",
+          "Unconditional Decrypted Local ZIP Export: Even during payment pause or cancellation, the School is never locked out of its data and may decrypt and export 100% of its database and resources into a local ZIP archive on its local server at any time.",
+          "Strict No-Refund Policy (Post-Trial & Mid-Quarter): Because a free trial is provided prior to purchase, all subscription payments are 100% Non-Refundable. If a School deletes its account or discontinues software usage mid-quarter (e.g., after 1 or 2 months), no full or partial refund is issued.",
+          "Zero Parent/Staff Fee & Equal Feature Parity: Modernisum never charges Parents, Students, or Staff any platform fee, never runs ads, and provides all core software updates equally to every School.",
+        ],
+      },
+      {
+        id: "liability-jurisdiction",
+        number: "9",
+        title: "Limitation of Liability, Indemnification & Meerut Jurisdiction",
+        tag: "Legal Jurisdiction",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "\"AS-IS\" Tool Provision & Third-Party API Disclaimer: Modernisum is not liable for local PC failures, power/internet outages, or Google LLC's changes to Gemini API free-tier limits (15 RPM). Gateway failures prior to settlement carry zero liability for the School; captured payments with a valid Razorpay Success Token are 100% guaranteed by Modernisum.",
+          "Financial Liability Cap: Total cumulative liability of Modernisum Technologies or Mr. Shivank Kumar for any proven claim shall never exceed the actual subscription fee paid by the School for the immediately preceding 1 (One) month.",
+          "Grievance Redressal Officer (IT Rules & DPDP Compliance): Name: Mr. Shivank Kumar | Designation: Founder & Grievance Officer, Modernisum Technologies | Address: Near Water Tank, Village Dayalpur, Parikshitgarh, Meerut, Uttar Pradesh – 250406 | Official Email: contact@modernisum.com.",
+          "Exclusive Jurisdiction of Meerut Courts: Any legal or billing dispute arising anywhere in India shall be subject to the exclusive jurisdiction of the competent Courts at Meerut, Uttar Pradesh.",
+        ],
+      },
+      {
+        id: "click-wrap-script",
+        number: "10",
+        title: "Website (school.modernisum.com) & Installer Click-Wrap Script",
+        tag: "Section 10A IT Act",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Copy and embed the exact checkbox script below onto the download/registration screen of school.modernisum.com and your desktop installer to form a legally binding contract under Section 10A of the IT Act, 2000:",
+        ],
+        codeSnippet: `[CLICK-WRAP CHECKBOX SCRIPT FOR SCHOOL.MODERNISUM.COM & DESKTOP APP]
+[ ✓ ] I, as the Principal / Authorized Signatory of the registering School, have read and agree to the Modernisum Technologies (MSME: UDYAM-UP-56-0049848) Master Software License, Data Privacy, and Subscription Policy. I explicitly confirm and agree that: 1. Our School is the sole "Data Fiduciary" under the DPDP Act 2023; 100% of student/staff data resides on our School's local PC, and obtaining parental permission for all students (including children under 13/18 years) is strictly our School's responsibility; 2. Pricing is fixed at ₹20/Active Regular Student/Month (Quarterly Prepaid or 25% OFF on Annual Upfront via Razorpay/UPI AutoPay, 0% GST) with equal features for all schools, zero ads, and Strict No-Refund after trial; 3. After a 7–15 day grace period, only mobile app visibility & read analytics pause—our academic work and local write access are never blocked, and we can export our decrypted database as a local ZIP file anytime; 4. Google Gemini AI & Cloud Backups use our School's own API keys (BYOK), and all disputes are subject exclusively to the Courts of Meerut, Uttar Pradesh.
+(Button disabled until ticked: [ Accept Agreement & Start Free Trial ])
+
+[FIREBASE AUDIT LOG JSON TO RECORD UPON CLICK-WRAP ACCEPTANCE]
+{
+  "licensor": "Modernisum Technologies (UDYAM-UP-56-0049848)",
+  "product_domain": "school.modernisum.com",
+  "software_mark": "MOD School",
+  "school_id": "SCH_ID_AUTO",
+  "authorized_email": "principal@school.edu.in",
+  "policy_version": "v2026.3-MODERNISUM-FINAL",
+  "clickwrap_accepted": true,
+  "accepted_timestamp_ist": "2026-10-17T17:19:00+05:30",
+  "client_ip_address": "Captured_Public_IP",
+  "desktop_hardware_uuid": "SHA256_MACHINE_HASH"
+}`,
+      },
+      {
+        id: "summary-legal-protections",
+        number: "11",
+        title: "Summary of Legal Protections Built Into Your Software",
+        tag: "Statutory Protections",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Four invariant statutory protections engineered directly into the software architecture and legal policy:",
+        ],
+        highlights: [
+          {
+            iconName: "Lock",
+            title: "1. Zero-Ransom / Non-Coercive Pause",
+            description:
+              "By pausing only software Read/Write & Tunnel while allowing local decrypted ZIP downloads during non-payment, no school can ever accuse Modernisum of data extortion or illegal withholding.",
+            badge: "Non-Coercive",
+          },
+          {
+            iconName: "UserCheck",
+            title: "2. 100% Parental Consent Shift",
+            description:
+              "Clause 5 legally binds the School Principal to collect parental consent on admission forms, shielding Shivank Kumar & Modernisum from Section 9 DPDP Act minor-data penalties.",
+            badge: "Parental Consent",
+          },
+          {
+            iconName: "Banknote",
+            title: "3. Statutory GST Exemption Clarity",
+            description:
+              "Clause 7 formally cites your MSME registration and CGST threshold exemption so school auditors accept your invoices without demanding a 15-digit GSTIN.",
+            badge: "GST Exempt",
+          },
+          {
+            iconName: "Building2",
+            title: "4. Home-Court Protection (Meerut)",
+            description:
+              "Clause 9 locks exclusive legal jurisdiction to Meerut, UP (Pin: 250406), ensuring remote schools from Chennai or elsewhere cannot drag you to out-of-state courts.",
+            badge: "Meerut Jurisdiction",
+          },
+        ],
+      },
+      {
+        id: "official-execution-signoff",
+        number: "12",
+        title: "Official Execution & Institutional Sign-Off Block",
+        tag: "Legal Sign-Off",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "This Agreement is executed under Section 10A of the Information Technology Act, 2000 through affirmative digital click-wrap acceptance or physical institutional seal:",
+        ],
+        signoffBlock: {
+          licensor: {
+            entity: "Modernisum Technologies",
+            msme: "UDYAM-UP-56-0049848",
+            authorizedBy: "Mr. Shivank Kumar (Founder & Lead Architect)",
+            address: "Near Water Tank, Vill. Dayalpur, Parikshitgarh, Meerut, UP – 250406",
+            webMail: "modernisum.com | contact@modernisum.com",
+          },
+          licensee: {
+            institutionPrompt: "Institution Name:",
+            signatoryPrompt: "Principal / Authorized Signatory:",
+            schoolIdPrompt: "School ID & City:",
+            acceptanceMode: "Digital Click-Wrap / Registered Stamp",
+          },
+        },
+      },
+    ],
+  },
+
+  // 2. OFFICIAL SUBSCRIPTION, TRANSPARENT PRICING & REFUND POLICY (STATUTORY POLICY)
+  {
+    id: "subscription",
+    slug: "subscription",
+    title: "Official Subscription, Transparent Pricing & Refund Policy",
+    shortTitle: "Subscription & Pricing",
+    category: "Operations & Billing",
+    variant: "all",
+    order: 2,
+    badge: "₹20 / Student • 0% GST • 25% OFF",
+    effectiveDate: "Academic & Fiscal Year 2026–2027",
+    lastUpdated: "17 October 2026",
+    summaryTitle: "Official Subscription, Transparent Flat Pricing & Refund Policy",
+    summarySubtitle: "Flat ₹20 / Student / Month • 25% Annual Discount • Razorpay UPI AutoPay • 0% GST",
+    summaryDescription:
+      "This official document governs all subscription billing, Razorpay gateway settlements, UPI AutoPay mandates, non-disruptive grace periods, and third-party AI/Cloud integrations for MOD School ERP (school.modernisum.com). Modernisum Technologies guarantees 100% Transparent Flat Pricing—every school receives identical software features and updates with zero hidden charges, zero ads, and zero fees charged to parents, students, or staff.",
+    pdfAttachment: {
+      url: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+      fileName: "MOD-School-Official-Subscription-Pricing-Policy.pdf",
+      fileSize: "980 KB",
+      sealText: "Govt. of India MSME: UDYAM-UP-56-0049848 • Official Executed Document",
+      description:
+        "Official Subscription, Transparent Flat Pricing & Refund Policy for MOD School ERP under MSME UDYAM-UP-56-0049848.",
+      gdriveUrl: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+    },
+    pdfAttachments: [
+      {
+        url: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+        fileName: "MOD-School-Official-Subscription-Pricing-Policy.pdf",
+        fileSize: "980 KB",
+        sealText: "Official Subscription, Transparent Pricing & Refund Policy (2 Pages)",
+        description: "Official commercial policy: flat ₹20/student/mo, 25% annual discount, UPI AutoPay, 0% GST, and non-blocking grace period.",
+        gdriveUrl: "/documents/MOD-School-Official-Subscription-Pricing-Policy.pdf",
+      },
+      {
+        url: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+        fileName: "MOD-School-Master-Software-License-Agreement.pdf",
+        fileSize: "1.05 MB",
+        sealText: "Master Software License, Data Privacy & Billing Agreement (4 Pages)",
+        description: "Official statutory executed contract covering zero-knowledge architecture, local storage, DPDP 2023, and Meerut jurisdiction.",
+        gdriveUrl: "/documents/MOD-School-Master-Software-License-Agreement.pdf",
+      },
+    ],
+    preamble: {
+      title: "Public Pricing Page & Footer Policy Mandate",
+      text: "This document governs all subscription billing, Razorpay gateway settlements, UPI AutoPay mandates, non-disruptive grace periods, and third-party AI/Cloud integrations for 'MOD School' ERP (school.modernisum.com). Modernisum Technologies guarantees 100% Transparent Flat Pricing—every school receives identical software features and updates with zero hidden charges, zero ads, and zero fees charged to parents, students, or staff.",
+    },
+    sections: [
+      {
+        id: "pricing-calculator",
+        number: "1",
+        title: "Transparent Per-Student Pricing & Cycle Calculator (INR)",
+        tag: "Official Flat Pricing",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Our pricing is fixed at ₹20 per Active Regular Student per Month. An 'Active Regular Student' means a student currently admitted and studying in the school who has not been issued a Transfer Certificate (TC) or marked inactive. Transferred (TC), dropped, or Alumni students incur ₹0 charge:",
+        ],
+        table: {
+          headers: [
+            "Active Regular Students",
+            "Monthly Base Calculation",
+            "Quarterly Prepaid (3 Months)\n[Standard Cycle — 0% Off]",
+            "Annual Upfront (12 Months)\n[Flat 25% Discount Applied]",
+          ],
+          rows: [
+            ["1 Active Student", "1 × ₹20 = ₹20 / Month", "₹60 / Quarter", "₹180 / Year • Save ₹60"],
+            ["100 Active Students", "100 × ₹20 = ₹2,000 / Month", "₹6,000 / Quarter", "₹18,000 / Year • Save ₹6,000"],
+            ["200 Active Students", "200 × ₹20 = ₹4,000 / Month", "₹12,000 / Quarter", "₹36,000 / Year • Save ₹12,000"],
+            ["500 Active Students", "500 × ₹20 = ₹10,000 / Month", "₹30,000 / Quarter", "₹90,000 / Year • Save ₹30,000"],
+          ],
+        },
+      },
+      {
+        id: "equal-features-autopay",
+        number: "2",
+        title: "Equal Features, Prepaid Cycles, Razorpay & UPI AutoPay Rules",
+        tag: "100% Feature Parity",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "100% Equal Feature Parity (No Paid Tiers or Credits): Modernisum Technologies does not divide schools into 'Basic' or 'Pro' tiers. Every school—whether educating 50 students or 2,000 students—receives 100% of all platform features and continuous software updates equally without buying extra plans or credit packs.",
+          "Strictly Prepaid Model & Billing Start Date: Postpaid billing is not available. Every new school receives a free evaluation trial (7-day standard trial, extendable up to 30 days on promotional onboarding). Once the school completes its advance payment after the trial, the official Billing Start Date commences on the exact date the payment succeeds.",
+          "Razorpay Payment Gateway & Settlement Liability: All payments are processed via Razorpay. If a transaction fails prior to settlement, the School has zero liability to credit Modernisum. Conversely, once the payment is deducted from the School's bank account and a valid Razorpay Payment Success Token is generated, Modernisum Technologies assumes 100% legal responsibility to credit the School's subscription, even if a technical webhook delay temporarily prevents the database from displaying it.",
+          "RBI-Compliant UPI AutoPay Mandate: When paying via UPI with OTP/PIN authorization on Razorpay, a recurring mandate is registered so the next Quarter's subscription is automatically deducted on the due date. Schools may cancel the mandate prior to the next billing date.",
+          "0% GST (Statutory MSME Exemption) & Optional Hardware: As a registered MSME startup (UDYAM-UP-56-0049848) below the statutory CGST turnover threshold, 0% GST applies. Optional physical devices/gadgets ordered by a school are billed solely at unit hardware cost without extra software charges.",
+        ],
+        highlights: [
+          {
+            iconName: "Award",
+            title: "100% Feature Parity",
+            description: "No 'Basic' or 'Pro' split. Every campus gets every enterprise capability equally.",
+            badge: "Equal Parity",
+          },
+          {
+            iconName: "ShieldCheck",
+            title: "Razorpay Token Guarantee",
+            description: "Once deducted, Modernisum legally guarantees credit with 0% liability for gateway webhook delays.",
+            badge: "Payment Protection",
+          },
+          {
+            iconName: "RefreshCw",
+            title: "RBI UPI AutoPay",
+            description: "Quarterly recurring deduction via authorized UPI PIN. Cancels anytime before due date.",
+            badge: "AutoPay Mandate",
+          },
+          {
+            iconName: "Banknote",
+            title: "0% GST Exemption",
+            description: "Statutory MSME exemption under CGST threshold. Zero hidden taxes.",
+            badge: "0% GST Exempt",
+          },
+        ],
+      },
+      {
+        id: "grace-period-workflow",
+        number: "3",
+        title: "7-to-15 Day Grace Period & Non-Disruptive Feature Pause Workflow",
+        tag: "Non-Coercive Suspension",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Non-Coercive Suspension Guarantee: Following cycle due date, the School receives a 7-to-15 calendar day payment window with advance alerts. If unpaid past 15 days, academic work and local write access are NEVER locked; schools can export local ZIP backups anytime.",
+        ],
+        highlights: [
+          {
+            iconName: "Clock",
+            title: "1. Trial & Prepaid Cycle",
+            description: "Free Trial -> Razorpay Prepaid. Billing starts on success date. [100% Features + Tunnel Active]",
+            badge: "Active",
+          },
+          {
+            iconName: "AlertCircle",
+            title: "2. 7 to 15 Day Grace Period",
+            description: "Advance Dashboard Alerts. UPI AutoPay / Manual Renewal. [Zero Disruption to School]",
+            badge: "Zero Disruption",
+          },
+          {
+            iconName: "Lock",
+            title: "3. Non-Blocking Pause",
+            description: "Paused: App Tunnel & Analytics | Active: Local Write & Academic [Local Decrypted ZIP Anytime]",
+            badge: "Non-Blocking",
+          },
+        ],
+      },
+      {
+        id: "zero-lockin-no-refund",
+        number: "4",
+        title: "Zero Data Lock-In, Strict No-Refund & Mid-Quarter Cancellation Rules",
+        tag: "Fair Operational Rules",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "No Academic Work Blockade & Unconditional Local ZIP Export: If a school fails to pay within the 7-to-15 day grace window, Modernisum Technologies never blocks the School's core academic operations or local write access, nor does it lock the School's database. Only external read/sync features—specifically Student Mobile App visibility, Employee App access, and Read Analytics modules—are paused. The School Admin can decrypt and export 100% of its database into a local ZIP file on its local server at any time.",
+          "Strict No-Refund Policy (Post-Trial & Mid-Quarter Discontinuation): Because every school is given a Free Trial prior to payment, all subscription fees paid after trial evaluation are 100% Non-Refundable. Once a Quarterly or Annual payment is processed, if a School deletes its account or decides after 1 or 2 months not to use the software during an active quarter, no full or partial refund shall be issued.",
+        ],
+      },
+      {
+        id: "google-gemini-cloud",
+        number: "5",
+        title: "Third-Party Google Gemini AI (BYOK) & Cloud Storage Policy",
+        tag: "BYOK Architecture",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "1. Bring Your Own Key (Google Gemini AI): The ₹20/student platform fee excludes third-party AI subscriptions. Modernisum does not host proprietary LLMs; schools integrate their own Google Gemini API Key directly inside the software settings.",
+          "2. 15 RPM Free Tier & Low-Token Logic: Google Gemini currently provides a free tier of 15 Requests Per Minute (RPM). Our code is engineered to send bare-minimum AI context payloads so schools can run AI features at ₹0 or minimal external cost.",
+          "3. School's Own Google Cloud Backup: Automated hourly encrypted backups sync directly to the School's own Google Drive/Cloud account. Any Google storage upgrade beyond Google's free tier is managed directly by the School.",
+          "4. B2B Model & Meerut Jurisdiction: Our sole business partner is the School Admin. We never monetize student/staff data or ask parents for money. All billing disputes fall under the exclusive jurisdiction of Meerut Courts, UP.",
+        ],
+        highlights: [
+          {
+            iconName: "Sparkles",
+            title: "BYO Google Gemini Key",
+            description: "Zero AI markup. Runs smoothly on Google Gemini's 15 RPM free tier.",
+            badge: "₹0 AI Markup",
+          },
+          {
+            iconName: "HardDrive",
+            title: "School's Google Drive",
+            description: "Hourly AES-256 snapshots sync to your own Drive account via OAuth.",
+            badge: "Self-Owned Cloud",
+          },
+          {
+            iconName: "Building2",
+            title: "Pure B2B & Meerut Jurisdiction",
+            description: "We bill only the school admin. Exclusive legal jurisdiction of Meerut Courts, UP.",
+            badge: "Home-Court Protection",
+          },
+        ],
+        signoffBlock: {
+          licensor: {
+            entity: "Modernisum Technologies",
+            msme: "UDYAM-UP-56-0049848",
+            authorizedBy: "Mr. Shivank Kumar (Founder & Lead Architect)",
+            address: "Near Water Tank, Vill. Dayalpur, Parikshitgarh, Meerut, UP – 250406",
+            webMail: "modernisum.com | contact@modernisum.com",
+          },
+          licensee: {
+            institutionPrompt: "Institution Name:",
+            signatoryPrompt: "Principal / Authorized Signatory:",
+            schoolIdPrompt: "School ID & City:",
+            acceptanceMode: "Digital Click-Wrap / Registered Stamp",
+          },
+        },
+      },
+    ],
+  },
+
+  // 3. PRIVACY POLICY & GLOBAL DATA PROTECTION
+  {
+    id: "privacy",
+    slug: "privacy",
+    title: "Privacy Policy & Global Data Protection",
+    shortTitle: "Privacy Policy",
+    category: "Privacy & Sovereignty",
+    variant: "all",
+    order: 3,
+    badge: "Zero Cloud Honeypot",
+    effectiveDate: "Academic & Fiscal Year 2026–2027",
+    lastUpdated: "17 October 2026",
+    summaryTitle: "The Modernisum Zero-Central-Storage Invariant",
+    summarySubtitle: "Local-First Architecture • Pure Pay-as-a-Service Model • 0% Ad Monetization",
+    summaryDescription:
+      "At Modernisum Technologies, we fundamentally reject the surveillance business model. We do not monetize, sell, harvest, or broker user or student data. Modernisum operates purely on a Pay-as-a-Service B2B software licensing model. All institutional records reside exclusively on your own on-premise hardware, never in a central cloud honeypot.",
+    sections: [
+      {
+        id: "local-first-sovereignty",
+        number: "1",
+        title: "Local-First Architecture & Data Sovereignty",
+        tag: "Architectural Pillar",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "MOD School functions as an autonomous local server executing directly on the institution's Windows 64-bit desktop or laptop terminals. Database state is stored in on-premise encrypted local stores (SQLite / LAN node databases).",
+        ],
+        highlights: [
+          {
+            iconName: "HardDrive",
+            title: "100% On-Campus Vault",
+            description:
+              "Databases operate locally on the school PC. Even during internet outages, operations run without interruption.",
+            badge: "Air-Gapped Ready",
+          },
+          {
+            iconName: "CloudOff",
+            title: "Zero Cloud Honeypot",
+            description:
+              "Modernisum hosts zero multi-tenant cloud databases containing student records, eliminating centralized hack risks.",
+            badge: "Zero-Trust",
+          },
+          {
+            iconName: "Cpu",
+            title: "Edge Biometric Hashing",
+            description:
+              "Biometric scans are converted at the edge into mathematical 512-dimension vectors; raw photos are never retained.",
+            badge: "Privacy by Design",
+          },
+        ],
+      },
+      {
+        id: "parental-consent",
+        number: "2",
+        title: "Verifiable Parental Consent & 100% Offline Air-Gapped Isolation",
+        tag: "Parental Consent",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Modernisum enforces strict, verifiable parental consent protocols in full compliance with the Digital Personal Data Protection (DPDP) Act 2023 (Section 9), US COPPA, and EU GDPR (Article 8):",
+        ],
+        bullets: [
+          "Written & Digital Approval Forms: Schools using Modernisum provide written or digitally signed consent forms to parents detailing the exact operational purposes for which student records are processed.",
+          "Granular Opt-In for Mobile App Access: Student data is accessible via mobile applications only if the parent affirmatively opts in.",
+          "Air-Gapped Offline Protection for Opt-Outs: If a parent declines or opts out of mobile application access, that student's profile remains strictly 100% offline inside the local school desktop server. Zero data packets are routed through cloud tunnels for opted-out students, permanently eliminating remote data exposure or leakage risks.",
+        ],
+      },
+      {
+        id: "telemetry-transparency",
+        number: "3",
+        title: "Data We Centrally Process vs. Data We NEVER Process",
+        tag: "Zero-Storage Guarantee",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "To maintain complete legal and technical transparency, our telemetry is strictly circumscribed:",
+        ],
+        alert: {
+          type: "critical",
+          title: "Data Modernisum NEVER Collects or Stores",
+          items: [
+            "Student demographic records, names, birthdates, or Aadhaar numbers",
+            "Student grades, report cards, exam scores, or behavioral assessments",
+            "Raw facial imagery, biometric scans, or voice recordings",
+            "Parent or guardian bank account numbers, credit cards, or fee payment instruments",
+            "Employee/teacher payroll records or confidential personnel files",
+            "Cross-site advertising cookies, behavioral trackers, or device telemetry",
+          ],
+        },
+        bullets: [
+          "Limited Operational Telemetry We Process:",
+          "School ID: Unique alphanumeric identifier to route encrypted tunnels",
+          "School Name & Address: Institutional verification and invoicing",
+          "Admin Email & Phone: Primary contact point for license verification and support",
+          "Anonymous Active Seat Count: Aggregated integer count locally computed on desktop for Pay-as-a-Service license billing",
+          "Software Runtime Version: For security updates and compatibility verification",
+        ],
+      },
+      {
+        id: "e2ee-tunneling",
+        number: "4",
+        title: "Ephemeral E2EE Cloud Tunneling Architecture",
+        tag: "Conduit Protocol",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "When authorized parents or teachers interact with the mobile application to view real-time notifications or bus tracking, communication is brokered through an end-to-end encrypted (E2EE) cloud tunnel.",
+          "The cloud tunnel acts strictly as an ephemeral pipe. Modernisum servers do not cache, inspect, or retain the payloads passing through the tunnel. Data is fetched directly from the school's active desktop server. If the school desktop server is turned off, the mobile app displays offline status. Modernisum operates purely as a technical conduit under Section 79 of the Information Technology Act, 2000.",
+        ],
+      },
+      {
+        id: "google-api-policy",
+        number: "5",
+        title: "Google API Services User Data Policy & Limited Use Disclosure",
+        tag: "Google Cloud Aligned",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Modernisum's use and transfer to any other app of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements.",
+          "Modernisum integrates with Google APIs solely to enhance institutional autonomy and disaster recovery:",
+        ],
+        bullets: [
+          "Google OAuth 2.0 Identity Authentication: Basic profile information (name, work email) is accessed solely to verify identity. We do not access external contacts, calendars, or private files.",
+          "User-Controlled BYOC Google Drive Backup (drive.file scope): Schools may configure automated midnight database snapshots to their own private Google Drive account. Modernisum utilizes the restricted https://www.googleapis.com/auth/drive.file scope, meaning our software can only access and modify the specific encrypted backup archive files that the application itself creates.",
+          "Google Gemini API Integration (BYO-Key): For document text extraction and OCR parsing, processing is executed using the institution's authorized Google Gemini API credentials. Customer document images or extraction outputs are never used for AI model training.",
+          "No Human Inspection & No Sale of Data: Google user data is never transferred to third parties, never used for advertising, and never inspected by human personnel.",
+        ],
+      },
+      {
+        id: "browser-extension-privacy",
+        number: "6",
+        title: "Chrome MV3 Browser Extension (Clerk Co-Pilot) Privacy",
+        tag: "In-Browser Sandbox",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Modernisum provides a specialized Manifest V3 (MV3) browser extension to automate student record submissions into government educational portals (such as U-DISE+, RTE, and State Board scholarship systems).",
+        ],
+        bullets: [
+          "100% In-Browser Execution: Form auto-filling and 20–50KB client-side image compression occur entirely within the user's local browser session.",
+          "Zero Credential Harvesting: The extension does not record, log, or transmit portal passwords, student enrollment records, or government portal tokens to external servers.",
+        ],
+      },
+      {
+        id: "global-compliance",
+        number: "7",
+        title: "Global Multi-Jurisdictional Compliance Architecture",
+        tag: "Global Privacy",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Our local-first security architecture is engineered to satisfy the world's most stringent data protection frameworks:",
+        ],
+        highlights: [
+          {
+            iconName: "CheckCircle2",
+            title: "India: DPDP Act 2023 & IT Act 2000",
+            description:
+              "The educational institution serves as the sole Data Fiduciary; Modernisum functions as the Technical Conduit & Processor. Section 9 minor protections and parental consent requirements are built into the onboarding pipeline.",
+            badge: "DPDP 2023",
+          },
+          {
+            iconName: "Globe",
+            title: "EU & UK: GDPR & UK-GDPR",
+            description:
+              "Compliant with Article 25 (Privacy by Design), Article 28 (Data Processor Terms), Article 17 (Right to Erasure), and zero third-party cross-site advertising trackers.",
+            badge: "GDPR Compliant",
+          },
+          {
+            iconName: "ShieldCheck",
+            title: "United States: COPPA & FERPA",
+            description:
+              "Guarantees absolute confidentiality of student educational records under FERPA and strict prohibition of commercial behavioral profiling of children under 13 under COPPA.",
+            badge: "COPPA / FERPA",
+          },
+          {
+            iconName: "FileCheck2",
+            title: "California: CCPA & CPRA",
+            description:
+              "We strictly do not sell, share, or rent personal information. By design, our architecture provides permanent opt-out from data sharing.",
+            badge: "CCPA / CPRA",
+          },
+        ],
+      },
+      {
+        id: "data-portability-deletion",
+        number: "8",
+        title: "Data Portability, Retention & Erasure Protocols",
+        tag: "User Sovereignty",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Institutional clients and individual users hold complete ownership of their data:",
+        ],
+        bullets: [
+          "1-Click Local Data Export: School administrators can export the complete institutional dataset (in standard open formats: CSV, JSON, and raw SQLite database dumps) with a single click at any time.",
+          "Telemetry Erasure on Demand: Upon written request to privacy@modernisum.com, all central administrative identifiers are permanently purged from our central registry within 30 calendar days, subject to mandatory tax retention regulations.",
+        ],
+      },
+      {
+        id: "grievance-contact",
+        number: "9",
+        title: "Enterprise Entity, Grievance Officer & Contact",
+        tag: "Statutory Contact",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "In compliance with the Information Technology Act, 2000 and the DPDP Act 2023, the details of our registered enterprise and official Grievance Desk are provided below:",
+          "Modernisum Technologies • Registered MSME: UDYAM-UP-56-0049848 • Near Water Tank, Dayalpur, Parikshitgarh, Meerut, Uttar Pradesh, 250406, India.",
+          "Compliance Officer Email: compliance@modernisum.com • Direct Phone: +91 9368671007",
+        ],
+      },
+      {
+        id: "community-review-transparency",
+        number: "10",
+        title: "Community Feedback, Honest Unfiltered Reviews & Direct Support Invariant",
+        tag: "100% Unaltered Feedback",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Modernisum Technologies enforces a strict Public Transparency Policy across all community discussion streams, product reviews, and bug report channels:",
+        ],
+        bullets: [
+          "Zero Review Modification or Priority Suppression: We never edit, curate, delete, or artificially manipulate user comments, feedback, or star ratings based on commercial interest. Negative feedback and critical technical bug reports are published openly with original timestamps.",
+          "Unrestricted User Sorting & Inspection: Users and prospective buyers retain complete autonomy to sort community entries by 'Critical Issues First' (Lowest to Highest Rating), 'Most Recent', or 'Most Upvoted' with zero algorithmic suppression.",
+          "Dedicated Institutional Technical Support & Direct Resolution: When an educational institution, school owner, or faculty member encounters an issue or requires software assistance, Modernisum engineers act as dedicated helpers with public resolution threads and accelerated patch deployments.",
+          "Authentic Ground-Level R&D: User reviews, feature suggestions, and open complaints serve as our direct roadmap inputs. We prioritize fixing real customer problems over commercial marketing hype.",
+        ],
+      },
+    ],
+  },
+
+  // 4. DPDP ACT 2023 COMPLIANCE SPECIFICATION
+  {
+    id: "dpdp",
+    slug: "dpdp",
+    title: "DPDP Act 2023 & Minor Data Protection Specification",
+    shortTitle: "DPDP Compliance",
+    category: "Compliance & Standards",
+    variant: "all",
+    order: 4,
+    badge: "Digital India DPDP",
+    effectiveDate: "Academic Session 2026–2027",
+    lastUpdated: "17 October 2026",
+    summaryTitle: "Architectural Compliance with India's DPDP Act 2023",
+    summarySubtitle: "Data Fiduciary Governance • Minor Consent Framework • Zero Profiling Guarantee",
+    summaryDescription:
+      "A comprehensive technical disclosure on how MOD School implements Section 9 minor protections, verifiable parental consent, biometric vector hashing, and data principal rights under the Digital Personal Data Protection Act, 2023.",
+    sections: [
+      {
+        id: "fiduciary-framework",
+        number: "1",
+        title: "Institution as Data Fiduciary & Modernisum as Data Processor",
+        tag: "DPDP Governance",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Section 2(i) of the DPDP Act 2023 defines a Data Fiduciary as any person who alone or in conjunction with other persons determines the purpose and means of processing personal data.",
+          "Under this legal standard, the subscribing school, college, or trust is the sole Data Fiduciary. Modernisum Technologies acts strictly as a Data Processor providing local on-premise execution software and ephemeral relay conduits.",
+        ],
+        bullets: [
+          "The school controls all data entry, retention periods, and record modifications.",
+          "Modernisum cannot access, copy, or index local database records without explicit, physically-supervised administrative authorization.",
+          "Local encryption keys are stored exclusively on campus host hardware.",
+        ],
+      },
+      {
+        id: "section-9-minors",
+        number: "2",
+        title: "Section 9 Protections: Verifiable Consent & No Behavioral Tracking",
+        tag: "Child Protection",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "Section 9(1) of the DPDP Act prohibits processing personal data of a child without verifiable consent of the parent or lawful guardian. Section 9(2) explicitly prohibits tracking, behavioral monitoring, or targeted advertising directed at children.",
+        ],
+        bullets: [
+          "Zero Behavioral Profiling: Modernisum contains no algorithms that evaluate students for commercial product placement or ad targeting.",
+          "Verifiable Parent Consent Mechanism: The system includes standard digital signature workflows and printed physical consent receipt generators for school admission counters.",
+          "Air-Gapped Opt-Out Invariant: Opted-out minor profiles never send data packets through cloud tunnels.",
+        ],
+      },
+      {
+        id: "biometric-edge-hashing",
+        number: "3",
+        title: "Edge Biometric Vector Hashing & Non-Reversibility",
+        tag: "Biometric Security",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Facial recognition attendance terminals powered by Modernisum convert incoming optical frames into one-way 512-dimension mathematical embeddings at the edge.",
+          "These numeric arrays cannot be reverse-engineered to reconstruct the student's original photograph. Once computed, the camera buffer is instantly purged from RAM.",
+        ],
+      },
+      {
+        id: "data-principal-rights",
+        number: "4",
+        title: "Data Principal Rights Execution: Access, Correction & Erasure",
+        tag: "Principal Rights",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Modernisum provides one-click administrative interfaces allowing school principals to fulfill statutory Data Principal requests under Sections 11, 12, and 13 of the DPDP Act:",
+        ],
+        highlights: [
+          {
+            iconName: "FileCheck2",
+            title: "Right to Information",
+            description: "Instant generation of comprehensive student profile dossiers in PDF or CSV formats.",
+            badge: "Section 11",
+          },
+          {
+            iconName: "CheckCircle2",
+            title: "Right to Correction & Updating",
+            description: "Direct atomic ledger correction preserving historical audit trails.",
+            badge: "Section 12",
+          },
+          {
+            iconName: "HardDrive",
+            title: "Right to Erasure",
+            description: "Cryptographic deletion of student demographic records upon graduation or withdrawal.",
+            badge: "Section 13",
+          },
+        ],
+      },
+    ],
+  },
+
+  // 5. SOFTWARE LICENSING & SERVICE COMMITMENTS
+  {
+    id: "licensing",
+    slug: "licensing",
+    title: "Software Licensing, SLAs & Refund Policy",
+    shortTitle: "Licensing & SLA",
+    category: "Operations & Billing",
+    variant: "all",
+    order: 5,
+    badge: "B2B SaaS SLA",
+    effectiveDate: "Academic Session 2026–2027",
+    lastUpdated: "17 October 2026",
+    summaryTitle: "Transparent Licensing, SLA Guarantees & Fair Refund Terms",
+    summarySubtitle: "Pay-as-a-Service • 14-Day Offline Grace • Direct Remote Emergency Dispatch",
+    summaryDescription:
+      "Modernisum software licensing terms, refund protocols, campus uptime guarantees, and tier-1 emergency response service levels for educational institutions and enterprise clients.",
+    sections: [
+      {
+        id: "subscription-model",
+        number: "1",
+        title: "Pay-as-a-Service Software Subscription Architecture",
+        tag: "Licensing Model",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Modernisum licenses its software on a pure Pay-as-a-Service model calculated by active seat tiers. There are no hidden setup penalties, no surprise cloud egress fees, and no per-transaction charges on tuition fees collected by the school.",
+          "Subscribers receive continuous software maintenance updates, security patches, state government board compliance updates (U-DISE+, CBSE, ICSE), and official technical support.",
+        ],
+      },
+      {
+        id: "offline-grace-guarantee",
+        number: "2",
+        title: "14-Day Offline Operational Grace Guarantee",
+        tag: "Offline Continuity",
+        lastAddedOrUpdated: "17 October 2026",
+        content: [
+          "To guarantee that students are never locked out of school gates or fee counters due to bank settlement delays or clerical oversights, Modernisum includes a mandatory 14-Day Operational Grace Period.",
+          "During these 14 calendar days, all desktop features (attendance, fee receipts, examination reports) continue operating with 100% functionality without interruption.",
+        ],
+      },
+      {
+        id: "refund-cancellation",
+        number: "3",
+        title: "Cancellation & Fair Refund Policy",
+        tag: "Fair B2B SaaS",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "We stand behind the engineering excellence of our platforms. If an institution experiences technical incompatibility within the first 30 days of initial deployment that our engineering team cannot resolve, the institution is eligible for a pro-rata refund of unutilized software subscription fees.",
+          "Hardware components (such as biometric turnstile controllers or RFID readers) are subject to manufacturer warranty standards.",
+        ],
+      },
+      {
+        id: "emergency-sla",
+        number: "4",
+        title: "Service Level Agreement (SLA) Matrix",
+        tag: "Guaranteed SLA",
+        lastAddedOrUpdated: "October 2026",
+        content: [
+          "Our dedicated institutional support desk operates 6 days a week with rapid emergency dispatches:",
+        ],
+        highlights: [
+          {
+            iconName: "Clock",
+            title: "P1 Emergency (Gate & Fee Counters)",
+            description: "15-minute response time via AnyDesk remote session or direct phone dispatch.",
+            badge: "15 Min Response",
+          },
+          {
+            iconName: "CheckCircle2",
+            title: "P2 Standard (Configuration & Templates)",
+            description: "2 business hours response time with complete ticket resolution.",
+            badge: "2 Hr Resolution",
+          },
+          {
+            iconName: "Server",
+            title: "P3 General (Custom Reports & Feature Requests)",
+            description: "Within 24 business hours.",
+            badge: "24 Hr Turnaround",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+/**
+ * Fetch all policies from Firestore, sorted by order.
+ * Falls back seamlessly to DEFAULT_POLICIES_SEED if Firestore is offline or empty.
+ */
+export async function fetchPolicies(variant?: "modernisum" | "vidhyam" | "all"): Promise<FirestorePolicyDoc[]> {
+  try {
+    const policiesRef = collection(db, COLLECTION_NAME);
+    const q = query(policiesRef, orderBy("order", "asc"));
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const docs = snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data(),
+      })) as FirestorePolicyDoc[];
+
+      if (variant && variant !== "all") {
+        return docs.filter((p) => !p.variant || p.variant === "all" || p.variant === variant);
+      }
+      return docs;
+    }
+  } catch (error: any) {
+    console.warn("[Firestore] Policies fetch fallback to seed data:", error?.message || error);
+  }
+
+  // Graceful fallback to rich default seed
+  if (variant && variant !== "all") {
+    return DEFAULT_POLICIES_SEED.filter((p) => !p.variant || p.variant === "all" || p.variant === variant);
+  }
+  return DEFAULT_POLICIES_SEED;
+}
+
+/**
+ * Fetch single policy by slug or id from Firestore or default seed
+ */
+export async function fetchPolicyBySlug(slug: string): Promise<FirestorePolicyDoc | null> {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, slug);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      } as FirestorePolicyDoc;
+    }
+  } catch (error: any) {
+    console.warn(`[Firestore] Policy fetch fallback for "${slug}":`, error?.message || error);
+  }
+
+  const found = DEFAULT_POLICIES_SEED.find((p) => p.slug === slug || p.id === slug);
+  return found || null;
+}
+
+/**
+ * Real-time listener for policies
+ */
+export function subscribeToPolicies(
+  callback: (policies: FirestorePolicyDoc[]) => void,
+  variant?: "modernisum" | "vidhyam" | "all"
+): () => void {
+  try {
+    const policiesRef = collection(db, COLLECTION_NAME);
+    const q = query(policiesRef, orderBy("order", "asc"));
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const docs = snapshot.docs.map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data(),
+          })) as FirestorePolicyDoc[];
+          const filtered =
+            variant && variant !== "all"
+              ? docs.filter((p) => !p.variant || p.variant === "all" || p.variant === variant)
+              : docs;
+          callback(filtered);
+        } else {
+          // If empty, return default seeds
+          callback(
+            variant && variant !== "all"
+              ? DEFAULT_POLICIES_SEED.filter((p) => !p.variant || p.variant === "all" || p.variant === variant)
+              : DEFAULT_POLICIES_SEED
+          );
+        }
+      },
+      (error) => {
+        console.warn("[Firestore] Policies subscription error:", error?.message || error);
+        callback(
+          variant && variant !== "all"
+            ? DEFAULT_POLICIES_SEED.filter((p) => !p.variant || p.variant === "all" || p.variant === variant)
+            : DEFAULT_POLICIES_SEED
+        );
+      }
+    );
+  } catch (err) {
+    callback(DEFAULT_POLICIES_SEED);
+    return () => {};
+  }
+}
+
+/**
+ * Seed all default policies and categorized headlines into Firebase Firestore
+ * Also logs an audit entry to `policy_audit_logs`.
+ */
+export async function seedPoliciesToFirestore(): Promise<{
+  count: number;
+  message: string;
+  seededPolicies: string[];
+}> {
+  const seeded: string[] = [];
+
+  for (const policy of DEFAULT_POLICIES_SEED) {
+    const docRef = doc(db, COLLECTION_NAME, policy.id);
+    await setDoc(
+      docRef,
+      {
+        ...policy,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    seeded.push(policy.title);
+  }
+
+  // Write audit log
+  try {
+    const auditRef = doc(db, AUDIT_COLLECTION, `seed_${Date.now()}`);
+    await setDoc(auditRef, {
+      action: "SEED_POLICIES",
+      summary: `Seeded ${DEFAULT_POLICIES_SEED.length} master policies with 24 categorized headlines into Firebase Firestore`,
+      policiesCount: DEFAULT_POLICIES_SEED.length,
+      timestamp: serverTimestamp(),
+    });
+  } catch (err) {
+    // Non-critical audit log
+  }
+
+  return {
+    count: seeded.length,
+    message: `Successfully seeded ${seeded.length} categorized master policies into Firebase Firestore.`,
+    seededPolicies: seeded,
+  };
+}
+
+/**
+ * Save or update a policy document in Firestore
+ */
+export async function savePolicy(policy: FirestorePolicyDoc): Promise<void> {
+  const docRef = doc(db, COLLECTION_NAME, policy.id || policy.slug);
+  await setDoc(
+    docRef,
+    {
+      ...policy,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  // Record audit log
+  try {
+    const auditRef = doc(db, AUDIT_COLLECTION, `update_${Date.now()}`);
+    await setDoc(auditRef, {
+      action: "UPDATE_POLICY",
+      policyId: policy.id || policy.slug,
+      policyTitle: policy.title,
+      summary: `Updated policy "${policy.title}" with ${policy.sections?.length || 0} sections`,
+      timestamp: serverTimestamp(),
+    });
+  } catch (err) {
+    // Non-critical
+  }
+}

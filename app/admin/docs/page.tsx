@@ -191,7 +191,7 @@ export default function AdminDocsManager() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-2">
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Vidhyam Knowledge Engine</span>
+            <span>School OS Knowledge Engine</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-display">
             Documentation & Tutorials CMS
@@ -203,7 +203,7 @@ export default function AdminDocsManager() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/vidhyam/docs"
+            href="/docs"
             target="_blank"
             className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-all"
           >
@@ -427,7 +427,7 @@ export default function AdminDocsManager() {
           <BookOpen className="w-8 h-8 text-slate-500 mx-auto mb-2" />
           <p className="text-sm font-semibold text-slate-300">No documentation modules found</p>
           <p className="text-xs text-slate-500 mt-1">
-            Click "Create Article" to publish your first system guide to Vidhyam Docs.
+            Click "Create Article" to publish your first system guide to MOD School Docs.
           </p>
         </div>
       ) : (

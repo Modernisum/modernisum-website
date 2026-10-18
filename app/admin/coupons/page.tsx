@@ -163,7 +163,7 @@ export default function AdminCouponsPage() {
               Create Promotional Coupon
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              Discount voucher for Vidhyam Cloud SaaS subscriptions.
+              Discount voucher for MOD School Cloud SaaS subscriptions.
             </p>
 
             <form onSubmit={handleCreateCoupon} className="space-y-4 text-xs">

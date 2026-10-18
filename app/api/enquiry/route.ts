@@ -1,67 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { Enquiry } from "@/lib/models/Enquiry";
+import { submitEnquiry, fetchAllEnquiries } from "@/lib/firestore/enquiries";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, serviceNeeded, budgetRange, projectDescription } = body;
+    const { name, email, phone, serviceNeeded, service, budgetRange, budget, projectDescription, message, quotationDetails } = body;
 
-    if (!name || !email || !projectDescription) {
+    const finalDescription = (projectDescription || message || "").trim();
+    const finalService = (serviceNeeded || service || "General Inquiry").trim();
+    const finalBudget = (budgetRange || budget || "Flexible").trim();
+
+    if (!name || !email || !finalDescription) {
       return NextResponse.json(
         { success: false, message: "Please fill in all required fields (Name, Email, Description)." },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
-    try {
-      const conn = await connectToDatabase();
-      if (conn) {
-        const newEnquiry = await Enquiry.create({
-          name,
-          email,
-          phone: phone || "",
-          serviceNeeded: serviceNeeded || "General Inquiry",
-          budgetRange: budgetRange || "Flexible",
-          projectDescription,
-          status: "new",
-        });
-        return NextResponse.json({
-          success: true,
-          message: "Thank you! Your architecture inquiry has been received. Our senior engineering team will respond within 24 hours.",
-          id: newEnquiry._id,
-        });
-      }
-    } catch (dbErr) {
-      console.warn("⚠️ Could not write to MongoDB, operating in fallback mode:", dbErr);
-    }
-
-    // Fallback response if DB offline
-    return NextResponse.json({
-      success: true,
-      message: "Thank you! Your architecture inquiry has been registered. Our senior engineering team will respond within 24 hours.",
+    const id = await submitEnquiry({
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone ? phone.trim() : "",
+      serviceNeeded: finalService,
+      budgetRange: finalBudget,
+      projectDescription: finalDescription,
+      status: "new",
+      quotationDetails: quotationDetails || null,
     });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Thank you! Your inquiry has been received. Our support team will respond shortly.",
+        id,
+      },
+      { headers: corsHeaders }
+    );
   } catch (error: unknown) {
     const err = error as Error;
     console.error("❌ Enquiry submission error:", err);
     return NextResponse.json(
       { success: false, message: "An error occurred while submitting your enquiry." },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
 
 export async function GET() {
   try {
-    const conn = await connectToDatabase();
-    if (!conn) {
-      return NextResponse.json({ success: false, data: [] }, { status: 503 });
-    }
-    const enquiries = await Enquiry.find().sort({ createdAt: -1 });
-    return NextResponse.json({ success: true, data: enquiries });
+    const enquiries = await fetchAllEnquiries();
+    return NextResponse.json({ success: true, data: enquiries }, { headers: corsHeaders });
   } catch (err: unknown) {
     const error = err as Error;
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500, headers: corsHeaders });
   }
 }
-

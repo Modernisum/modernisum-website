@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Agromi 3-Leaf Sprout Emblem -->
+  <g fill="#2e7d32">
+    <!-- Top Central Leaf -->
+    <path d="M 100 28 C 92 48 84 62 84 76 C 84 88 92 98 100 98 C 108 98 116 88 116 76 C 116 62 108 48 100 28 Z" />
+    <!-- Bottom Left Leaf -->
+    <path d="M 94 108 C 82 108 56 94 48 80 C 46 88 48 104 58 118 C 70 134 86 142 100 142 C 100 142 98 126 94 108 Z" />
+    <!-- Bottom Right Leaf -->
+    <path d="M 106 108 C 118 108 144 94 152 80 C 154 88 152 104 142 118 C 130 134 114 142 100 142 C 100 142 102 126 106 108 Z" />
+  </g>
+</svg>

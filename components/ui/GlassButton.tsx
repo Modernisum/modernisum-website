@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 
 interface GlassButtonProps extends HTMLMotionProps<"button"> {
   children?: React.ReactNode;
-  variant?: "primary" | "secondary" | "pill" | "ghost";
+  variant?: "primary" | "secondary" | "pill" | "ghost" | "emerald";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   icon?: React.ReactNode;
@@ -24,6 +24,7 @@ export function GlassButton({
   iconPosition = "left",
   className,
   disabled,
+  type = "button",
   ...props
 }: GlassButtonProps) {
   const sizeStyles = {
@@ -37,10 +38,12 @@ export function GlassButton({
     secondary: "glass-button-secondary",
     pill: "glass-pill text-slate-800 dark:text-white/90 hover:text-cyan-600 dark:hover:text-white",
     ghost: "bg-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-700 dark:text-white/80 hover:text-slate-950 dark:hover:text-white border-transparent",
+    emerald: "bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_24px_rgba(16,185,129,0.35)] border border-emerald-400/40 rounded-full font-semibold",
   };
 
   return (
     <motion.button
+      type={type}
       whileTap={{ scale: 0.97 }}
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 450, damping: 20 }}

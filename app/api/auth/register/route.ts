@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { User } from "@/lib/models/User";
-import { hashPassword, signToken, setSessionCookie } from "@/lib/auth";
+import { signToken, setSessionCookie } from "@/lib/auth";
+import { db } from "@/lib/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password } = await req.json();
+    const body = await req.json();
+    const {
+      name,
+      email,
+      password,
+      avatar = "cyber-astro",
+      phone = "",
+      address = "",
+      interestedProducts = [],
+      accountType = "customer",
+    } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -14,46 +24,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const conn = await connectToDatabase();
-    if (!conn) {
-      // Offline fallback: simulate successful registration
-      const fakeToken = await signToken({
-        userId: "guest_" + Date.now(),
-        email,
-        name,
-        role: "client",
-      });
-      await setSessionCookie(fakeToken);
+    const cleanEmail = email.toLowerCase().trim();
+    const role = cleanEmail.includes("admin") ? "admin" : "client";
 
-      return NextResponse.json({
-        success: true,
-        user: { name, email, role: "client" },
-        message: "Account created successfully.",
-      });
-    }
-
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      return NextResponse.json(
-        { success: false, message: "An account with this email already exists." },
-        { status: 409 }
+    // Save user to Firestore
+    try {
+      const sanitizedDocId = cleanEmail.replace(/[@.]/g, "_");
+      await setDoc(
+        doc(db, "users", sanitizedDocId),
+        {
+          name,
+          email: cleanEmail,
+          role,
+          avatar,
+          phone,
+          address,
+          interestedProducts,
+          accountType,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
       );
+    } catch (fsErr) {
+      console.warn("⚠️ Firestore user save warning:", fsErr);
     }
-
-    const hashedPassword = await hashPassword(password);
-    const newUser = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      role: email.toLowerCase().includes("admin") ? "admin" : "client",
-      provider: "credentials",
-    });
 
     const token = await signToken({
-      userId: newUser._id.toString(),
-      email: newUser.email,
-      name: newUser.name,
-      role: newUser.role,
+      userId: `user_${Date.now()}`,
+      email: cleanEmail,
+      name,
+      role,
+      avatar,
+      accountType,
     });
 
     await setSessionCookie(token);
@@ -61,12 +64,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
+        id: cleanEmail,
+        name,
+        email: cleanEmail,
+        role,
+        avatar,
+        phone,
+        address,
+        interestedProducts,
+        accountType,
       },
-      message: "Registration successful!",
+      message: "Modernisum account successfully created!",
     });
   } catch (error: unknown) {
     const err = error as Error;

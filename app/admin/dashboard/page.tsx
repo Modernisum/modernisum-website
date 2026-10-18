@@ -216,7 +216,7 @@ export default function AdminDashboardPage() {
             245 MB / 5.0 TB
           </div>
           <p className="text-[11px] text-slate-400 mt-1 font-light">
-            Vidhyam service account active
+            MOD School service account active
           </p>
         </LiquidGlassCard>
       </div>

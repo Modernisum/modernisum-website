@@ -2,42 +2,97 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { AuthDialog } from "@/components/ui/AuthDialog";
-import { 
-  Menu, 
-  X, 
-  Sun, 
-  Moon, 
-  ChevronDown, 
-  Sparkles, 
-  Smartphone, 
-  Globe, 
-  Cpu, 
-  Cloud, 
-  GraduationCap, 
-  ShieldCheck,
-  Zap
+import {
+  Menu,
+  X,
+  Sun,
+  Moon,
+  ChevronDown,
 } from "lucide-react";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { getSSOUser, saveSSOUser, clearSSOUser, type AuthUser } from "@/lib/sso";
+import { NavbarVariant, NavDomainConfig, NavItem } from "./nav/types";
+import { getSchoolNavConfig } from "./nav/school.config";
+import { getFarmerNavConfig } from "./nav/farmer.config";
+import { getModernisumNavConfig } from "./nav/modernisum.config";
+import { MegaDropdown } from "./nav/MegaDropdown";
+import { UserAccountMenu } from "./nav/UserAccountMenu";
+import { MobileNavDrawer } from "./nav/MobileNavDrawer";
 
-export function Navbar() {
+export type { NavbarVariant } from "./nav/types";
+
+interface NavbarProps {
+  variant?: NavbarVariant;
+}
+
+export function Navbar({ variant = "modernisum" }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isSchoolDomain, setIsSchoolDomain] = useState(false);
+
+  useEffect(() => {
+    const host = window.location.hostname;
+    if (
+      host === "school.modernisum.com" ||
+      host.startsWith("school.") ||
+      new URLSearchParams(window.location.search).get("subdomain") === "school"
+    ) {
+      setIsSchoolDomain(true);
+    }
+  }, []);
+
+  const activeVariant: NavbarVariant = isSchoolDomain
+    ? "school"
+    : variant === "vidhyam"
+    ? "school"
+    : variant;
+
+  // Retrieve clean domain-specific content configuration
+  const config: NavDomainConfig =
+    activeVariant === "school"
+      ? getSchoolNavConfig(isSchoolDomain)
+      : activeVariant === "agromi" || activeVariant === "farmer"
+      ? getFarmerNavConfig()
+      : getModernisumNavConfig();
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  // User Account Dropdown states
+  const [pillUserDropdownOpen, setPillUserDropdownOpen] = useState(false);
+  const [topUserDropdownOpen, setTopUserDropdownOpen] = useState(false);
+
+  // Active Dropdown state for mega-menus
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleOpenDropdown = () => {
+  // Spotlight effect on the navbar pill
+  const pillRef = useRef<HTMLDivElement>(null);
+  const [pillMousePos, setPillMousePos] = useState({ x: 0, y: 0 });
+  const [isPillHovered, setIsPillHovered] = useState(false);
+
+  const handlePillMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!pillRef.current) return;
+    const rect = pillRef.current.getBoundingClientRect();
+    setPillMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleOpenDropdown = (id: string) => {
     if (dropdownTimeoutRef.current) {
       clearTimeout(dropdownTimeoutRef.current);
       dropdownTimeoutRef.current = null;
     }
-    setServicesDropdownOpen(true);
+    setActiveDropdown(id);
   };
 
   const handleCloseDropdown = () => {
@@ -45,13 +100,16 @@ export function Navbar() {
       clearTimeout(dropdownTimeoutRef.current);
     }
     dropdownTimeoutRef.current = setTimeout(() => {
-      setServicesDropdownOpen(false);
-    }, 220); // 220ms grace period prevents accidental close while moving mouse across gap
+      setActiveDropdown(null);
+    }, 220);
   };
 
-  // Close dropdown on route changes or component unmount
+  // Close dropdown on route changes or unmount
   useEffect(() => {
-    setServicesDropdownOpen(false);
+    setActiveDropdown(null);
+    setPillUserDropdownOpen(false);
+    setTopUserDropdownOpen(false);
+    setMobileMenuOpen(false);
     return () => {
       if (dropdownTimeoutRef.current) {
         clearTimeout(dropdownTimeoutRef.current);
@@ -59,40 +117,204 @@ export function Navbar() {
     };
   }, [pathname]);
 
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  // Scroll detection for floating island morph
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const scrollPos =
+        window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      setScrolled(scrollPos > 35);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
-    // Synchronize stored theme preference on client mount
+    // Sync theme
     const savedTheme = localStorage.getItem("theme");
     const html = document.documentElement;
-    if (savedTheme === "light") {
-      html.classList.remove("dark");
-      html.classList.add("light");
-      setIsDark(false);
-    } else {
+    const initialDark = savedTheme === "light" ? false : true;
+
+    if (initialDark) {
       html.classList.remove("light");
       html.classList.add("dark");
       setIsDark(true);
+    } else {
+      html.classList.remove("dark");
+      html.classList.add("light");
+      setIsDark(false);
     }
 
-    // Check if auth modal requested via URL query params (e.g. ?auth=signin)
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const authParam = params.get("auth");
-      if (authParam === "signin" || authParam === "login") {
-        setAuthTab("signin");
-        setAuthModalOpen(true);
-      } else if (authParam === "signup") {
-        setAuthTab("signup");
-        setAuthModalOpen(true);
+    // Auto-handoff to desktop OS if already authenticated
+    let desktopHandoffTriggered = false;
+    let hasAuthenticatedUser = false;
+
+    const triggerDesktopHandoffIfPresent = async (userEmail: string, userName?: string) => {
+      if (desktopHandoffTriggered) return;
+      if (typeof window === "undefined") return;
+
+      const currentPath = window.location.pathname || "";
+      if (
+        currentPath.includes("/register") ||
+        currentPath.includes("/mod-school/register") ||
+        currentPath.includes("/vidhyam/register") ||
+        (pathname &&
+          (pathname.includes("/register") ||
+            pathname.includes("/mod-school/register") ||
+            pathname.includes("/vidhyam/register")))
+      ) {
+        return;
       }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("origin") !== "desktop") return;
+
+      desktopHandoffTriggered = true;
+      setAuthModalOpen(false);
+
+      try {
+        const { processDesktopHandoff } = await import("@/lib/desktopAuthHandoff");
+        const handoff = await processDesktopHandoff(userEmail, userName);
+        if (handoff.schoolFound) {
+          try {
+            window.history.replaceState({}, "", window.location.pathname);
+          } catch {}
+
+          if (window.opener && !window.opener.closed) {
+            setTimeout(() => {
+              try {
+                window.close();
+              } catch {}
+            }, 600);
+          } else if (!handoff.relayed && handoff.handoffUrl) {
+            window.location.href = handoff.handoffUrl;
+          }
+        } else {
+          if (!window.location.pathname.includes("/register")) {
+            const handoffId = params.get("handoff_id") || "";
+            const handoffQuery = handoffId ? `&handoff_id=${encodeURIComponent(handoffId)}` : "";
+            router.push(
+              `/register?origin=desktop&email=${encodeURIComponent(userEmail)}${handoffQuery}`
+            );
+          }
+        }
+      } catch (err) {
+        console.warn("Desktop handoff auto-detect warning:", err);
+      }
+    };
+
+    // 1. Check existing cached user session via Universal Cross-Subdomain SSO
+    const ssoUser = getSSOUser();
+    if (ssoUser && ssoUser.email) {
+      hasAuthenticatedUser = true;
+      setCurrentUser(ssoUser);
+      setAuthModalOpen(false);
+      triggerDesktopHandoffIfPresent(ssoUser.email, ssoUser.name);
     }
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // 2. Firebase Auth session listener
+    let unsubscribeAuth: (() => void) | null = null;
+    try {
+      unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
+        if (fbUser && fbUser.email) {
+          hasAuthenticatedUser = true;
+          const userObj: AuthUser = {
+            id: fbUser.uid,
+            email: fbUser.email,
+            name: fbUser.displayName || fbUser.email.split("@")[0],
+            role: fbUser.email.includes("admin") ? "admin" : "client",
+            avatar: fbUser.photoURL || "cyber-astro",
+            photoURL: fbUser.photoURL || undefined,
+          };
+          setCurrentUser(userObj);
+          setAuthModalOpen(false);
+          saveSSOUser(userObj);
+          triggerDesktopHandoffIfPresent(fbUser.email, fbUser.displayName || undefined);
+        }
+      });
+    } catch (err) {
+      console.warn("Firebase onAuthStateChanged error:", err);
+    }
+
+    // 3. Listen to SSO cross-tab or cross-subdomain auth changes & window focus
+    const handleAuthChange = (e: Event) => {
+      const customEvent = e as CustomEvent<AuthUser | null>;
+      if (customEvent.detail) {
+        setCurrentUser(customEvent.detail);
+        setAuthModalOpen(false);
+      } else {
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener("modernisum_auth_change", handleAuthChange);
+
+    const handleWindowFocus = () => {
+      const freshUser = getSSOUser();
+      if (freshUser && freshUser.email) {
+        setCurrentUser((prev) => {
+          if (!prev || prev.email !== freshUser.email) {
+            return freshUser;
+          }
+          return prev;
+        });
+      } else if (!freshUser) {
+        setCurrentUser((prev) => (prev ? null : prev));
+      }
+    };
+    window.addEventListener("focus", handleWindowFocus);
+
+    // 4. Probe backend API when running on localhost as secondary fallback
+    if (
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ) {
+      fetch("/api/auth/me")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.user?.email) {
+            hasAuthenticatedUser = true;
+            setCurrentUser(data.user);
+            setAuthModalOpen(false);
+            saveSSOUser(data.user);
+            triggerDesktopHandoffIfPresent(data.user.email, data.user.name);
+          }
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("modernisum_auth_change", handleAuthChange);
+      window.removeEventListener("focus", handleWindowFocus);
+      if (unsubscribeAuth) {
+        unsubscribeAuth();
+      }
+    };
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { signOut } = await import("firebase/auth");
+      await signOut(auth);
+    } catch {}
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error(e);
+    }
+    clearSSOUser();
+    setCurrentUser(null);
+    window.location.reload();
+  };
 
   const toggleTheme = () => {
     const html = document.documentElement;
@@ -109,273 +331,356 @@ export function Navbar() {
     }
   };
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { 
-      name: "Services", 
-      href: "/services",
-      hasDropdown: true,
-      subItems: [
-        { name: "AI SaaS & Intelligence", href: "/services/ai-solutions", icon: <Sparkles className="w-4 h-4 text-cyan-400" /> },
-        { name: "Vidhyam School OS", href: "/vidhyam", icon: <GraduationCap className="w-4 h-4 text-cyan-400" /> },
-        { name: "Web Applications", href: "/services/web-development", icon: <Globe className="w-4 h-4 text-purple-400" /> },
-        { name: "Mobile Apps (Android & iOS)", href: "/services/mobile-development", icon: <Smartphone className="w-4 h-4 text-emerald-400" /> },
-        { name: "Custom Device Software & IoT", href: "/services/iot-automation", icon: <Cpu className="w-4 h-4 text-amber-400" /> },
-        { name: "Cloud Architecture & APIs", href: "/services/cloud-services", icon: <Cloud className="w-4 h-4 text-blue-400" /> },
-      ]
-    },
-    { name: "School", href: "/modern-school" },
-    { name: "Vidhyam", href: "/vidhyam" },
-    { name: "Portfolio", href: "/projects" },
-    { name: "Blog", href: "/blog" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
-
-  const isLinkActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname === href || pathname.startsWith(href);
+  const isLinkActive = (item: NavItem) => {
+    if (item.href === config.homeHref) return pathname === config.homeHref;
+    if (item.dropdown) {
+      return item.dropdown.columns.some((col) =>
+        col.items.some((sub) => {
+          const pureSubHref = sub.href.split("#")[0];
+          return (
+            pathname === sub.href ||
+            (pureSubHref !== "/" && pathname === pureSubHref) ||
+            (pureSubHref !== "/" && pureSubHref.length > 1 && pathname.startsWith(pureSubHref))
+          );
+        })
+      );
+    }
+    return pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
   };
+
+  const activeDropdownItem = config.navItems.find(
+    (item) => item.dropdown && item.dropdown.id === activeDropdown
+  );
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 py-2.5 sm:py-3.5 px-3 sm:px-5 lg:px-4 xl:px-8 ${
-          scrolled
-            ? "backdrop-blur-xl bg-white/80 dark:bg-black/40 border-b border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/20"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 lg:gap-2 xl:gap-4">
-          {/* Brand Logo with Bulb 'M' */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group select-none shrink-0">
-            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl glass-pill flex items-center justify-center p-1.5 border border-amber-400/40 shadow-sm shadow-amber-500/20 group-hover:border-amber-400 transition-colors shrink-0">
-              <Image
-                src="/logo.png"
-                alt="Modernisum Logo"
-                width={26}
-                height={26}
-                className="object-contain"
-                priority
-              />
-              {/* Soft Bulb Ambient Glow */}
-              <div className="absolute inset-0 rounded-xl bg-amber-400/20 blur-md -z-10 group-hover:bg-amber-400/35 transition-all" />
-            </div>
-            <div className="flex flex-col shrink-0">
-              <span className="text-base sm:text-lg font-bold font-tech tracking-tight text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors whitespace-nowrap">
-                MODERNISUM
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-tech -mt-1 whitespace-nowrap hidden sm:block">
-                AI & Software Solutions
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Pill */}
-          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 px-2.5 xl:px-4 py-1.5 rounded-full glass-pill border border-slate-200/80 dark:border-white/15 whitespace-nowrap flex-nowrap shrink-0">
-            {navLinks.map((link) => {
-              const isActive = isLinkActive(link.href);
-
-              if (link.hasDropdown) {
-                return (
-                  <div
-                    key={link.name}
-                    className="relative shrink-0 py-1"
-                    onMouseEnter={handleOpenDropdown}
-                    onMouseLeave={handleCloseDropdown}
+      <header className="fixed top-4 sm:top-5 left-0 right-0 z-40 w-full pointer-events-none px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1760px] mx-auto flex items-center justify-between relative h-11 sm:h-12">
+          {/* A. Outer Left: Brand Logo & Title (Outside nav pill when at top) */}
+          <div className="flex items-center shrink-0 min-w-0 pointer-events-auto">
+            <AnimatePresence>
+              {!scrolled && (
+                <motion.div
+                  key="top-brand"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 30, transition: { duration: 0.22, ease: "easeOut" } }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex items-center"
+                >
+                  <Link
+                    href={config.homeHref}
+                    prefetch={false}
+                    className="flex items-center gap-2.5 sm:gap-3 group select-none"
+                    title={`${config.brandTitle || "Modernisum"} Home`}
                   >
-                    <Link
-                      href={link.href}
-                      onClick={() => {
-                        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-                        setServicesDropdownOpen(false);
-                      }}
-                      className={`flex items-center gap-1 px-2 xl:px-3 py-1.5 text-xs font-semibold rounded-full transition-colors whitespace-nowrap shrink-0 ${
-                        isActive
-                          ? "text-cyan-600 dark:text-cyan-300 bg-cyan-500/10 dark:bg-white/10"
-                          : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                      }`}
-                    >
-                      <span>{link.name}</span>
-                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesDropdownOpen ? "rotate-180" : ""}`} />
-                    </Link>
-
-                    {/* Mega Dropdown with seamless hover bridge */}
-                    {servicesDropdownOpen && (
-                      <div 
-                        className="absolute top-full left-0 pt-2 w-72 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
-                        onMouseEnter={handleOpenDropdown}
-                        onMouseLeave={handleCloseDropdown}
-                      >
-                        {/* Invisible bridge to catch cursor movement seamlessly across gap */}
-                        <div className="absolute -top-3 left-0 right-0 h-5 bg-transparent pointer-events-auto" />
-
-                        <div className="p-2 rounded-2xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl glass-panel-elevated border border-slate-200/80 dark:border-white/20 shadow-2xl relative">
-                          <div className="p-2 border-b border-slate-200 dark:border-white/10 mb-1">
-                            <span className="text-[10px] font-tech uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                              Enterprise Software Suites
-                            </span>
-                          </div>
-                          {link.subItems?.map((sub) => (
-                            <Link
-                              key={sub.name}
-                              href={sub.href}
-                              onClick={() => {
-                                if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-                                setServicesDropdownOpen(false);
-                              }}
-                              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group/item"
-                            >
-                              <div className="p-2 rounded-lg bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/10 group-hover/item:border-cyan-500/40 shrink-0">
-                                {sub.icon}
-                              </div>
-                              <div>
-                                <div className="text-xs font-medium text-slate-900 dark:text-white group-hover/item:text-cyan-600 dark:group-hover/item:text-cyan-300 transition-colors">
-                                  {sub.name}
-                                </div>
-                              </div>
-                            </Link>
-                          ))}
+                    <div className="flex items-center justify-center shrink-0">
+                      {config.brandLogoNode}
+                    </div>
+                    {config.variant === "school" ? (
+                      <div className="flex flex-col justify-center select-none w-fit ml-0.5" aria-label="ModSchool Modernisum">
+                        <span className="text-[18px] sm:text-[20px] font-black font-tech tracking-tight text-slate-900 dark:text-white leading-none">
+                          School
+                        </span>
+                        <div className="w-full flex justify-between items-center text-[7px] sm:text-[7.5px] font-bold font-tech uppercase text-amber-500 dark:text-yellow-400 leading-none mt-1 select-none" aria-hidden="true">
+                          <span>M</span><span>O</span><span>D</span><span>E</span><span>R</span><span>N</span><span>I</span><span>S</span><span>U</span><span>M</span>
                         </div>
                       </div>
+                    ) : config.variant === "farmer" || config.variant === "agromi" ? (
+                      <div className="flex flex-col justify-center select-none w-fit" aria-label="MOD Farmer by Modernisum">
+                        <span className="text-[17px] sm:text-[19px] font-black font-tech tracking-wider text-slate-900 dark:text-white leading-none">
+                          MOD FARMER
+                        </span>
+                        <div className="w-full flex justify-between items-center text-[7px] sm:text-[8px] font-bold font-tech uppercase text-emerald-500 dark:text-emerald-400 leading-none mt-1 select-none" aria-hidden="true">
+                          <span>M</span><span>O</span><span>D</span><span>E</span><span>R</span><span>N</span><span>I</span><span>S</span><span>U</span><span>M</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col justify-center select-none">
+                        <span className="text-[15px] sm:text-[17px] font-bold font-tech tracking-wider text-slate-900 dark:text-white leading-none">
+                          {config.brandTitle}
+                        </span>
+                        {config.brandSubtitle && (
+                          <span className="text-[10px] sm:text-[11px] font-tech font-bold tracking-widest leading-none uppercase mt-1 text-slate-500 dark:text-cyan-400/90">
+                            {config.brandSubtitle}
+                          </span>
+                        )}
+                      </div>
                     )}
-                  </div>
-                );
-              }
-
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`relative px-2 xl:px-3 py-1.5 text-xs font-semibold rounded-full transition-colors whitespace-nowrap shrink-0 flex items-center ${
-                    isActive
-                      ? "text-cyan-600 dark:text-cyan-300 bg-cyan-500/10 dark:bg-white/10"
-                      : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                  }`}
-                >
-                  <span>{link.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Right Action Buttons */}
-          <div className="hidden lg:flex items-center gap-1.5 xl:gap-3 shrink-0">
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 sm:p-2 rounded-full glass-pill text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none shrink-0 cursor-pointer"
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-cyan-600" />}
-            </button>
-
-            {/* Sign In Button (Client Portal) */}
-            <GlassButton
-              variant="ghost"
-              size="sm"
-              className="whitespace-nowrap shrink-0 px-2.5 xl:px-4"
-              onClick={() => {
-                setAuthTab("signin");
-                setAuthModalOpen(true);
-              }}
-            >
-              Sign In
-            </GlassButton>
-
-            {/* Get Started Button */}
-            <GlassButton
-              variant="primary"
-              size="sm"
-              className="whitespace-nowrap shrink-0 px-3 xl:px-4"
-              onClick={() => {
-                setAuthTab("signup");
-                setAuthModalOpen(true);
-              }}
-              icon={<Zap className="w-3.5 h-3.5 text-cyan-300" />}
-            >
-              Get Started
-            </GlassButton>
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full glass-pill text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white cursor-pointer"
-              aria-label="Toggle theme mobile"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-cyan-600" />}
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl glass-pill text-slate-900 dark:text-white focus:outline-none cursor-pointer"
-              aria-label="Toggle mobile menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+          {/* B. Center: Compact Floating Island Pill */}
+          <motion.div
+            ref={pillRef}
+            data-testid="floating-island-pill"
+            onMouseMove={handlePillMouseMove}
+            onMouseEnter={() => setIsPillHovered(true)}
+            onMouseLeave={() => setIsPillHovered(false)}
+            initial={false}
+            animate={{
+              paddingLeft: scrolled ? "10px" : "14px",
+              paddingRight: scrolled ? "10px" : "14px",
+            }}
+            transition={{
+              duration: 0.35,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className={`absolute left-1/2 -translate-x-1/2 pointer-events-auto ${
+              scrolled ? "flex" : "hidden lg:flex"
+            } items-center h-10 sm:h-11 rounded-full backdrop-blur-2xl border transition-all duration-300 group/pill overflow-visible ${
+              config.themePillBg
+            } ${config.themePillBorder} ${config.themePillShadow}`}
+          >
+            {/* Ambient Glass Sheen */}
+            <div className="pointer-events-none absolute inset-0 rounded-full overflow-hidden">
+              <div className="w-full h-full bg-gradient-to-b from-white/20 via-white/[0.05] to-transparent dark:from-white/[0.14] dark:via-white/[0.03] dark:to-transparent" />
+            </div>
+
+            {/* Specular Spotlight tracking cursor */}
+            {isPillHovered && (
+              <div className="pointer-events-none absolute inset-0 rounded-full overflow-hidden">
+                <div
+                  className="w-full h-full transition-opacity duration-300"
+                  style={{
+                    background: `radial-gradient(220px circle at ${pillMousePos.x}px ${pillMousePos.y}px, ${config.themeSpotlightGlow}, transparent 70%)`,
+                  }}
+                  aria-hidden="true"
+                />
+              </div>
+            )}
+
+            {/* Embedded Logo in pill: ONLY when scrolled */}
+            <AnimatePresence>
+              {scrolled && (
+                <motion.div
+                  key="scrolled-pill-logo"
+                  initial={{ opacity: 0, width: 0, scale: 0.8, x: -10 }}
+                  animate={{ opacity: 1, width: "auto", scale: 1, x: 0 }}
+                  exit={{ opacity: 0, width: 0, scale: 0.8, x: -10, transition: { duration: 0.22, ease: "easeOut" } }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden flex items-center mr-2 shrink-0"
+                >
+                  <Link href={config.homeHref} prefetch={false} className="flex items-center group">
+                    <div className="flex items-center justify-center shrink-0">
+                      {config.brandPillLogoNode}
+                    </div>
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation Links: ALWAYS centered in pill */}
+            <div className="hidden lg:flex items-center shrink-0">
+              <div className="relative flex items-center shrink-0">
+                <nav className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0">
+                  {config.navItems.map((item) => {
+                    const ItemIcon = item.icon;
+
+                    if (item.dropdown) {
+                      const isOpen = activeDropdown === item.dropdown.id;
+                      return (
+                        <div
+                          key={item.name}
+                          className="shrink-0 py-1"
+                          onMouseEnter={() => handleOpenDropdown(item.dropdown!.id)}
+                          onMouseLeave={handleCloseDropdown}
+                        >
+                          <Link
+                            href={item.href}
+                            prefetch={false}
+                            onClick={handleCloseDropdown}
+                            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-[13.5px] sm:text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap shrink-0 border ${
+                              isOpen
+                                ? `${config.activePillBg} font-semibold shadow-xs`
+                                : "border-transparent text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
+                            }`}
+                          >
+                            {ItemIcon && <ItemIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />}
+                            <span>{item.name}</span>
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                isOpen
+                                  ? "rotate-180 text-current opacity-100"
+                                  : "opacity-50 group-hover:opacity-80"
+                              }`}
+                            />
+                          </Link>
+                        </div>
+                      );
+                    }
+
+                    const isDownload =
+                      item.isDownload ||
+                      item.href.includes("/downloads/") ||
+                      item.href.endsWith(".exe") ||
+                      item.href.endsWith(".zip");
+
+                    if (isDownload) {
+                      return (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          download
+                          onMouseEnter={handleCloseDropdown}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13.5px] sm:text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap shrink-0 border border-transparent text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
+                        >
+                          {ItemIcon && <ItemIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-sky-500" />}
+                          <span>{item.name}</span>
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        prefetch={false}
+                        onMouseEnter={handleCloseDropdown}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13.5px] sm:text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap shrink-0 border border-transparent text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
+                      >
+                        {ItemIcon && <ItemIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />}
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {/* Unified Static Centered Dropdown Mega-Menu */}
+                <AnimatePresence>
+                  {activeDropdownItem && activeDropdownItem.dropdown && (
+                    <MegaDropdown
+                      dropdown={activeDropdownItem.dropdown}
+                      themeSpotlightGlow={config.themeSpotlightGlow}
+                      activeVariant={config.variant}
+                      onClose={handleCloseDropdown}
+                      onOpen={handleOpenDropdown}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Embedded Sign In / Account Chip in pill: ONLY when scrolled */}
+            <AnimatePresence>
+              {scrolled && (
+                <motion.div
+                  key="scrolled-pill-auth"
+                  initial={{ opacity: 0, width: 0, scale: 0.8, x: 10 }}
+                  animate={{ opacity: 1, width: "auto", scale: 1, x: 0 }}
+                  exit={{ opacity: 0, width: 0, scale: 0.8, x: 10, transition: { duration: 0.22, ease: "easeOut" } }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex items-center ml-2 shrink-0 relative"
+                >
+                  <UserAccountMenu
+                    currentUser={currentUser}
+                    isOpen={pillUserDropdownOpen}
+                    onToggle={() => setPillUserDropdownOpen((prev) => !prev)}
+                    onClose={() => setPillUserDropdownOpen(false)}
+                    onLogout={handleLogout}
+                    isDark={isDark}
+                    onToggleTheme={toggleTheme}
+                    onOpenAuth={() => setAuthModalOpen(true)}
+                    isSchoolDomain={isSchoolDomain}
+                    compact={true}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Mobile Drawer Trigger inside pill when scrolled */}
+            {scrolled && (
+              <div className="flex lg:hidden items-center ml-1">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-1.5 rounded-lg text-slate-900 dark:text-white cursor-pointer"
+                  aria-label="Toggle mobile menu"
+                >
+                  {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                </button>
+              </div>
+            )}
+          </motion.div>
+
+          {/* C. Outer Right: Theme Toggle & Sign In (Outside nav pill when at top) */}
+          <div className="flex items-center justify-end shrink-0 pointer-events-auto">
+            <AnimatePresence>
+              {!scrolled && (
+                <motion.div
+                  key="top-actions"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -30, transition: { duration: 0.22, ease: "easeOut" } }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex items-center gap-1.5 sm:gap-3"
+                >
+                  {/* Theme Toggle (outside nav at top) */}
+                  <button
+                    onClick={toggleTheme}
+                    className="p-1.5 sm:p-2 rounded-full glass-pill text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer hover:rotate-12"
+                    aria-label="Toggle theme"
+                  >
+                    {isDark ? (
+                      <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+                    ) : (
+                      <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-600" />
+                    )}
+                  </button>
+
+                  {/* Sign In / Account Chip (outside nav at top) */}
+                  <UserAccountMenu
+                    currentUser={currentUser}
+                    isOpen={topUserDropdownOpen}
+                    onToggle={() => setTopUserDropdownOpen((prev) => !prev)}
+                    onClose={() => setTopUserDropdownOpen(false)}
+                    onLogout={handleLogout}
+                    isDark={isDark}
+                    onToggleTheme={toggleTheme}
+                    onOpenAuth={() => setAuthModalOpen(true)}
+                    isSchoolDomain={isSchoolDomain}
+                    compact={false}
+                  />
+
+                  {/* Mobile Trigger at top */}
+                  <div className="flex lg:hidden items-center ml-0.5 sm:ml-1">
+                    <button
+                      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                      className="p-1.5 sm:p-2 rounded-xl glass-pill text-slate-900 dark:text-white"
+                      aria-label="Toggle mobile menu"
+                    >
+                      {mobileMenuOpen ? (
+                        <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                      ) : (
+                        <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-
-        {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 p-5 rounded-2xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/20 shadow-2xl shadow-black/50 animate-in fade-in slide-in-from-top-3 duration-200">
-            <nav className="flex flex-col gap-2">
-              {navLinks.map((link) => {
-                const isActive = isLinkActive(link.href);
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`px-4 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
-                      isActive
-                        ? "bg-cyan-500/10 dark:bg-white/10 text-cyan-600 dark:text-cyan-300"
-                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                    }`}
-                  >
-                    <span>{link.name}</span>
-                  </Link>
-                );
-              })}
-
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
-                <GlassButton
-                  variant="secondary"
-                  size="md"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setAuthTab("signin");
-                    setAuthModalOpen(true);
-                  }}
-                  className="w-full"
-                >
-                  Sign In
-                </GlassButton>
-                <GlassButton
-                  variant="primary"
-                  size="md"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setAuthTab("signup");
-                    setAuthModalOpen(true);
-                  }}
-                  className="w-full"
-                >
-                  Get Started
-                </GlassButton>
-              </div>
-            </nav>
-          </div>
-        )}
       </header>
 
-      {/* Interactive Liquid Glass Auth Dialog */}
-      <AuthDialog
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        defaultTab={authTab}
+      {/* Mobile Navigation Drawer */}
+      <MobileNavDrawer
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        config={config}
+        isSchoolDomain={isSchoolDomain}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        isLinkActive={isLinkActive}
       />
+
+      {/* Interactive Liquid Glass Auth Dialog */}
+      <AuthDialog isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   );
 }

@@ -39,8 +39,17 @@ gdrive_token.json
 service-account.json
 *.token.json
 
-# vercel
+# vercel & firebase
 .vercel
+.firebase/
+
+# Large binaries & release installers (hosted via Google Drive / CDN)
+public/downloads/*.exe
+public/downloads/*.apk
+public/downloads/*.zip
+public/downloads/raw/
+*.exe
+*.apk
 
 # typescript
 *.tsbuildinfo

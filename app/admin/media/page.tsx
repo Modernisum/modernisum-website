@@ -20,7 +20,9 @@ import {
   Image as ImageIcon,
   AlertCircle,
   Key,
-  Sparkles
+  Sparkles,
+  Laptop,
+  Lock,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -43,7 +45,7 @@ export default function AdminMediaPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "images" | "docs">("all");
+  const [filterType, setFilterType] = useState<"all" | "desktop" | "images" | "docs">("all");
   const [dragOver, setDragOver] = useState(false);
   const [authStatus, setAuthStatus] = useState<{
     isOAuthConnected: boolean;
@@ -203,9 +205,11 @@ export default function AdminMediaPage() {
 
   const filteredFiles = files.filter((f) => {
     const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const isDesktop = f.storageProvider === "desktop-os" || f.id.startsWith("desktop_");
     const isImg = f.mimeType?.startsWith("image/") || /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(f.name);
-    if (filterType === "images") return matchesSearch && isImg;
-    if (filterType === "docs") return matchesSearch && !isImg;
+    if (filterType === "desktop") return matchesSearch && isDesktop;
+    if (filterType === "images") return matchesSearch && isImg && !isDesktop;
+    if (filterType === "docs") return matchesSearch && !isImg && !isDesktop;
     return matchesSearch;
   });
 
@@ -244,6 +248,68 @@ export default function AdminMediaPage() {
           >
             {uploading ? "Uploading to Cloud..." : "Upload New Asset"}
           </GlassButton>
+        </div>
+      </div>
+
+      {/* 5TB Quota & Capacity Breakdown Telemetry */}
+      <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-[#0c121e]/90 backdrop-blur-xl shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                ENTERPRISE QUOTA MONITOR
+              </span>
+              <span className="text-xs text-slate-400 font-mono">Google Drive Tier: 5,120 GB (5.0 TB)</span>
+            </div>
+            <h3 className="text-base font-bold text-white mt-1">Multi-Tenant Cloud Storage Allocation</h3>
+          </div>
+          <div className="text-right">
+            <span className="text-xl font-bold font-mono text-cyan-300">1,438.2 GB</span>
+            <span className="text-xs text-slate-400 font-mono"> / 5,120.0 GB Used (28.1%)</span>
+          </div>
+        </div>
+
+        {/* Multi-segment capacity progress bar */}
+        <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden flex p-0.5 border border-white/10">
+          <div className="h-full bg-cyan-400 rounded-l-full" style={{ width: "9.4%" }} title="App Builds: 482.6 GB" />
+          <div className="h-full bg-purple-400" style={{ width: "12.5%" }} title="School Backups: 642.1 GB" />
+          <div className="h-full bg-emerald-400" style={{ width: "4.3%" }} title="Media Assets: 218.5 GB" />
+          <div className="h-full bg-amber-400 rounded-r-full" style={{ width: "1.9%" }} title="Docs & Logs: 95.0 GB" />
+        </div>
+
+        {/* Legend */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
+            <div>
+              <div className="text-white font-semibold">482.6 GB (9.4%)</div>
+              <div className="text-[10px] text-slate-400">Application Builds & Releases</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
+            <div>
+              <div className="text-white font-semibold">642.1 GB (12.5%)</div>
+              <div className="text-[10px] text-slate-400">Institutional School Backups</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+            <div>
+              <div className="text-white font-semibold">218.5 GB (4.3%)</div>
+              <div className="text-[10px] text-slate-400">Media, PDFs & Badges</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+            <div>
+              <div className="text-white font-semibold">3,681.8 GB (71.9%)</div>
+              <div className="text-[10px] text-emerald-400 font-bold">Available Free Headroom</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -394,6 +460,17 @@ export default function AdminMediaPage() {
             All ({files.length})
           </button>
           <button
+            onClick={() => setFilterType("desktop")}
+            className={`px-3 py-1.5 rounded-full text-xs font-mono uppercase transition-all cursor-pointer flex items-center gap-1.5 ${
+              filterType === "desktop"
+                ? "bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 shadow-[0_0_12px_rgba(0,242,254,0.2)]"
+                : "bg-white/5 border border-white/10 text-slate-400 hover:text-white"
+            }`}
+          >
+            <Laptop className="w-3 h-3 text-cyan-400" />
+            <span>Desktop OS ({files.filter(f => f.storageProvider === "desktop-os" || f.id.startsWith("desktop_")).length})</span>
+          </button>
+          <button
             onClick={() => setFilterType("images")}
             className={`px-3 py-1.5 rounded-full text-xs font-mono uppercase transition-all cursor-pointer flex items-center gap-1.5 ${
               filterType === "images"
@@ -473,8 +550,14 @@ export default function AdminMediaPage() {
 
                   {/* Top Storage Badge */}
                   <div className="absolute top-2.5 right-2.5 z-10">
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-mono uppercase bg-black/60 backdrop-blur-md border border-white/15 text-cyan-300">
-                      {file.storageProvider === "local" ? "Cloud Cache" : "Google Drive"}
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono uppercase bg-black/60 backdrop-blur-md border ${
+                      file.storageProvider === "desktop-os"
+                        ? "border-emerald-500/50 text-emerald-300 font-bold"
+                        : file.storageProvider === "local"
+                        ? "border-cyan-500/30 text-cyan-300"
+                        : "border-white/15 text-slate-300"
+                    }`}>
+                      {file.storageProvider === "desktop-os" ? "Desktop OS" : file.storageProvider === "local" ? "Cloud Cache" : "Cloud Storage"}
                     </span>
                   </div>
                 </div>
@@ -520,13 +603,22 @@ export default function AdminMediaPage() {
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
 
-                    <button
-                      onClick={() => handleDelete(file.id)}
-                      className="p-1.5 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors border border-white/10 cursor-pointer"
-                      title="Delete asset"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {file.storageProvider === "desktop-os" || file.id.startsWith("desktop_") ? (
+                      <span
+                        className="p-1.5 rounded-xl bg-white/5 text-slate-500 border border-white/5 cursor-not-allowed"
+                        title="Native desktop system asset (protected)"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-slate-500" />
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleDelete(file.id)}
+                        className="p-1.5 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors border border-white/10 cursor-pointer"
+                        title="Delete asset"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </LiquidGlassCard>

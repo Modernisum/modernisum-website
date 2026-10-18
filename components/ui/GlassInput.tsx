@@ -35,7 +35,7 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
             type={inputType}
             ref={ref}
             className={cn(
-              "glass-input w-full px-4 py-2.5 text-sm transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500",
+              "glass-input w-full px-4 py-2.5 text-sm transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden",
               icon && "pl-11",
               (rightIcon || isPassword) && "pr-11",
               error && "border-rose-500/60 focus:border-rose-500 focus:ring-rose-500/20",

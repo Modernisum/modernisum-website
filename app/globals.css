@@ -3,20 +3,36 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-abyss: #07090e;
-  --bg-surface: #0c0e14;
-  --bg-surface-elevated: #11141d;
+  --bg-abyss: #020617;
+  --bg-surface: #050b1a;
+  --bg-surface-elevated: #091226;
   
   --glass-bg: rgba(255, 255, 255, 0.035);
   --glass-bg-hover: rgba(255, 255, 255, 0.065);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-border-highlight: rgba(255, 255, 255, 0.35);
-  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
   
   --neon-cyan: #00f2fe;
   --neon-purple: #7928ca;
   --neon-emerald: #10b981;
   --solar-amber: #f59e0b;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+}
+
+.dark {
+  --bg-abyss: #020617;
+  --bg-surface: #050b1a;
+  --bg-surface-elevated: #091226;
+  
+  --glass-bg: rgba(255, 255, 255, 0.035);
+  --glass-bg-hover: rgba(255, 255, 255, 0.065);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.85);
   
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
@@ -44,11 +60,36 @@
   --text-muted: #64748b;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+  font-size: 16px;
+}
+
+/* Zero-Flicker Subdomain Switcher */
+html.is-school-subdomain #modernisum-home-content {
+  display: none !important;
+}
+
+@media (min-width: 1440px) {
+  html {
+    font-size: 16.5px;
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 17px;
+  }
+}
+
 body {
   background-color: var(--bg-abyss);
   color: var(--text-primary);
   font-family: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
   transition: background-color 0.35s ease, color 0.35s ease;
 }
 
@@ -334,9 +375,12 @@ h1, h2, h3, h4, h5, h6, .font-tech {
 .light .glass-input,
 .light input[type="text"],
 .light input[type="email"],
+.light input[type="password"],
+.light input[type="tel"],
+.light select,
 .light textarea {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border-color: rgba(203, 213, 225, 0.8) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(203, 213, 225, 0.85) !important;
   color: #090d16 !important;
 }
 
@@ -347,6 +391,7 @@ h1, h2, h3, h4, h5, h6, .font-tech {
 
 .light .glass-input:focus,
 .light input:focus,
+.light select:focus,
 .light textarea:focus {
   background: #ffffff !important;
   border-color: #0284c7 !important;
@@ -400,3 +445,82 @@ h1, h2, h3, h4, h5, h6, .font-tech {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(2, 132, 199, 0.5);
 }
+
+/* Disable Microsoft Edge & Internet Explorer native password reveal and clear buttons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Disable WebKit auto-fill credentials icons */
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Zero-flicker school subdomain presentation */
+.is-school-subdomain #modernisum-home-content {
+  display: none !important;
+}
+
+/* Right-to-Left Continuous Smooth Marquee for Community Reviews */
+@keyframes marquee-rtl {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-rtl {
+  display: flex;
+  width: max-content;
+  animation: marquee-rtl 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-rtl:hover {
+  animation-play-state: paused;
+}
+
+/* ========================================================================= */
+/* ⚡ 120 FPS CORE WEB VITALS & GPU COMPOSITOR ENGINE OPTIMIZATIONS           */
+/* ========================================================================= */
+
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+
+.gpu-accelerate {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Stitch-Inspired 3D Pop-Out Perspective Stage */
+.stitch-3d-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+
+

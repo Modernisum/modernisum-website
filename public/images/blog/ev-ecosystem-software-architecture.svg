@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 600" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#030712" />
+      <stop offset="50%" stop-color="#0a1226" />
+      <stop offset="100%" stop-color="#030816" />
+    </linearGradient>
+
+    <!-- Glowing Cyber Blue Gradient -->
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="50%" stop-color="#4facfe" />
+      <stop offset="100%" stop-color="#00e676" />
+    </linearGradient>
+
+    <!-- Energy Pulse Gradient -->
+    <linearGradient id="energyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#818cf8" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Glass Surface Gradient -->
+    <linearGradient id="glassFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="intenseGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="28" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.75" stroke-opacity="0.45" />
+    </pattern>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1400" height="600" fill="url(#bgGrad)" />
+  <rect width="1400" height="600" fill="url(#grid)" />
+
+  <!-- Ambient Light Orbs -->
+  <circle cx="200" cy="120" r="280" fill="#0284c7" opacity="0.16" filter="url(#glow)" />
+  <circle cx="1180" cy="480" r="320" fill="#059669" opacity="0.14" filter="url(#glow)" />
+  <circle cx="700" cy="300" r="220" fill="#6366f1" opacity="0.12" filter="url(#glow)" />
+
+  <!-- Grid Feeder Waveform / Energy Circuit Tracks -->
+  <path d="M 0 480 Q 320 460 520 510 T 950 470 T 1400 500" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-opacity="0.3" />
+  <path d="M 0 510 Q 380 540 680 490 T 1100 530 T 1400 480" fill="none" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.25" />
+  <path d="M 120 0 L 120 600 M 1280 0 L 1280 600" stroke="#334155" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 8" />
+
+  <!-- Central High-Tech Telemetry Cockpit Card (Liquid Glass) -->
+  <g transform="translate(140, 70)">
+    <!-- Glass Card Background -->
+    <rect width="1120" height="460" rx="28" fill="url(#glassFill)" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.3" />
+    <rect width="1120" height="460" rx="28" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-opacity="0.15" />
+
+    <!-- Top Status Bar -->
+    <g transform="translate(48, 48)">
+      <!-- Modernisum Architecture Badge -->
+      <rect width="250" height="34" rx="17" fill="#0369a1" fill-opacity="0.25" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4" />
+      <circle cx="20" cy="17" r="5" fill="#38bdf8" filter="url(#glow)" />
+      <text x="36" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc" letter-spacing="1.5">MODERNISUM SYSTEMS</text>
+
+      <!-- Protocol Badges Right -->
+      <g transform="translate(720, 0)">
+        <rect width="140" height="34" rx="17" fill="#065f46" fill-opacity="0.3" stroke="#34d399" stroke-width="1" stroke-opacity="0.4" />
+        <circle cx="18" cy="17" r="4" fill="#34d399" />
+        <text x="32" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#a7f3d0">ISO 15118 PLUG</text>
+
+        <rect x="155" y="0" width="150" height="34" rx="17" fill="#4338ca" fill-opacity="0.3" stroke="#818cf8" stroke-width="1" stroke-opacity="0.4" />
+        <circle cx="173" cy="17" r="4" fill="#818cf8" />
+        <text x="187" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#c7d2fe">EDGE OCPP 2.0</text>
+      </g>
+    </g>
+
+    <!-- Main Title & Subtitle Section -->
+    <g transform="translate(48, 130)">
+      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#38bdf8" letter-spacing="3">ZERO-FRICTION INFRASTRUCTURE ARCHITECTURE</text>
+      
+      <text y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="900" fill="#f8fafc" letter-spacing="-0.5">
+        Designing a Zero-Friction EV Ecosystem
+      </text>
+      
+      <text y="92" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="500" fill="#94a3b8">
+        Why Software Architecture, Open APIs &amp; Resilient Grids Matter More Than Charger Count
+      </text>
+    </g>
+
+    <!-- Interactive Architecture Pillars / Telemetry Cards -->
+    <g transform="translate(48, 280)">
+      <!-- Pillar 1: FASTag Metering -->
+      <g transform="translate(0, 0)">
+        <rect width="240" height="130" rx="18" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="1" />
+        <circle cx="36" cy="36" r="18" fill="#0284c7" fill-opacity="0.25" />
+        <!-- Chip/Wallet Icon -->
+        <path d="M 27 30 L 45 30 L 45 42 L 27 42 Z M 39 36 L 41 36" stroke="#38bdf8" stroke-width="1.8" fill="none" />
+        <text x="66" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="0.5">PAYMENT FLOW</text>
+        <text x="66" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f1f5f9">FASTag &amp; Pre-Auth</text>
+        <text x="18" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748b" width="200">
+          Zero-app checkout. Metered auto-debit on gun disconnect.
+        </text>
+      </g>
+
+      <!-- Pillar 2: Edge Autonomy -->
+      <g transform="translate(260, 0)">
+        <rect width="240" height="130" rx="18" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="1" />
+        <circle cx="36" cy="36" r="18" fill="#0d9488" fill-opacity="0.25" />
+        <!-- CPU / Edge Icon -->
+        <rect x="29" y="29" width="14" height="14" rx="2" stroke="#2dd4bf" stroke-width="1.8" fill="none" />
+        <path d="M 33 26 L 33 29 M 39 26 L 39 29 M 43 33 L 46 33 M 43 39 L 46 39 M 33 43 L 33 46 M 39 43 L 39 46 M 26 33 L 29 33 M 26 39 L 29 39" stroke="#2dd4bf" stroke-width="1.5" />
+        <text x="66" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="0.5">EDGE HARDWARE</text>
+        <text x="66" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f1f5f9">Offline State Machine</text>
+        <text x="18" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748b">
+          Basement 2G/Satellite sync. Compact 4-byte settlement.
+        </text>
+      </g>
+
+      <!-- Pillar 3: Auto-Unlock Gun Sharing -->
+      <g transform="translate(520, 0)">
+        <rect width="240" height="130" rx="18" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="1" />
+        <circle cx="36" cy="36" r="18" fill="#4f46e5" fill-opacity="0.25" />
+        <!-- Unlock / Gun Sharing Icon -->
+        <path d="M 31 35 L 31 32 C 31 29 33 27 36 27 C 39 27 41 29 41 32 L 41 35 M 29 35 L 43 35 L 43 45 L 29 45 Z" stroke="#818cf8" stroke-width="1.8" fill="none" />
+        <text x="66" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="0.5">HARDWARE HANDSHAKE</text>
+        <text x="66" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f1f5f9">Auto-Unlock Gun</text>
+        <text x="18" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748b">
+          Zero charger squatting. Instant port unlock at 100%.
+        </text>
+      </g>
+
+      <!-- Pillar 4: National Open API -->
+      <g transform="translate(780, 0)">
+        <rect width="244" height="130" rx="18" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="1" />
+        <circle cx="36" cy="36" r="18" fill="#059669" fill-opacity="0.25" />
+        <!-- Cloud / Telemetry Pulse -->
+        <path d="M 28 40 L 33 34 L 38 38 L 44 30" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <text x="66" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="0.5">OPEN PLATFORM</text>
+        <text x="66" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f1f5f9">Weather-Style API</text>
+        <text x="18" y="85" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748b">
+          Predictive queue sync. DISCOM underground feeders.
+        </text>
+      </g>
+    </g>
+  </g>
+
+  <!-- High-Tech Charging Cable Accent along bottom -->
+  <path d="M 140 550 C 420 575 880 575 1260 550" fill="none" stroke="url(#cyanGlow)" stroke-width="3" filter="url(#glow)" />
+  <circle cx="700" cy="565" r="5" fill="#00f2fe" filter="url(#intenseGlow)" />
+</svg>

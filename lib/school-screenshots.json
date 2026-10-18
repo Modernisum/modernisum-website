@@ -1,0 +1,122 @@
+[
+  {
+    "id": "dashboard",
+    "title": "Executive Cockpit & School Dashboard",
+    "category": "Executive Overview",
+    "caption": "Real-time administrative telemetry: daily attendance metrics, fee collection summaries, active bus tracking alerts, and quick actions.",
+    "url": "/images/desktop/dashboard_dark.png",
+    "darkUrl": "/images/desktop/dashboard_dark.png",
+    "lightUrl": "/images/desktop/dashboard_light.png",
+    "thumbnailUrl": "/images/desktop/dashboard_dark.png",
+    "fileId": "local_dashboard_01",
+    "isMain": true
+  },
+  {
+    "id": "attendance",
+    "title": "Automated RFID & Face AI Attendance Console",
+    "category": "Attendance & Security",
+    "caption": "Sub-second contactless campus entry logging with instant parent WhatsApp notifications and leave quota tracking.",
+    "url": "/images/desktop/attendance_dark.png",
+    "darkUrl": "/images/desktop/attendance_dark.png",
+    "lightUrl": "/images/desktop/attendance_leave.png",
+    "thumbnailUrl": "/images/desktop/attendance_dark.png",
+    "fileId": "local_attendance_02",
+    "isMain": false
+  },
+  {
+    "id": "finance",
+    "title": "Dual-Rate Financial Ledger & Student Passbook",
+    "category": "Fee Management & P&L",
+    "caption": "Classroom fee collection tracking, installment schedules, online payment reconciliation, and instant passbook audit.",
+    "url": "/images/desktop/finance_dark.png",
+    "darkUrl": "/images/desktop/finance_dark.png",
+    "lightUrl": "/images/desktop/finance_light.png",
+    "thumbnailUrl": "/images/desktop/finance_dark.png",
+    "fileId": "local_finance_03",
+    "isMain": false
+  },
+  {
+    "id": "timetable",
+    "title": "Conflict-Free Timetable & Teacher Substitution Engine",
+    "category": "Academic Scheduling",
+    "caption": "Intelligent timetable matrix with drag-and-drop slot reordering and automated teacher substitution resolving.",
+    "url": "/images/desktop/timetable_dark.png",
+    "darkUrl": "/images/desktop/timetable_dark.png",
+    "lightUrl": "/images/desktop/timetable_calendar.png",
+    "thumbnailUrl": "/images/desktop/timetable_dark.png",
+    "fileId": "local_timetable_04",
+    "isMain": false
+  },
+  {
+    "id": "call_center",
+    "title": "Autonomous Voice Campaign & Parent Call Center",
+    "category": "Communication & CRM",
+    "caption": "Integrated outbound calling engine for batch attendance alerts, fee recovery reminders, and automated DTMF feedback collection.",
+    "url": "/images/desktop/call_center_dark.png",
+    "darkUrl": "/images/desktop/call_center_dark.png",
+    "lightUrl": "/images/desktop/call_center_phone.png",
+    "thumbnailUrl": "/images/desktop/call_center_dark.png",
+    "fileId": "local_callcenter_05",
+    "isMain": false
+  },
+  {
+    "id": "assistant",
+    "title": "Integrated AI Administrative Copilot",
+    "category": "Cognitive AI",
+    "caption": "Context-aware conversational assistant delivering instant student dossiers, marksheet analytics, and board policy answers.",
+    "url": "/images/desktop/assistant_overview.png",
+    "darkUrl": "/images/desktop/assistant_overview.png",
+    "lightUrl": "/images/desktop/assistant_chat_window.png",
+    "thumbnailUrl": "/images/desktop/assistant_overview.png",
+    "fileId": "local_assistant_06",
+    "isMain": false
+  },
+  {
+    "id": "admissions",
+    "title": "In-Place Multi-Step Student Admission Suite",
+    "category": "Student Onboarding",
+    "caption": "Paperless admission workflow with instant certificate OCR, fee schedule assignment, and bus route mapping.",
+    "url": "/images/desktop/admissions_dark.png",
+    "darkUrl": "/images/desktop/admissions_dark.png",
+    "lightUrl": "/images/desktop/admissions_light.png",
+    "thumbnailUrl": "/images/desktop/admissions_dark.png",
+    "fileId": "local_admissions_07",
+    "isMain": false
+  },
+  {
+    "id": "student_profile",
+    "title": "Student 360° Profile & Academic Dossier",
+    "category": "Student Records",
+    "caption": "Comprehensive student records with multi-attribute filtering, emergency contact cards, fee statements, and complete academic audit trails.",
+    "url": "/images/desktop/student_profile_overview.png",
+    "darkUrl": "/images/desktop/student_profile_overview.png",
+    "lightUrl": "/images/desktop/student_dossier_performance.png",
+    "thumbnailUrl": "/images/desktop/student_profile_overview.png",
+    "fileId": "local_student_profile_08",
+    "isMain": false
+  },
+  {
+    "id": "vault",
+    "title": "Institutional Document Vault & Extension Hub",
+    "category": "Compliance & KYC",
+    "caption": "Student transfer certificates, identity card generation, government scholarship forms, and secure document storage.",
+    "url": "/images/desktop/vault_dark.png",
+    "darkUrl": "/images/desktop/vault_dark.png",
+    "lightUrl": "/images/desktop/vault_extension.png",
+    "thumbnailUrl": "/images/desktop/vault_dark.png",
+    "fileId": "local_vault_09",
+    "isMain": false
+  },
+  {
+    "id": "exams",
+    "title": "Examination Matrix & AI Question Generator",
+    "category": "Academic Assessment",
+    "caption": "CBSE & ICSE syllabus-aligned test papers, grade books, marksheet formulations, and automated report cards.",
+    "url": "/images/desktop/exams_dark.png",
+    "darkUrl": "/images/desktop/exams_dark.png",
+    "lightUrl": "/images/desktop/exams_ai_paper.png",
+    "thumbnailUrl": "/images/desktop/exams_dark.png",
+    "fileId": "local_exams_10",
+    "isMain": false
+  }
+]

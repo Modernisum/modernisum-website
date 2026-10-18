@@ -137,7 +137,9 @@ export default function AdminServicesPage() {
                           }
                           className="bg-black border border-white/20 rounded-lg px-2 py-1 text-white text-xs"
                         >
-                          <option value="Modern School ERP">Modern School ERP</option>
+                          <option value="Modern School ERP">Modern School ERP (Legacy)</option>
+                          <option value="Modernisum School OS">Modernisum School OS</option>
+                          <option value="Agro-Tech AI">Agro-Tech AI (Agromi)</option>
                           <option value="AI SaaS">AI SaaS</option>
                           <option value="Web Development">Web Development</option>
                           <option value="Mobile Development">Mobile Development</option>
