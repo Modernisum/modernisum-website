@@ -24,7 +24,9 @@ import {
   Trash2,
   Clock,
   Award,
+  Printer,
 } from "lucide-react";
+import { PolicyPdfModal } from "@/components/policy/PolicyPdfModal";
 import {
   FirestorePolicyDoc,
   PolicySectionItem,
@@ -39,6 +41,7 @@ export default function AdminPoliciesPage() {
   const [selectedPolicyId, setSelectedPolicyId] = useState<string>("terms");
   const [loading, setLoading] = useState<boolean>(false);
   const [seeding, setSeeding] = useState<boolean>(false);
+  const [isAdminPdfModalOpen, setIsAdminPdfModalOpen] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // Form State for Adding / Editing a Clause
@@ -253,6 +256,16 @@ export default function AdminPoliciesPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsAdminPdfModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 transition-colors cursor-pointer"
+            title="Generate real-time executive PDF from current database"
+          >
+            <Printer className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Generate Live PDF</span>
+          </button>
+
           <Link
             href="/terms"
             target="_blank"
@@ -536,6 +549,13 @@ export default function AdminPoliciesPage() {
           </div>
         </div>
       )}
+
+      {/* Real-Time Live PDF Generator & Print Preview Modal */}
+      <PolicyPdfModal
+        isOpen={isAdminPdfModalOpen}
+        onClose={() => setIsAdminPdfModalOpen(false)}
+        policy={activePolicy}
+      />
     </div>
   );
 }
