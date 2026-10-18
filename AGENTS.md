@@ -44,6 +44,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 7. Specialized Domain Skills Integration (`.agent/skills/`)
 All agents must adhere to the specialized modular domain skills:
+- [`architecture`](file:///d:/modernisum/modernisum-web/.agent/skills/architecture/SKILL.md): Monorepo partitioning, Firestore data flows, offline mirrors, and routing architecture.
+- [`design`](file:///d:/modernisum/modernisum-web/.agent/skills/design/SKILL.md): 3D interactive stage, liquid glass morphism, fluid wide-screen layouts, and visual-first standards.
+- [`seo`](file:///d:/modernisum/modernisum-web/.agent/skills/seo/SKILL.md): Google SERP Sitelinks 6-pack, structured JSON-LD schemas, syndication feeds, and keyword hygiene.
 - [`user-expectations`](file:///d:/modernisum/modernisum-web/.agent/skills/user-expectations/SKILL.md): 90% visual law, text halving, buyer psychographics, zero developer jargon.
 - [`playwright`](file:///d:/modernisum/modernisum-web/.agent/skills/playwright/SKILL.md): Visual auditing, full-page screenshots, layout verification, defect remediation.
 - [`documentation`](file:///d:/modernisum/modernisum-web/.agent/skills/documentation/SKILL.md): Statutory legal drafting (Contract Act, IT Act Sec 10A, DPDP Act 2023, MSME), SLA terms, 100% advance refunds, visual tutorial manuals.
