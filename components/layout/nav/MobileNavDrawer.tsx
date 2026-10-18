@@ -10,6 +10,7 @@ import {
   ChevronRight,
   GraduationCap,
   Building2,
+  Activity,
 } from "lucide-react";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { NavDomainConfig, NavItem } from "./types";
@@ -26,6 +27,7 @@ interface MobileNavDrawerProps {
   currentUser: AuthUser | null;
   onLogout: () => void;
   onOpenAuth: () => void;
+  onOpenOrderTracking?: () => void;
   isLinkActive: (item: NavItem) => boolean;
 }
 
@@ -39,6 +41,7 @@ export function MobileNavDrawer({
   currentUser,
   onLogout,
   onOpenAuth,
+  onOpenOrderTracking,
   isLinkActive,
 }: MobileNavDrawerProps) {
   return (
@@ -263,6 +266,26 @@ export function MobileNavDrawer({
                   Toggle
                 </button>
               </div>
+
+              {/* Track Project Order button */}
+              {onOpenOrderTracking && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenOrderTracking();
+                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>Track Project Order</span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase bg-cyan-500/20 px-1.5 py-0.5 rounded">
+                    Live
+                  </span>
+                </button>
+              )}
 
               {currentUser ? (
                 <div className="p-3 rounded-2xl bg-slate-100/80 dark:bg-white/5 space-y-2.5">

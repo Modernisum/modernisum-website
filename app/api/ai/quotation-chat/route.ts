@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPlatformCoupons } from "@/lib/platform-schools-engine";
 
-interface QuotationCalculation {
+export interface ProjectTaskItem {
+  id: string;
+  title: string;
+  weightPct: number;
+  completed: boolean;
+}
+
+export interface PaymentMilestoneItem {
+  name: string;
+  pct: number;
+  amount: number;
+  status: "pending" | "paid";
+}
+
+export interface GeneratedQuoteResult {
   solution: string;
   scopeTier: string;
   standardDays: number;
@@ -12,11 +27,28 @@ interface QuotationCalculation {
   totalCost: number;
   advanceAmount: number;
   milestoneBalance: number;
+  discountPercent?: number;
+  discountAmount?: number;
+  finalDiscountedTotal?: number;
+  tasks: ProjectTaskItem[];
+  milestones: PaymentMilestoneItem[];
+  summary: string;
+  projectState: "new" | "existing_legacy";
+  referenceUrl?: string;
 }
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, conversationHistory = [], currentQuote } = await req.json();
+    const {
+      message,
+      conversationHistory = [],
+      currentQuote,
+      couponCode,
+      projectState = "new",
+      referenceUrl,
+    } = await req.json();
 
     if (!message || typeof message !== "string") {
       return NextResponse.json(
@@ -25,49 +57,70 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1. Coupon Verification
+    let appliedDiscountPct = 0;
+    let couponNote = "";
+    if (couponCode && typeof couponCode === "string") {
+      const cleanCode = couponCode.trim().toUpperCase();
+      try {
+        const coupons = await getPlatformCoupons();
+        const found = coupons.find((c: any) => c.code.toUpperCase() === cleanCode && c.isActive !== false);
+        if (found) {
+          appliedDiscountPct = Number(found.discountPercent) || 5;
+          couponNote = `Referral Coupon "${cleanCode}" applied: ${appliedDiscountPct}% official partner concession credited.`;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
 
+    // Strict System Prompt (Zero IP Leakage, Anti-Theft High-Level Milestones, Fixed Price Guarantee)
     const systemPrompt = `
-You are the Senior Solutions Architect and Transparent Pricing AI for Modernisum (HQ in Meerut, UP, India).
-Modernisum is a sovereign software engineering firm specializing in:
-1. MOD School Autonomous School OS (Campus edge ERP, RFID, GPS bus telemetry, zero-latency desktop app)
-2. Agromi Autonomous Agro-Tech OS (Precision drone telemetry, IoT soil sensors, mandi logistics)
-3. Sovereign Web Platforms (Next.js 16 + Rust Axum edge architectures)
+You are the Senior Solutions Architect and Transparent Pricing AI for Modernisum Technologies (HQ in Meerut, UP, India).
+Modernisum is an elite sovereign software engineering firm specializing in:
+1. MOD School Autonomous School OS (Local desktop ERP, RFID turnstiles, parent bus GPS telemetry, offline SQLite resilience)
+2. MOD Farmer Autonomous Agro-Tech OS (Precision drone telemetry, IoT soil sensors, mandi logistics)
+3. Sovereign Web Platforms (Next.js 16 + Rust Axum edge architectures, ultra-fast 120fps)
 4. Cross-Platform Mobile Applications (Flutter iOS/Android & Kotlin Jetpack Compose)
-5. Enterprise Autonomous AI Workforce (Multi-agent custom automation, self-healing bots)
+5. Custom Enterprise SaaS & AI Workforces (Autonomous multi-agent task pipelines)
 6. Custom Edge IoT & Embedded Telemetry (Microcontrollers, hardware interfaces)
 
-### MODERNISUM TRANSPARENT PRICING & PAYMENT CALCULUS (STRICT RULES):
-In today's AI agent era, programming languages, UI graphics, and tech stacks are NOT barriers. Modernisum NEVER charges a tech stack markup. Pricing is purely driven by SCOPE and TIME DURATION.
-1. Baseline turnaround and base prices:
-   - Rapid Prototype / MVP: Base 14 days, Base ₹45,000
-   - Production Single-Tenant / School / Org: Base 30 days, Base ₹1,40,000
-   - Multi-Tenant / Multi-Campus Ecosystem: Base 45 days, Base ₹3,80,000
-   - Sovereign Enterprise Infrastructure: Base 60 days, Base ₹8,50,000
-2. EXPEDITED TIME SURGE FORMULA:
-   - If client needs delivery faster than the standard baseline, for every 1% reduction in turnaround time, project cost increases by 2%.
-   - Reason: Dedicated concurrent AI orchestrators, senior engineers, and accelerated cloud compute tools must be mobilized immediately.
-   - Example: 30-day baseline project (₹1,00,000) expedited to 15 days (50% reduction in time) => +100% surcharge => ₹2,00,000 total.
-3. ON-TIME DELIVERY SLA GUARANTEE (COMPANY DELAY PENALTY):
-   - If Modernisum ever delays delivery beyond the agreed deadline, for every 1% time delay incurred, Modernisum deducts 1% from the remaining balance / project cost as an automatic SLA credit!
-4. 25% ADVANCE COMMITMENT:
-   - Client pays only 25% advance to mobilize the team and lock the development calendar. The remaining 75% is payable only upon milestone delivery and sign-off.
-5. 100% FULL ADVANCE REFUND GUARANTEE:
-   - If Modernisum cancels the project or is unable to deliver, 100% of the customer's advance is immediately refunded without deductions.
-6. APPROVAL PIPELINE:
-   - Customer submits the quotation blueprint request. Admin and engineering leads review team capacity and confirm the exact start date and sprint lead within 4 hours.
+### MODERNISUM GUARANTEED FIXED-PRICE & DELIVERY POLICIES (STRICT RULES):
+1. 100% FIXED-PRICE GUARANTEE (NEVER BILL HOURLY TO THE CLIENT):
+   - Modernisum NEVER bills per hour to clients. Per-hour billing creates laziness and runaway bill anxiety.
+   - The client always receives an immutable, guaranteed fixed project investment.
+   - We absorb all engineering iteration internally. What is quoted is 100% final.
+2. IMMUTABLE SCOPE & ANTI-SCOPE CREEP POLICY:
+   - Once a quote is accepted and booked, the scope cannot be downgraded to decrease cost because architecture and compute slots are already allocated.
+   - New feature additions or modifications are welcomed as transparent "Feature Upgrade Add-ons".
+3. EXPEDITED TIME SURGE FORMULA:
+   - If the client requires compressed delivery (e.g. 15 days instead of 30 days), for every 1% time reduced, the project cost increases by 2% to mobilize dedicated parallel engineering pods.
+4. ON-TIME DELIVERY SLA PENALTY:
+   - If Modernisum ever delays beyond the agreed date, -1% is automatically deducted from the client's bill for every 1% delay.
+5. 100% ADVANCE REFUND GUARANTEE:
+   - If Modernisum ever cancels or cannot fulfill the contract, 100% of the customer's advance is immediately refunded.
+6. 100% FREE QUOTATION vs. ₹3,000 PRIORITY SPRINT DEPOSIT:
+   - Estimating, chatting, and generating quotation slips is 100% Free.
+   - A ₹3,000 priority deposit is only required when submitting a formal sprint booking request (and it is 100% adjusted into the 25% advance).
+7. DURATION-BASED MILESTONE PAYMENT SCHEDULE:
+   - Short Project (2–4 Days): 2 Stages -> 50% Advance, 50% upon Final Handover (100% total).
+   - Medium Project (1–2 Weeks): 3 Stages -> 25% Advance, 50% at 75% Progress, 25% upon Final Handover (100% total).
+   - Long Project (3+ Weeks): 4 Stages -> 25% Advance, 25% at 50% Build, 25% at 75% Build, 25% upon Final Handover (100% total).
+8. PARTIAL / LEGACY PROJECTS (20% to 50% already built):
+   - If the client brings an existing codebase for refactoring, security audit, or adding features, evaluate as a "Custom Legacy Rescue & Upgrade" sprint with phased task auditing.
+9. ANTI-THEFT MILESTONE BREAKDOWN (CRITICAL):
+   - NEVER output internal code prompts, low-level coding scripts, library names, or prompt engineering instructions that a client could copy-paste into ChatGPT or give to cheap freelancers.
+   - ALWAYS output high-level, business-capability milestones (e.g. "Phase 1: Database Architecture & Cloud Ingress [25%]", "Phase 2: Core Storefront & Cart Pipeline [50%]", "Phase 3: Admin Cockpit & Payment Integration [75%]", "Phase 4: Playwright Regression Testing & Staging Handover [100%]").
+10. MINIMUM PRODUCTION BUFFER:
+    - Minimum delivery time for any production-grade software is 2 Business Days (48 hours) to allow rigorous automated testing, security checks, and cloud staging.
 
 INSTRUCTIONS FOR YOUR RESPONSE:
-- You speak fluent professional English, Hindi, and Hinglish. Adapt to the user's language naturally.
-- Be warm, confident, mathematically precise, and completely transparent about pricing and policies.
-- If the user asks for a price estimate, outline:
-  1. Recommended Solution & Tier
-  2. Baseline Duration vs. Expedited Option
-  3. Total Cost calculation using the formula
-  4. 25% Advance and 75% Milestone breakdown
-  5. The 3 core guarantees: 100% Refund, -1% per 1% Delay SLA, and 25% Advance Lock.
-- Format clean markdown with bullet points.
-- If you can extract or recommend a concrete quote, also include a structured JSON block at the very end wrapped in \`\`\`quote-json ... \`\`\` with this format:
+- Speak fluent professional English, Hindi, or Hinglish based on the user's input.
+- Be warm, authoritative, mathematically precise, and crystal-clear.
+- Present the final guaranteed fixed price, timeline, dynamic milestone stages, and the high-level task breakdown.
+- Always append a valid JSON block wrapped in \`\`\`quote-json ... \`\`\` at the very end of your response following this exact structure:
 \`\`\`quote-json
 {
   "solution": "MOD School Autonomous School OS",
@@ -75,7 +128,27 @@ INSTRUCTIONS FOR YOUR RESPONSE:
   "standardDays": 30,
   "expeditedDays": 20,
   "baseCost": 140000,
-  "summary": "Full campus OS with RFID turnstiles and parent GPS app"
+  "timeReductionPct": 33,
+  "surgeMultiplierPct": 66,
+  "expeditedSurcharge": 92400,
+  "totalCost": 232400,
+  "advanceAmount": 58100,
+  "milestoneBalance": 174300,
+  "summary": "Full campus edge ERP with RFID turnstiles and parent bus GPS telemetry",
+  "projectState": "new",
+  "referenceUrl": "",
+  "tasks": [
+    { "id": "task-1", "title": "Campus Ingress & Edge Database Architecture", "weightPct": 25, "completed": false },
+    { "id": "task-2", "title": "RFID Turnstile Reader & Attendance Sync Pipeline", "weightPct": 25, "completed": false },
+    { "id": "task-3", "title": "Parent Bus GPS Telemetry & Automated Fee Reconciliation", "weightPct": 25, "completed": false },
+    { "id": "task-4", "title": "End-to-End Playwright Regression QA & Handover", "weightPct": 25, "completed": false }
+  ],
+  "milestones": [
+    { "name": "Sprint Mobilization Advance", "pct": 25, "amount": 58100, "status": "pending" },
+    { "name": "Ingress & Attendance Verification Demo", "pct": 25, "amount": 58100, "status": "pending" },
+    { "name": "Bus Telemetry & Fee Portal Demo", "pct": 25, "amount": 58100, "status": "pending" },
+    { "name": "Final Handover & Production Deployment", "pct": 25, "amount": 58100, "status": "pending" }
+  ]
 }
 \`\`\`
 `;
@@ -84,10 +157,7 @@ INSTRUCTIONS FOR YOUR RESPONSE:
     if (apiKey) {
       try {
         const contents = [
-          {
-            role: "user",
-            parts: [{ text: systemPrompt }],
-          },
+          { role: "user", parts: [{ text: systemPrompt }] },
           ...conversationHistory.slice(-6).map((m: any) => ({
             role: m.sender === "user" ? "user" : "model",
             parts: [{ text: m.text }],
@@ -96,7 +166,7 @@ INSTRUCTIONS FOR YOUR RESPONSE:
             role: "user",
             parts: [
               {
-                text: `${currentQuote ? `[Context: Current visual quote config: ${JSON.stringify(currentQuote)}]\n` : ""}${message}`,
+                text: `${currentQuote ? `[Context: Current visual quote config: ${JSON.stringify(currentQuote)}]\n` : ""}${projectState ? `[Project State: ${projectState}]\n` : ""}${referenceUrl ? `[Reference URL: ${referenceUrl}]\n` : ""}${couponCode ? `[Coupon Code: ${couponCode} -> ${appliedDiscountPct}% discount]\n` : ""}${message}`,
               },
             ],
           },
@@ -110,8 +180,8 @@ INSTRUCTIONS FOR YOUR RESPONSE:
             body: JSON.stringify({
               contents,
               generationConfig: {
-                temperature: 0.6,
-                maxOutputTokens: 1200,
+                temperature: 0.5,
+                maxOutputTokens: 1500,
               },
             }),
           }
@@ -119,86 +189,143 @@ INSTRUCTIONS FOR YOUR RESPONSE:
 
         if (geminiRes.ok) {
           const geminiData = await geminiRes.json();
-          const replyText =
-            geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          const replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-          // Parse optional quote-json block
-          let suggestedQuote = null;
+          let suggestedQuote: GeneratedQuoteResult | null = null;
           const jsonMatch = replyText.match(/```quote-json([\s\S]*?)```/);
           if (jsonMatch && jsonMatch[1]) {
             try {
               suggestedQuote = JSON.parse(jsonMatch[1].trim());
+              if (suggestedQuote && appliedDiscountPct > 0) {
+                suggestedQuote.discountPercent = appliedDiscountPct;
+                suggestedQuote.discountAmount = Math.round(suggestedQuote.totalCost * (appliedDiscountPct / 100));
+                suggestedQuote.finalDiscountedTotal = suggestedQuote.totalCost - suggestedQuote.discountAmount;
+              }
             } catch (e) {
               // ignore parse error
             }
           }
 
-          // Clean reply text of json block if desired
           const cleanReply = replyText.replace(/```quote-json[\s\S]*?```/, "").trim();
 
           return NextResponse.json({
             success: true,
             reply: cleanReply,
             suggestedQuote,
+            couponApplied: appliedDiscountPct > 0 ? { code: couponCode, discountPercent: appliedDiscountPct, note: couponNote } : null,
           });
         }
       } catch (err) {
-        console.warn("⚠️ Gemini API fetch failed, switching to intelligent local engine:", err);
+        console.warn("⚠️ Gemini API fetch failed, switching to deterministic engine:", err);
       }
     }
 
     // High-Intelligence Deterministic Fallback Engine (Zero downtime)
     const lower = message.toLowerCase();
-    let reply = "";
-    let suggestedQuote: any = null;
+    let solution = "Custom Sovereign Web & SaaS Architecture";
+    let baseCost = 95000;
+    let standardDays = 20;
+    let expeditedDays = 15;
 
-    if (lower.includes("school") || lower.includes("vidhyam") || lower.includes("erp") || lower.includes("student")) {
-      reply = `नमस्ते! Modernisum के **MOD School Autonomous School OS** के लिए हमारी पूरी पारदर्शी कोटेशन नीति निम्नलिखित है:
-
-- **मानक समय (Standard Duration)**: 30 कार्य दिवस (Base ₹1,40,000)
-- **त्वरित डिलीवरी (Expedited Delivery)**: यदि आप इसे 20 दिनों में चाहते हैं (33% समय की बचत), तो हमारे नियम के अनुसार (1% समय कम = 2% अतिरिक्त लागत), लागत में +66% की वृद्धि होगी।
-- **25% अग्रिम नीति (Advance Policy)**: कार्य प्रारंभ करने के लिए कुल बजट का केवल 25% अग्रिम देय है।
-- **Modernisum 100% रिफंड गारंटी**: यदि कंपनी किसी भी कारणवश प्रोजेक्ट रद्द करती है, तो 100% अग्रिम राशि तुरंत वापस की जाएगी।
-- **समयबद्ध डिलीवरी SLA (-1% प्रति 1% देरी)**: यदि हमारे द्वारा 1 दिन की भी देरी होती है, तो कुल प्रोजेक्ट लागत में से उसी अनुपात में कटौती की जाएगी।
-
-आप नीचे दिए गए इंटरैक्टिव **Quotation Calculator** में दिनों का चयन करके तुरंत आधिकारिक कोटेशन स्लिप डाउनलोड कर सकते हैं!`;
-      suggestedQuote = {
-        solution: "MOD School Autonomous School OS",
-        scopeTier: "Production Single-Tenant",
-        standardDays: 30,
-        expeditedDays: 20,
-        baseCost: 140000,
-      };
+    if (lower.includes("school") || lower.includes("vidhyam") || lower.includes("student") || lower.includes("rfid")) {
+      solution = "MOD School Autonomous School OS";
+      baseCost = 140000;
+      standardDays = 30;
+      expeditedDays = 20;
     } else if (lower.includes("farm") || lower.includes("agromi") || lower.includes("kisan") || lower.includes("crop")) {
-      reply = `नमस्ते! **Agromi Autonomous Agro-Tech OS** (सॉइल टेलीमेट्री, ड्रोन मैपिंग और मंडी लॉजिस्टिक्स) के लिए हमारी पारदर्शी पॉलिसी:
-
-- **मानक समय (Standard)**: 30 कार्य दिवस (Base ₹1,40,000)
-- **स्पीड वृद्धि नियम**: समय में प्रत्येक 1% कमी पर प्रोजेक्ट लागत में 2% की वृद्धि होती है।
-- **भुगतान गारंटी**: केवल 25% अग्रिम पर काम शुरू, शेष 75% माइलस्टोन डिलीवरी पर।
-- **100% सुरक्षित**: कंपनी द्वारा प्रोजेक्ट कैंसिल होने पर 100% अग्रिम रिफंड की गारंटी।`;
-      suggestedQuote = {
-        solution: "Agromi Autonomous Agro-Tech OS",
-        scopeTier: "Production Single-Tenant",
-        standardDays: 30,
-        expeditedDays: 25,
-        baseCost: 140000,
-      };
-    } else {
-      reply = `Hello! Welcome to Modernisum's Autonomous Architecture & Quotation Desk. 
-
-Here is our **100% Transparent Pricing & Delivery Guarantee**:
-1. **Zero Stack Markup**: No markup for choice of language or UI animations—our engineering is powered by autonomous AI agents.
-2. **Time-Based Calculus**: Baseline projects start from ₹45,000 (MVP) to ₹1,40,000 (Production). For every **1% time saved (expedited delivery)**, cost increases by **2%** to allocate concurrent dedicated engineering pods.
-3. **On-Time SLA Guarantee**: If Modernisum is ever delayed by 1% of time, **1% is automatically deducted from your final bill**.
-4. **25% Advance & 100% Refund**: Only 25% advance to initiate development. If we cancel the project, **100% of your advance is immediately refunded**.
-
-Tell me what you are planning to build, or use the interactive calculator on this page to generate your instant official blueprint slip!`;
+      solution = "MOD Farmer Autonomous Agro-Tech OS";
+      baseCost = 140000;
+      standardDays = 30;
+      expeditedDays = 20;
+    } else if (lower.includes("e-commerce") || lower.includes("shop") || lower.includes("store") || lower.includes("cart")) {
+      solution = "Next-Gen E-Commerce & Merchant Cockpit";
+      baseCost = 85000;
+      standardDays = 18;
+      expeditedDays = 12;
+    } else if (projectState === "existing_legacy" || lower.includes("existing") || lower.includes("partial") || lower.includes("20%") || lower.includes("50%")) {
+      solution = "Legacy Codebase Audit, Security QA & Feature Rescue";
+      baseCost = 65000;
+      standardDays = 10;
+      expeditedDays = 7;
     }
+
+    const timeReductionPct = Math.round(((standardDays - expeditedDays) / standardDays) * 100);
+    const surgeMultiplierPct = timeReductionPct * 2;
+    const expeditedSurcharge = Math.round(baseCost * (surgeMultiplierPct / 100));
+    const totalCost = baseCost + expeditedSurcharge;
+    const discountAmount = appliedDiscountPct > 0 ? Math.round(totalCost * (appliedDiscountPct / 100)) : 0;
+    const finalTotal = totalCost - discountAmount;
+    const advanceAmount = Math.round(finalTotal * 0.25);
+    const milestoneBalance = finalTotal - advanceAmount;
+
+    const tasks: ProjectTaskItem[] = [
+      { id: "task-1", title: "Cloud Architecture, Database Ingress & Data Models", weightPct: 25, completed: false },
+      { id: "task-2", title: "Core Application Workflows & User Experience", weightPct: 25, completed: false },
+      { id: "task-3", title: "Administrative Command Cockpit & Integration Pipelines", weightPct: 25, completed: false },
+      { id: "task-4", title: "Playwright Regression Testing, Security Audit & Cloud Handover", weightPct: 25, completed: false },
+    ];
+
+    const milestones: PaymentMilestoneItem[] = standardDays <= 4
+      ? [
+          { name: "50% Sprint Mobilization Advance", pct: 50, amount: Math.round(finalTotal * 0.5), status: "pending" },
+          { name: "50% Handover & Production Handover", pct: 50, amount: Math.round(finalTotal * 0.5), status: "pending" },
+        ]
+      : standardDays <= 14
+      ? [
+          { name: "25% Sprint Mobilization Advance", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+          { name: "50% Midway Milestone (75% Progress Demo)", pct: 50, amount: Math.round(finalTotal * 0.5), status: "pending" },
+          { name: "25% Handover & Production Deployment", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+        ]
+      : [
+          { name: "25% Sprint Mobilization Advance", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+          { name: "25% Core Architecture Demo (50% Build)", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+          { name: "25% Cockpit & Integration Demo (75% Build)", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+          { name: "25% Final Handover & Source Handover", pct: 25, amount: Math.round(finalTotal * 0.25), status: "pending" },
+        ];
+
+    const suggestedQuote: GeneratedQuoteResult = {
+      solution,
+      scopeTier: "Production Grade",
+      standardDays,
+      expeditedDays,
+      timeReductionPct,
+      surgeMultiplierPct,
+      baseCost,
+      expeditedSurcharge,
+      totalCost,
+      discountPercent: appliedDiscountPct,
+      discountAmount,
+      finalDiscountedTotal: finalTotal,
+      advanceAmount,
+      milestoneBalance,
+      summary: `${solution} with guaranteed fixed price, on-time SLA, and 100% advance refund guarantee.`,
+      projectState,
+      referenceUrl: referenceUrl || "",
+      tasks,
+      milestones,
+    };
+
+    const reply = `नमस्ते! Modernisum के **100% Guaranteed Fixed-Price** एवं पारदर्शी सिस्टम में आपका स्वागत है:
+
+1. **गारंटीड निश्चित मूल्य (No Hourly Surprise)**: कुल प्रोजेक्ट लागत **₹${finalTotal.toLocaleString("en-IN")}** फिक्स है। इसमें कोई प्रति घंटा बिलिंग या अप्रत्याशित खर्चे नहीं हैं।
+2. **समय-सीमा एवं टर्नअराउंड**: 
+   - मानक समय: **${standardDays} दिन**
+   - त्वरित डिलीवरी (Expedited): **${expeditedDays} दिन** (${timeReductionPct}% की बचत)
+3. **डायनामिक माइलस्टोन भुगतान**:
+${milestones.map((m, idx) => `   - **चरण ${idx + 1} (${m.name})**: ₹${m.amount.toLocaleString("en-IN")} (${m.pct}%)`).join("\n")}
+4. **मॉडर्निज्म के 3 कानूनी संरक्षण**:
+   - **100% रिफंड गारंटी**: कंपनी द्वारा प्रोजेक्ट कैंसिल होने पर अग्रिम राशि की 100% तुरंत वापसी।
+   - **समय पर डिलीवरी SLA**: कंपनी की ओर से 1% देरी पर भी अंतिम बिल में से 1% की सीधी कटौती।
+   - **इम्यूटेबल स्कोप**: कोटेशन फाइनल होने के बाद बाद में कोई फीचर कम करके कीमत नहीं घटाई जा सकती, लेकिन नए फीचर्स को "Feature Add-ons" के रूप में जोड़ा जा सकता है।
+
+${couponNote ? `\n🎁 **${couponNote}**` : ""}
+आप नीचे दिए गए इंटरैक्टिव कैलकुलेटर से इस कोटेशन को सिंक कर सकते हैं या तुरंत आधिकारिक कोटेशन स्लिप डाउनलोड कर सकते हैं!`;
 
     return NextResponse.json({
       success: true,
       reply,
       suggestedQuote,
+      couponApplied: appliedDiscountPct > 0 ? { code: couponCode, discountPercent: appliedDiscountPct, note: couponNote } : null,
     });
   } catch (error: any) {
     console.error("❌ Quotation Chat Error:", error);

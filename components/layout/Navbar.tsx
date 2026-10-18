@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  Activity,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -22,6 +23,7 @@ import { getModernisumNavConfig } from "./nav/modernisum.config";
 import { MegaDropdown } from "./nav/MegaDropdown";
 import { UserAccountMenu } from "./nav/UserAccountMenu";
 import { MobileNavDrawer } from "./nav/MobileNavDrawer";
+import { OrderTrackingModal } from "@/components/shared/OrderTrackingModal";
 
 export type { NavbarVariant } from "./nav/types";
 
@@ -62,6 +64,7 @@ export function Navbar({ variant = "modernisum" }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [orderTrackingOpen, setOrderTrackingOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
 
@@ -584,6 +587,7 @@ export function Navbar({ variant = "modernisum" }: NavbarProps) {
                     isDark={isDark}
                     onToggleTheme={toggleTheme}
                     onOpenAuth={() => setAuthModalOpen(true)}
+                    onOpenOrderTracking={() => setOrderTrackingOpen(true)}
                     isSchoolDomain={isSchoolDomain}
                     compact={true}
                   />
@@ -617,6 +621,17 @@ export function Navbar({ variant = "modernisum" }: NavbarProps) {
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center gap-1.5 sm:gap-3"
                 >
+                  {/* Track Order Trigger */}
+                  <button
+                    type="button"
+                    onClick={() => setOrderTrackingOpen(true)}
+                    className="p-1.5 sm:px-3 sm:py-1 rounded-full glass-pill text-slate-700 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
+                    title="Track Order / Sprint Telemetry"
+                  >
+                    <Activity className="w-3.5 h-3.5 text-cyan-500" />
+                    <span className="hidden sm:inline">Track Order</span>
+                  </button>
+
                   {/* Theme Toggle (outside nav at top) */}
                   <button
                     onClick={toggleTheme}
@@ -640,6 +655,7 @@ export function Navbar({ variant = "modernisum" }: NavbarProps) {
                     isDark={isDark}
                     onToggleTheme={toggleTheme}
                     onOpenAuth={() => setAuthModalOpen(true)}
+                    onOpenOrderTracking={() => setOrderTrackingOpen(true)}
                     isSchoolDomain={isSchoolDomain}
                     compact={false}
                   />
@@ -676,11 +692,15 @@ export function Navbar({ variant = "modernisum" }: NavbarProps) {
         currentUser={currentUser}
         onLogout={handleLogout}
         onOpenAuth={() => setAuthModalOpen(true)}
+        onOpenOrderTracking={() => setOrderTrackingOpen(true)}
         isLinkActive={isLinkActive}
       />
 
       {/* Interactive Liquid Glass Auth Dialog */}
       <AuthDialog isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      {/* Real-time Order & Sprint Telemetry Modal */}
+      <OrderTrackingModal isOpen={orderTrackingOpen} onClose={() => setOrderTrackingOpen(false)} />
     </>
   );
 }

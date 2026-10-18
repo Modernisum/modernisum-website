@@ -1061,6 +1061,181 @@ export const DEFAULT_POLICIES_SEED: FirestorePolicyDoc[] = [
       },
     ],
   },
+  // 6. CUSTOM SOFTWARE ENGINEERING, GUARANTEED FIXED PRICE & DELIVERY SLA AGREEMENT
+  {
+    id: "software-development",
+    slug: "software-development",
+    title: "Custom Software Engineering, Guaranteed Fixed Price & Delivery SLA Agreement",
+    shortTitle: "Custom Software SLA & Fixed Price",
+    category: "Master Agreements",
+    variant: "modernisum",
+    order: 6,
+    badge: "100% Guaranteed Fixed Price",
+    effectiveDate: "Calendar Year 2026–2027",
+    lastUpdated: "18 October 2026",
+    summaryTitle: "Zero Hourly Billing • Immutable Scope Lock • 100% Advance Refund Guarantee",
+    summarySubtitle: "Transparent Milestone Escrow • SLA Turnaround Acceleration • Statutory MSME Protection",
+    summaryDescription:
+      "Modernisum Technologies (MSME: UDYAM-UP-56-0049848) operates strictly on a 100% Guaranteed Fixed-Price Model. We reject predatory hourly billing, developer padding, and scope ambiguity. Every custom software sprint is backed by an immutable scope definition, dynamic milestone disbursement, real-time code progress tracking, and contractual SLA delivery deadlines with statutory delay penalties.",
+    preamble: {
+      title: "Statutory Master Engineering Agreement Preamble",
+      text: "This Master Software Engineering & Fixed-Price Delivery Agreement (\"Agreement\") is entered into under Section 10A of the Information Technology Act, 2000 and the Indian Contract Act, 1872 by Modernisum Technologies (MSME Registration: UDYAM-UP-56-0049848, Meerut, Uttar Pradesh – 250406) (\"Engineering Studio\") and the client ordering bespoke software, mobile apps, desktop systems, AI agents, or web platforms (\"Client\"). By confirming an official Quotation Slip or depositing the Priority Booking Token, the Client legally accepts these immutable terms.",
+    },
+    sections: [
+      {
+        id: "guaranteed-fixed-price-model",
+        number: "1",
+        title: "100% Guaranteed Fixed-Price Model (Zero Hourly Billing)",
+        tag: "Core Invariant",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Modernisum operates exclusively on a 100% Guaranteed Fixed-Price Model. Under no circumstances does Modernisum bill clients on an hourly rate, time-and-materials basis, or open-ended developer retainers.",
+          "Clients are shielded from developer procrastination, artificial complexity, and surprise invoices. The final price calculated and confirmed on the official Quotation Blueprint is the total statutory fee payable for the agreed scope.",
+        ],
+        highlights: [
+          {
+            iconName: "ShieldCheck",
+            title: "Guaranteed Final Cost",
+            description: "Zero surprise fees. What is quoted on the verified blueprint is the absolute final cost.",
+            badge: "Fixed Price Guarantee",
+          },
+          {
+            iconName: "Clock",
+            title: "Zero Hourly Bill Shock",
+            description: "No hourly billing meters or developer padding. Total financial transparency.",
+            badge: "0% Hourly Risk",
+          },
+          {
+            iconName: "Banknote",
+            title: "Transparent MSME Invoicing",
+            description: "Statutory billing under UDYAM-UP-56-0049848 with zero hidden surcharges.",
+            badge: "MSME UDYAM",
+          },
+        ],
+      },
+      {
+        id: "immutable-scope-lock",
+        number: "2",
+        title: "Immutable Scope Definition & Add-On Feature Protocol",
+        tag: "Scope Governance",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Upon payment of the Priority Booking Token or the Initial Advance Milestone, the architectural scope and deliverable capabilities are locked as Immutable.",
+          "Scope Downgrade Invariant: Clients cannot arbitrarily downgrade or remove pre-agreed tasks post-sprint mobilization to reduce the fixed investment, as engineering capacity has been mobilized.",
+          "Scope Expansion / Feature Upgrades: Any additional functionality requested outside the approved blueprint is handled as a separate 'Feature Upgrade Add-on' with its own fixed price and SLA timeline.",
+        ],
+        highlights: [
+          {
+            iconName: "Lock",
+            title: "Immutable Blueprint",
+            description: "Deliverables, screens, and API endpoints are locked at sprint confirmation.",
+            badge: "Locked Scope",
+          },
+          {
+            iconName: "Layers",
+            title: "Modular Add-Ons",
+            description: "New features are quoted transparently without destabilizing current sprint deadlines.",
+            badge: "Add-On Protocol",
+          },
+        ],
+      },
+      {
+        id: "turnaround-surge-sla-penalty",
+        number: "3",
+        title: "Turnaround Acceleration Surge & SLA Delay Penalty",
+        tag: "SLA Invariant",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Clients may choose Standard Delivery or an Expedited Turnaround sprint. Accelerating delivery requires dedicating senior engineering pods and weekend overtime shifts.",
+          "Expedited Surcharge Formula: For every 1% reduction in calendar delivery time compared to the standard timeline, a +2% speed surcharge is applied to the base engineering cost.",
+          "Contractual Delay Penalty: If Modernisum fails to deliver the verified build on or before the committed SLA deadline (excluding client feedback delays or force majeure), a -1% price penalty deduction is refunded to the client for every 1% of time delayed past the SLA date.",
+        ],
+        table: {
+          headers: ["Timeline Selection", "Turnaround Duration", "Speed Multiplier", "SLA Delay Penalty"],
+          rows: [
+            ["Standard Engineering", "14 - 30 Calendar Days", "1.0x (Base Cost)", "-1% per 1% unexcused company delay"],
+            ["Expedited Sprint", "7 - 14 Calendar Days", "+2% cost per 1% speed gain", "-1% per 1% unexcused company delay"],
+            ["Ultra-Fast Hotfix / Sprint", "2 - 5 Calendar Days", "+2% cost per 1% speed gain", "-1% per 1% unexcused company delay"],
+          ],
+        },
+      },
+      {
+        id: "milestone-payment-framework",
+        number: "4",
+        title: "Dynamic Duration-Based Milestone Payment Schedule",
+        tag: "Payment Escrow",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Milestone disbursement is dynamically governed by the total duration of the software sprint, ensuring equal risk distribution between client and engineering studio:",
+          "1. Sprint Duration 2–4 Days: 50% Mobilization Advance → 50% Final Handover & Source Delivery.",
+          "2. Sprint Duration 1–2 Weeks: 25% Mobilization Advance → 50% Mid-Sprint (at 75% Task Completion) → 25% Final Handover.",
+          "3. Sprint Duration 3+ Weeks: 25% Mobilization Advance → 25% Milestone 1 (at 50% Progress) → 25% Milestone 2 (at 75% Progress) → 25% Final Handover.",
+        ],
+        highlights: [
+          {
+            iconName: "CheckCircle2",
+            title: "Progress-Verified Releases",
+            description: "Mid-sprint milestones are only due after live screen demos and task verification.",
+            badge: "Verified Stages",
+          },
+          {
+            iconName: "ShieldCheck",
+            title: "No 100% Upfront Demands",
+            description: "Final 25% to 50% handover payment is held until full UAT testing and delivery.",
+            badge: "Customer Protection",
+          },
+        ],
+      },
+      {
+        id: "100-percent-advance-refund",
+        number: "5",
+        title: "100% Advance Refund & Priority Booking Guarantee",
+        tag: "Zero-Risk Policy",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Priority Booking Token: The optional ₹3,000 reservation token locks the engineering sprint date. This token is 100% adjusted into the initial advance payment upon contract commencement.",
+          "Full Refund Guarantee: If Modernisum is unable to initiate the engineering sprint within 5 business days of the agreed start date, or if Modernisum cancels the project, 100% of all deposited advances and tokens are immediately refunded to the client's original payment method without deductions.",
+        ],
+      },
+      {
+        id: "code-ownership-ip-governance",
+        number: "6",
+        title: "Intellectual Property & Source Code Ownership",
+        tag: "IP Transfer",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Upon receipt of final handover milestone payment, full commercial ownership and perpetual intellectual property rights of the client's custom source code, assets, and database schemas are transferred to the Client.",
+          "Modernisum retains no proprietary claim over the Client's business data, proprietary business logic, or user credentials. Modernisum retains zero centralized telemetry of custom customer applications.",
+        ],
+      },
+      {
+        id: "statutory-jurisdiction",
+        number: "7",
+        title: "Statutory MSME Registration & Legal Jurisdiction",
+        tag: "Legal Identity",
+        lastAddedOrUpdated: "18 October 2026",
+        content: [
+          "Entity Identity: Modernisum Technologies is an officially recognized enterprise registered under the Ministry of Micro, Small and Medium Enterprises (MSME), Government of India, Registration No. UDYAM-UP-56-0049848.",
+          "Governing Law: This agreement shall be interpreted in accordance with the laws of India, including the Information Technology Act 2000 and the Indian Contract Act 1872. The courts in Meerut, Uttar Pradesh shall have exclusive jurisdiction.",
+        ],
+        signoffBlock: {
+          licensor: {
+            entity: "Modernisum Technologies",
+            msme: "UDYAM-UP-56-0049848",
+            authorizedBy: "Founder & Lead Architect",
+            address: "Near Water Tank, Dayalpur, Parikshitgarh, Meerut, UP - 250406",
+            webMail: "contact@modernisum.com",
+          },
+          licensee: {
+            institutionPrompt: "Client Corporate Name / Entity",
+            signatoryPrompt: "Authorized Signatory Name & Designation",
+            schoolIdPrompt: "Order / Quotation Reference ID",
+            acceptanceMode: "Digital Acceptance via Verified Blueprint Confirmation & Token Deposit",
+          },
+        },
+      },
+    ],
+  },
 ];
 
 /**

@@ -11,6 +11,7 @@ import {
   LogOut,
   GraduationCap,
   Building2,
+  Activity,
 } from "lucide-react";
 import { type AuthUser } from "@/lib/sso";
 import { getAvatarById } from "@/lib/avatars";
@@ -24,6 +25,7 @@ interface UserAccountMenuProps {
   isDark: boolean;
   onToggleTheme: () => void;
   onOpenAuth: () => void;
+  onOpenOrderTracking?: () => void;
   isSchoolDomain: boolean;
   compact?: boolean;
 }
@@ -48,6 +50,7 @@ export function UserAccountMenu({
   isDark,
   onToggleTheme,
   onOpenAuth,
+  onOpenOrderTracking,
   isSchoolDomain,
   compact = false,
 }: UserAccountMenuProps) {
@@ -198,6 +201,28 @@ export function UserAccountMenu({
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               </Link>
             </div>
+
+            {/* Track Project Order */}
+            {onOpenOrderTracking && (
+              <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenOrderTracking();
+                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-3.5 h-3.5 text-cyan-500" />
+                    <span>Track Project Order</span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-1.5 py-0.5 rounded font-bold">
+                    Live
+                  </span>
+                </button>
+              </div>
+            )}
 
             {/* Theme Change Toggle */}
             <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1">

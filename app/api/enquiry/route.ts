@@ -17,11 +17,36 @@ export async function OPTIONS() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, serviceNeeded, service, budgetRange, budget, projectDescription, message, quotationDetails } = body;
+    const {
+      name,
+      email,
+      phone,
+      serviceNeeded,
+      service,
+      budgetRange,
+      budget,
+      projectDescription,
+      message,
+      quotationDetails,
+      orderId,
+      referenceUrl,
+      surfaces,
+      features,
+      projectState,
+      tasks,
+      milestones,
+      couponCode,
+      discountAmount,
+      partnerCommission,
+      tokenPaid,
+      tokenAmount,
+      totalFixedPrice,
+      estimatedDays,
+    } = body;
 
     const finalDescription = (projectDescription || message || "").trim();
-    const finalService = (serviceNeeded || service || "General Inquiry").trim();
-    const finalBudget = (budgetRange || budget || "Flexible").trim();
+    const finalService = (serviceNeeded || service || "Custom Software Sprint").trim();
+    const finalBudget = (budgetRange || budget || "Guaranteed Fixed Price").trim();
 
     if (!name || !email || !finalDescription) {
       return NextResponse.json(
@@ -30,13 +55,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const id = await submitEnquiry({
+    const { id, orderId: generatedOrderId } = await submitEnquiry({
+      orderId: orderId || undefined,
       name: name.trim(),
       email: email.trim(),
       phone: phone ? phone.trim() : "",
       serviceNeeded: finalService,
       budgetRange: finalBudget,
       projectDescription: finalDescription,
+      projectState: projectState || "new",
+      referenceUrl: referenceUrl ? referenceUrl.trim() : "",
+      surfaces: Array.isArray(surfaces) ? surfaces : [],
+      features: Array.isArray(features) ? features : [],
+      tasks: Array.isArray(tasks) ? tasks : (quotationDetails?.tasks || []),
+      milestones: Array.isArray(milestones) ? milestones : (quotationDetails?.milestones || []),
+      couponCode: couponCode || "",
+      discountAmount: Number(discountAmount) || 0,
+      partnerCommission: Number(partnerCommission) || 0,
+      tokenPaid: Boolean(tokenPaid),
+      tokenAmount: Number(tokenAmount) || 0,
+      totalFixedPrice: Number(totalFixedPrice) || (quotationDetails?.totalCost || 0),
+      estimatedDays: Number(estimatedDays) || (quotationDetails?.expeditedDays || quotationDetails?.standardDays || 14),
       status: "new",
       quotationDetails: quotationDetails || null,
     });
@@ -44,8 +83,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Thank you! Your inquiry has been received. Our support team will respond shortly.",
+        message: "Thank you! Your official quotation blueprint has been registered. Order ID generated.",
         id,
+        orderId: generatedOrderId,
       },
       { headers: corsHeaders }
     );
